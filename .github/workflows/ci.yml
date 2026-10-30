@@ -93,11 +93,27 @@ jobs:
 
       - name: Ensure Android SDK platform 36 + build tools
         run: |
-          # Runners ship the SDK with licences already accepted. Install
-          # explicitly so a missing platform surfaces as a clear error here
-          # rather than as a confusing AGP failure later.
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+          SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::notice::preinstalled cmdline-tools not found; downloading"
+            mkdir -p "$SDK_ROOT/cmdline-tools"
+            curl -fsSL -o /tmp/cmdline-tools.zip \
+              "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+            unzip -q /tmp/cmdline-tools.zip -d "$SDK_ROOT/cmdline-tools"
+            rm -rf "$SDK_ROOT/cmdline-tools/latest"
+            mv "$SDK_ROOT/cmdline-tools/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
+            SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          fi
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::error::sdkmanager still not found at $SDKMAN"
+            ls -laR "$SDK_ROOT" | head -50
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
+          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
 
       # The Firebase plugins are commented out in app/build.gradle.kts until a
       # real google-services.json exists. If you have uncommented them but not
@@ -159,10 +175,29 @@ jobs:
             "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
           sudo unzip -q /tmp/gradle.zip -d /opt
           echo "/opt/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
-      - name: Ensure Android SDK platform 36
+      - name: Ensure Android SDK platform 36 + build tools
         run: |
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::notice::preinstalled cmdline-tools not found; downloading"
+            mkdir -p "$SDK_ROOT/cmdline-tools"
+            curl -fsSL -o /tmp/cmdline-tools.zip \
+              "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+            unzip -q /tmp/cmdline-tools.zip -d "$SDK_ROOT/cmdline-tools"
+            rm -rf "$SDK_ROOT/cmdline-tools/latest"
+            mv "$SDK_ROOT/cmdline-tools/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
+            SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          fi
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::error::sdkmanager still not found at $SDKMAN"
+            ls -laR "$SDK_ROOT" | head -50
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
+          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
       - name: Run unit tests
         run: gradle testDebugUnitTest --stacktrace --no-daemon
       # The HTML report names every failing test and shows the assertion
@@ -194,10 +229,29 @@ jobs:
             "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
           sudo unzip -q /tmp/gradle.zip -d /opt
           echo "/opt/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
-      - name: Ensure Android SDK platform 36
+      - name: Ensure Android SDK platform 36 + build tools
         run: |
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::notice::preinstalled cmdline-tools not found; downloading"
+            mkdir -p "$SDK_ROOT/cmdline-tools"
+            curl -fsSL -o /tmp/cmdline-tools.zip \
+              "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+            unzip -q /tmp/cmdline-tools.zip -d "$SDK_ROOT/cmdline-tools"
+            rm -rf "$SDK_ROOT/cmdline-tools/latest"
+            mv "$SDK_ROOT/cmdline-tools/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
+            SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          fi
+          if [ ! -x "$SDKMAN" ]; then
+            echo "::error::sdkmanager still not found at $SDKMAN"
+            ls -laR "$SDK_ROOT" | head -50
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
+          yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
+          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
       - name: Provide a placeholder google-services.json if one is missing
         run: |
           if [ ! -f app/google-services.json ]; then
