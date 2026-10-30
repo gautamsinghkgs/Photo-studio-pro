@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hand-drawn flat vector: a photo frame with the background peeled away.
+  Deliberately NOT AI-generated — using AI art here would trigger the Play
+  Console AI Asset Declaration and put a public "AI-generated" badge on the
+  listing. See master-plan section 6.1.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- photo frame -->
+    <path android:fillColor="#FFFFFF" android:pathData="M26,30h56v48h-56z"/>
+    <!-- peeled corner -->
+    <path android:fillColor="#2F6FED" android:pathData="M82,30 L82,78 L26,78 L26,66 C46,66 66,52 70,30 Z"/>
+    <!-- subject silhouette kept -->
+    <path android:fillColor="#00B894" android:pathData="M54,44m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0"/>
+    <path android:fillColor="#00B894" android:pathData="M38,72c0,-9 7,-15 16,-15s16,6 16,15z"/>
+</vector>

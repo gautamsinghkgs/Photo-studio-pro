@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hindi (Devanagari). Same naming rules apply — no "AI Enhance" etc. -->
+<resources>
+    <string name="app_name">फोटो स्टूडियो प्रो</string>
+    <string name="app_tagline">सेलर्स और क्रिएटर्स के लिए ऑफ़लाइन फोटो टूलकिट</string>
+
+    <string name="pillar_no_upload">आपकी फोटो कभी फोन से बाहर नहीं जाती</string>
+    <string name="pillar_offline">एक बार सेटअप के बाद ऑफ़लाइन काम करता है</string>
+    <string name="pillar_unlimited">बैकग्राउंड हटाना मुफ़्त और असीमित</string>
+
+    <string name="home_title">टूल्स</string>
+    <string name="home_subtitle">सब कुछ आपके डिवाइस पर चलता है। कोई अकाउंट नहीं, कोई अपलोड नहीं।</string>
+
+    <string name="tool_bgremover">बैकग्राउंड रिमूवर</string>
+    <string name="tool_bgremover_desc">किसी भी सब्जेक्ट को अपने आप काटें</string>
+    <string name="tool_idphoto">पासपोर्ट और आईडी फोटो</string>
+    <string name="tool_idphoto_desc">30+ देशों के सरकारी साइज़</string>
+    <string name="tool_batch">बैच रिसाइज़ और कंप्रेस</string>
+    <string name="tool_batch_desc">एक साथ 100 फोटो तक रिसाइज़ करें</string>
+    <string name="tool_whitebg">व्हाइट बैकग्राउंड</string>
+    <string name="tool_whitebg_desc">मार्केटप्लेस के लिए तैयार प्रोडक्ट फोटो</string>
+    <string name="tool_collage">कोलाज</string>
+    <string name="tool_collage_desc">लेआउट, बॉर्डर और टेम्पलेट</string>
+    <string name="tool_pdf">फोटो से PDF</string>
+    <string name="tool_pdf_desc">फोटो जोड़कर PDF बनाएँ, या PDF तोड़ें</string>
+    <string name="tool_ocr">टेक्स्ट स्कैनर</string>
+    <string name="tool_ocr_desc">छपा हुआ टेक्स्ट निकालें — अंग्रेज़ी और हिंदी</string>
+    <string name="tool_enhance">फोटो एन्हांस</string>
+    <string name="tool_enhance_desc">शार्पन, डीनॉइज़, ऑटो-लेवल्स</string>
+
+    <string name="later_title">अगले बिल्ड में आ रहा है</string>
+    <string name="later_body">यह टूल माइलस्टोन %1$s का हिस्सा है। यह छिपाया या पेवॉल किया नहीं गया — बस अभी बना नहीं है। ऐप में जो कुछ पहले से है वह पूरा काम करता है।</string>
+    <string name="later_back">टूल्स पर वापस</string>
+
+    <string name="pick_photo">फोटो चुनें</string>
+    <string name="pick_photos">फोटो चुनें</string>
+    <string name="export">एक्सपोर्ट</string>
+    <string name="save">सेव करें</string>
+    <string name="share">शेयर करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="retry">फिर कोशिश करें</string>
+    <string name="done">हो गया</string>
+    <string name="processing">काम हो रहा है…</string>
+    <string name="before">पहले</string>
+    <string name="after">बाद में</string>
+
+    <string name="bg_model_downloading">बैकग्राउंड रिमूवर सेट हो रहा है…</string>
+    <string name="bg_model_downloading_body">यह सिर्फ़ एक बार होता है, बैकग्राउंड में। एक छोटा मॉडल आपके फोन में डाउनलोड होता है — आपकी फोटो कभी अपलोड नहीं होती।</string>
+    <string name="bg_model_needs_network">बैकग्राउंड रिमूवर के लिए एक बार सेटअप चाहिए</string>
+    <string name="bg_model_needs_network_body">एक बार इंटरनेट चालू करें ताकि मॉडल आपके फोन में आ जाए। उसके बाद यह हमेशा ऑफ़लाइन चलेगा। बाकी टूल अभी काम कर रहे हैं।</string>
+    <string name="bg_transparent">ट्रांसपेरेंट</string>
+    <string name="bg_solid">एक रंग</string>
+    <string name="bg_gradient">ग्रेडिएंट</string>
+    <string name="bg_result_empty">कोई साफ़ सब्जेक्ट नहीं मिला</string>
+    <string name="bg_result_empty_body">ऐसी फोटो इस्तेमाल करें जिसमें सब्जेक्ट बैकग्राउंड से अलग दिखता हो, कम से कम 512×512 पिक्सल हो, और फोकस में हो।</string>
+
+    <string name="id_country">देश / डॉक्यूमेंट</string>
+    <string name="id_search_country">खोजें</string>
+    <string name="id_guide_head_size">सिर की ऊँचाई</string>
+    <string name="id_guide_eye_line">आँखों की लाइन</string>
+    <string name="id_guide_background">बैकग्राउंड</string>
+    <string name="id_guide_pass">सही लग रहा है</string>
+    <string name="id_guide_warn">यह जाँचें</string>
+    <string name="id_print_sheet">प्रिंट शीट</string>
+    <string name="id_disclaimer">सरकारी माप के अनुसार फॉर्मैट किया गया। जमा करने से पहले अपने देश के नए नियम ज़रूर देखें — नियम बदलते रहते हैं।</string>
+    <string name="id_no_face">कोई चेहरा नहीं मिला</string>
+    <string name="id_no_face_body">ऐसी फोटो लें जिसमें एक चेहरा साफ़ दिखे और वह सीधे कैमरे की ओर देख रहा हो।</string>
+    <string name="id_multiple_faces">एक से ज़्यादा चेहरे मिले</string>
+
+    <string name="batch_free_limit_title">मुफ़्त वर्शन एक बार में 1 फोटो रिसाइज़ करता है</string>
+    <string name="batch_free_limit_body">प्रो लें और एक साथ 100 फोटो तक रिसाइज़ करें — या एक छोटा वीडियो देखकर इस बैच में 5 फोटो और जोड़ें।</string>
+    <string name="batch_watch_ad">वीडियो देखें · 5 फोटो जोड़ें</string>
+    <string name="batch_go_pro">प्रो देखें</string>
+    <string name="batch_target_size">फ़ाइल का टारगेट साइज़</string>
+    <string name="batch_strip_exif">लोकेशन और कैमरा की जानकारी हमेशा हटा दी जाती है</string>
+    <string name="batch_format_png">PNG (बड़ा, लॉसलेस) — बंद = JPEG</string>
+    <string name="batch_summary">%1$d फोटो · %2$s → %3$s बचा</string>
+
+    <string name="pro_badge">प्रो</string>
+    <string name="paywall_title">फोटो स्टूडियो प्रो</string>
+    <string name="paywall_subtitle">उनके लिए जो रोज़ फोटो एडिट करते हैं</string>
+    <string name="paywall_continue_free">मुफ़्त वर्शन से आगे बढ़ें</string>
+    <string name="paywall_restore">खरीदारी वापस लाएँ</string>
+    <string name="paywall_terms">सब्सक्रिप्शन अपने आप रिन्यू होती है जब तक रद्द न करें। भुगतान आपके Google Play अकाउंट से होता है। Play Store → Payments &amp; subscriptions → Subscriptions में जाकर कभी भी रद्द करें।</string>
+    <string name="paywall_trial_info">%1$d दिन मुफ़्त ट्रायल, उसके बाद %2$s।</string>
+    <string name="reward_granted">अनलॉक हुआ · %1$s</string>
+    <string name="reward_cap_reached">आज की सीमा पूरी। कल फिर आएँ, या बिना सीमा के लिए प्रो लें।</string>
+    <string name="reward_ad_failed">वीडियो लोड नहीं हुआ। थोड़ी देर बाद फिर कोशिश करें।</string>
+
+    <string name="settings">सेटिंग्स</string>
+    <string name="settings_privacy">प्राइवेसी पॉलिसी</string>
+    <string name="settings_privacy_summary">आपकी कोई भी फोटो डिवाइस से बाहर नहीं जाती। विज्ञापन और बिलिंग SDK क्या करते हैं, पूरा पढ़ें।</string>
+    <string name="settings_rate">ऐप को रेट करें</string>
+    <string name="settings_share">किसी दोस्त को बताएँ</string>
+    <string name="settings_about">ऐप के बारे में</string>
+    <string name="settings_version">वर्शन %1$s</string>
+
+    <string name="err_generic">कुछ गड़बड़ हो गई। फिर कोशिश करें।</string>
+    <string name="err_oom">यह फोटो बहुत बड़ी है। छोटी फोटो आज़माएँ, या दूसरे ऐप बंद करके फिर कोशिश करें।</string>
+
+    <!-- ================= ONBOARDING ================= -->
+    <string name="onb_1_title">Koi bhi background kaat do</string>
+    <string name="onb_1_body">Product, insaan, object — transparent background ke saath export karo, ya white/black par rakho. Background removal unlimited aur free hai — koi daily limit nahi, koi credit nahi.</string>
+    <string name="onb_2_title">Tumhari photos phone se bahar nahi jaati</string>
+    <string name="onb_2_body">Koi account nahi, koi email nahi, koi upload nahi. Har image isi device par process hoti hai. Ek baar setup ke baad offline chalta hai — sirf machine-learning model download hota hai, tumhari photos kabhi nahi.</string>
+    <string name="onb_3_title">Aath tools, ek app</string>
+    <string name="onb_3_body">30+ deshon ke ID photos, batch resize aur compress, marketplace ke liye white background, collage, photo se PDF, Devanagari ke saath text scanning, aur photo enhance.</string>
+    <string name="onboarding_next">Aage</string>
+    <string name="onboarding_skip">Chhodo</string>
+    <string name="onboarding_see_pro">Pro dekho — free trial shuru karo</string>
+
+    <string name="batch_save_to">Yahan save karo</string>
+    <string name="batch_save_to_none">Abhi koi folder nahi chuna</string>
+    <string name="batch_choose_folder">Folder chuno</string>
+
+    <string name="wb_strength">Taakat</string>
+    <string name="wb_even_lighting">Lighting barabar karo</string>
+    <string name="wb_body">Marketplace listing ke liye deewar ya table ke background ko pure white karo. Yeh classical threshold-and-flood algorithm hai, generative model nahi — yeh detail bana nahi sakta.</string>
+    <string name="wb_tip">Sabse achha tab kaam karta hai jab subject background se clearly gehra ho aur lighting kaafi barabar ho.</string>
+
+    <string name="collage_layout">Layout</string>
+    <string name="collage_spacing">Beech ki jagah</string>
+    <string name="collage_border">Border</string>
+    <string name="collage_corners">Corner radius</string>
+    <string name="collage_ratio">Aspect ratio</string>
+    <string name="collage_need_more">Is layout ke liye %1$d photos chuno</string>
+    <string name="collage_free_limit">Free templates limited hain. Chhota video dekho aur saare templates 24 ghante ke liye khol lo.</string>
+
+    <string name="pdf_to_pdf">Photos se PDF</string>
+    <string name="pdf_to_images">PDF se photos</string>
+    <string name="pdf_page_size">Page size</string>
+    <string name="pdf_fit">Fit</string>
+    <string name="pdf_fill">Fill (crop hota hai)</string>
+    <string name="pdf_margin">Margin</string>
+    <string name="pdf_pages_out">%1$d page likhe gaye</string>
+    <string name="pdf_images_out">%1$d images nikali gayin</string>
+    <string name="pdf_pick_pdf">PDF chuno</string>
+    <string name="pdf_empty">Pehle photos add karo</string>
+
+    <string name="ocr_script">Script</string>
+    <string name="ocr_scan">Text scan karo</string>
+    <string name="ocr_copy">Copy</string>
+    <string name="ocr_copied">Text copy ho gaya</string>
+    <string name="ocr_nothing">Is image mein koi text nahi mila</string>
+    <string name="ocr_nothing_body">Zyada saaf photo aur achhi lighting mein try karo. Text tab sabse achha padha jaata hai jab woh frame ka zyada tar hissa bhare aur zyada tedha na ho.</string>
+    <string name="ocr_free_limit">Aaj ke free scans khatam. Pro mein bina limit scan hota hai.</string>
+    <string name="ocr_blocks">%1$d text block mile</string>
+
+    <string name="enh_auto">Auto enhance</string>
+    <string name="enh_brightness">Brightness</string>
+    <string name="enh_contrast">Contrast</string>
+    <string name="enh_saturation">Saturation</string>
+    <string name="enh_sharpness">Sharpness</string>
+    <string name="enh_denoise">Noise kam karo</string>
+    <string name="enh_wb">Auto white balance</string>
+    <string name="enh_reset">Reset</string>
+    <string name="enh_compare">Dabaye rakho — compare karo</string>
+    <string name="enh_honest">Photo Enhance classical algorithms use karta hai — auto levels, grey-world white balance, unsharp masking aur edge-preserving denoise. Yeh exposure aur sharpness sudharta hai; jo detail capture hi nahi hui use wapas nahi la sakta, aur purani damaged photos restore nahi karta.</string>
+
+    <string name="settings_delete_data">Mera data mitao</string>
+    <string name="settings_delete_data_summary">Is app ne device par jo bhi save kiya hai, sab saaf ho jaayega</string>
+    <string name="settings_delete_data_warn">Isse tumhare daily usage counters, saved preferences aur is device par offline Pro status saaf ho jaayenge. Tumhari photos hum kabhi store nahi karte, isliye server se kuch mitane ko hai hi nahi — hamara koi server nahi hai. Agar tum Pro subscriber ho toh purchase tumhare Google account par rehti hai aur Restore purchases se kabhi bhi wapas la sakte ho. Yeh wapas nahi hoga.</string>
+    <string name="settings_delete_confirm">Sab mita do</string>
+</resources>

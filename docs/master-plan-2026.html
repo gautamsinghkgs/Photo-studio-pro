@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASTER PLAN 2026 — Photo Studio Pro · $25 Budget · Zero AI API · Zero Backend</title>
+<style>
+  :root{
+    --bg:#0b0e14; --card:#131824; --card2:#1a2130; --line:#253044;
+    --txt:#e6edf7; --mut:#93a2b8; --acc:#6ee7b7; --acc2:#60a5fa;
+    --warn:#fbbf24; --bad:#f87171; --gold:#fcd34d; --pur:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.68;font-size:16.5px}
+  .wrap{max-width:960px;margin:0 auto;padding:26px 18px 70px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  .kicker{color:var(--acc);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px;margin-bottom:10px}
+  h1{font-size:33px;line-height:1.24;margin:0 0 12px}
+  .sub{color:var(--mut);font-size:16.5px;max-width:800px}
+  .meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}
+  .meta span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:12.5px;color:var(--mut)}
+  h2{font-size:23.5px;margin:46px 0 13px;padding-top:20px;border-top:1px solid var(--line)}
+  h2 .num{color:var(--acc);font-size:13px;display:block;letter-spacing:.12em;margin-bottom:5px;font-weight:700}
+  h3{font-size:18px;margin:25px 0 8px;color:var(--acc2)}
+  h4{font-size:15.5px;margin:18px 0 7px;color:var(--pur)}
+  p{margin:0 0 13px}
+  .lead{color:var(--mut);font-size:15.8px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:7px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:19px 21px;margin:16px 0}
+  .verdict{border-left:4px solid var(--acc);background:linear-gradient(90deg,rgba(110,231,183,.09),rgba(19,24,36,.5))}
+  .warn{border-left:4px solid var(--warn);background:linear-gradient(90deg,rgba(251,191,36,.09),rgba(19,24,36,.5))}
+  .bad{border-left:4px solid var(--bad);background:linear-gradient(90deg,rgba(248,113,113,.09),rgba(19,24,36,.5))}
+  .gold{border-left:4px solid var(--gold);background:linear-gradient(90deg,rgba(252,211,77,.09),rgba(19,24,36,.5))}
+  .info{border-left:4px solid var(--acc2)}
+  .pur{border-left:4px solid var(--pur)}
+  table{width:100%;border-collapse:collapse;margin:15px 0;font-size:14.2px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--card2);font-weight:700}
+  tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+  td.c,th.c{text-align:center}
+  code{background:#0a0f18;border:1px solid var(--line);border-radius:5px;padding:1.5px 6px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.9px;color:var(--acc)}
+  pre{background:#080c13;border:1px solid var(--line);border-radius:11px;padding:15px 17px;overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.9px;line-height:1.62;margin:14px 0}
+  pre code{background:none;border:none;padding:0;color:#cfe3ff}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:17px 21px;margin:20px 0}
+  .toc ol{margin:7px 0 0;padding-left:20px;columns:2;column-gap:30px}
+  .toc a{color:var(--acc2);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .yes{color:var(--acc);font-weight:700}
+  .no{color:var(--bad);font-weight:700}
+  .mid{color:var(--warn);font-weight:700}
+  .footer{margin-top:44px;padding-top:19px;border-top:1px solid var(--line);color:var(--mut);font-size:13.3px}
+  .src{font-size:13.3px;color:var(--mut)}
+  .src li{margin-bottom:9px}
+  blockquote{margin:13px 0;padding:11px 17px;border-left:3px solid var(--acc2);
+    background:rgba(96,165,250,.07);border-radius:0 9px 9px 0;font-style:italic;color:#d6e4f7;font-size:15.2px}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px;margin:17px 0}
+  .kpi div{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
+  .kpi b{display:block;font-size:24px;color:var(--acc);margin-bottom:3px;line-height:1.2}
+  .kpi span{font-size:12.6px;color:var(--mut);line-height:1.45;display:block}
+  .kpi div.w b{color:var(--warn)} .kpi div.b b{color:var(--bad)} .kpi div.g b{color:var(--gold)}
+  hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+  .flow{background:#080c13;border:1px solid var(--line);border-radius:11px;padding:17px 19px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.9px;
+    line-height:1.72;overflow-x:auto;white-space:pre;color:#cfe3ff}
+  .hero{background:linear-gradient(135deg,rgba(110,231,183,.11),rgba(96,165,250,.09));
+    border:1px solid var(--line);border-radius:15px;padding:23px 25px;margin:20px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">⭐ MASTER PLAN · Final Consolidated Report</div>
+  <h1>Photo Studio Pro — poora plan ek jagah</h1>
+  <div class="sub">$25 total budget · Zero AI API · Zero backend · 100% on-device · Solo developer · Saara development AI tools se · Hybrid monetization (ads + subscription) · Yeh pichli 5 reports ka <b>final consolidated version</b> hai — ab aur koi report nahi chahiye.</div>
+  <div class="meta">
+    <span><b>Date:</b> 29 October 2026</span>
+    <span><b>Total cost:</b> $25 one-time ≈ ₹2,100</span>
+    <span><b>Monthly cost:</b> ₹0</span>
+    <span><b>Credit card:</b> kahin nahi</span>
+    <span><b>Timeline:</b> 8 hafte</span>
+    <span><b>Build file:</b> <code>SPEC.md</code></span>
+  </div>
+</header>
+
+<div class="hero">
+  <h3 style="margin-top:0">🎯 Poora plan 60 second mein</h3>
+  <p style="margin-bottom:10px"><b>Banao:</b> "Photo Studio Pro" — ek offline photo toolkit online sellers ke liye. Background remover + passport/ID photo maker + batch resize, teeno <b>ML Kit se phone par hi</b> chalte hain.</p>
+  <p style="margin-bottom:10px"><b>Kamao:</b> Hybrid. 96-97% users free tier par ads dekhein (rewarded + capped interstitial), ~3% subscription lein ($6.99/wk, $34.99/yr, 7-din trial). Payers ko <b>zero forced ads</b>.</p>
+  <p style="margin-bottom:10px"><b>Kharcha:</b> $25 (Play registration). Bas. Koi AI API nahi, koi server nahi, koi domain nahi, koi paid marketing nahi, koi credit card nahi.</p>
+  <p style="margin-bottom:0"><b>Expectation:</b> Launch par ₹5,400/mo. 3-6 mahine mein ₹45,600/mo. Top ~17% apps mein pahunche toh ₹2.28 lakh/mo. <b>Lekin yaad rakho: 83% apps 2 saal mein $1K/mo tak nahi pahunchte.</b> Yeh ek real business hai, lottery nahi.</p>
+</div>
+
+<div class="toc">
+  <strong>Report map:</strong>
+  <ol>
+    <li><a href="#s1">5 locked decisions</a></li>
+    <li><a href="#s2">App: 8 tools</a></li>
+    <li><a href="#s3">Yeh category kyun</a></li>
+    <li><a href="#s4">$0 tech stack</a></li>
+    <li><a href="#s5">Backend: definitive jawab</a></li>
+    <li><a href="#s6">⚠️ Naming trap + Play compliance</a></li>
+    <li><a href="#s7">ML Kit size + AAB + 16 KB</a></li>
+    <li><a href="#s8">Hybrid monetization</a></li>
+    <li><a href="#s9">Earning projections</a></li>
+    <li><a href="#s10">Poora $25 bill</a></li>
+    <li><a href="#s11">8-week launch plan</a></li>
+    <li><a href="#s12">Post-launch roadmap</a></li>
+    <li><a href="#s13">North Star + guardrails</a></li>
+    <li><a href="#s14">7 revenue-killing mistakes</a></li>
+    <li><a href="#s15">Risk register</a></li>
+    <li><a href="#s16">12-tester bottleneck</a></li>
+    <li><a href="#s17">SPEC.md kaise use karo</a></li>
+    <li><a href="#s18">Sabhi files + sources</a></li>
+  </ol>
+</div>
+
+<!-- ===== 1 ===== -->
+<h2 id="s1"><span class="num">01</span>5 locked decisions — yeh plan kaise bana</h2>
+<p class="lead">Har decision ek research round se aaya. Yeh trail isliye zaroori hai taaki 6 mahine baad tumhein yaad rahe ki <b>kya kyun</b> decide hua — aur koi AI tool tumhein galat direction mein na le jaaye.</p>
+
+<table>
+  <thead><tr><th class="c">#</th><th>Tumne kaha</th><th>Decision jo lock hua</th><th>Kya reject hua</th></tr></thead>
+  <tbody>
+    <tr><td class="c"><b>1</b></td><td>"Kis category ka app banaun jiska success rate zyada ho"</td><td><b>Photo &amp; Video</b> — $1K/mo tak pahunchne ki odds 21.4% (sabse zyada), median monthly revenue $124 (sabse zyada)</td><td>Business (1.6% — sabse kharab), Utilities, general PDF scanner</td></tr>
+    <tr><td class="c"><b>2</b></td><td>"Total budget $25, sab development AI karega, solo"</td><td><b>100% on-device ML Kit</b> — free &amp; unlimited, Google-confirmed</td><td>Replicate, fal.ai, Gemini Image, FLUX — sab per-call paid hain</td></tr>
+    <tr><td class="c"><b>3</b></td><td>"Ads + subscription dono se kamana hai"</td><td><b>Toolkit</b> (8 tools) — high usage frequency, natural break points</td><td>Standalone Passport Photo Maker — low frequency, utility apps ko industry <b>ZERO</b> interstitials deti hai</td></tr>
+    <tr><td class="c"><b>4</b></td><td>"Backend free mein deploy kar sakta hoon na"</td><td><b>Haan — Cloudflare Workers</b> (100K req/day, no card, commercial OK, throttle-not-bill)</td><td>Vercel Hobby (<b>commercial BANNED</b>), Railway (uncapped bill), Fly.io (free tier dead), Render (cold start + Postgres 30-din delete + no India region), Supabase (5 GB egress = app dead), Firebase Blaze (no spending cap)</td></tr>
+    <tr><td class="c"><b>5</b></td><td>"Main kisi bhi AI ka API use nahi karunga"</td><td><b>Zero AI API + zero backend at launch.</b> App ka naam "AI Photo Studio" → <b>"Photo Studio Pro"</b></td><td>Saare generative features; SSV bhi <b>defer</b> hua (India ke patchy data par honest users "fraud" ban jaate hain)</td></tr>
+  </tbody>
+</table>
+
+<div class="box verdict">
+  <p style="margin-bottom:0"><b>Net result:</b> tumhara product ab <b>sirf ek Android APK</b> hai. Koi server nahi, koi API key nahi, koi uptime alarm nahi, koi egress bill nahi, koi data liability nahi. <b>2026 mein yeh sabse clean setup hai jo possible hai.</b></p>
+</div>
+
+<!-- ===== 2 ===== -->
+<h2 id="s2"><span class="num">02</span>App: Photo Studio Pro — 8 tools</h2>
+
+<div class="box gold">
+  <h4 style="margin-top:0">Positioning (yehi har jagah use karo)</h4>
+  <p style="font-size:17px;margin-bottom:8px"><i>"Product Photo Studio for Online Sellers &amp; Creators"</i></p>
+  <p style="margin-bottom:0"><b>Play title:</b> <code>Photo Studio Pro: BG Remover</code> (28 chars) · <b>Short description:</b> <i>"Remove backgrounds &amp; make ID photos offline. Unlimited, no upload, no signup."</i> (78 chars)</p>
+</div>
+
+<table>
+  <thead><tr><th class="c">Order</th><th>Tool</th><th>Kaise chalta hai</th><th>Business role</th></tr></thead>
+  <tbody>
+    <tr><td class="c"><b>M1</b></td><td><b>Background Remover</b> ⭐</td><td>ML Kit Subject Segmentation (<span class="mid">Beta</span>) — bundled</td><td><b>Main hook.</b> Screenshot #1. Unlimited free = generous hook jo competitors nahi de sakte</td></tr>
+    <tr><td class="c"><b>M2</b></td><td><b>Passport / ID Photo Maker</b> ⭐</td><td>ML Kit Face Detection (<code>PERFORMANCE_MODE_FAST</code>) + <code>countries.json</code> (30+ desh)</td><td><b>Install magnet / SEO.</b> "passport photo" high-volume low-competition keyword hai</td></tr>
+    <tr><td class="c"><b>M3</b></td><td><b>Batch Resize + Compress</b> ⭐</td><td>Bitmap scaling + JPEG/WebP quality (<b>no ML</b>)</td><td><b>Subscription driver.</b> Free = 1 photo, Pro = 100. Sabse high-intent paywall</td></tr>
+    <tr><td class="c"><b>M6</b></td><td>White Background / Product Cleanup</td><td>M1 ka segmentation + auto-levels + contact shadow</td><td>Amazon/eBay/Etsy compliance angle</td></tr>
+    <tr><td class="c"><b>M7</b></td><td>Collage + Templates</td><td>Canvas drawing (<b>no ML</b>)</td><td><b>Rewarded-ad surface</b> — 🔒 template 24h ke liye unlock</td></tr>
+    <tr><td class="c"><b>M8</b></td><td>Image ↔ PDF</td><td>PdfBox-Android (Apache 2.0)</td><td>Sellers ko invoices/catalogues chahiye</td></tr>
+    <tr><td class="c"><b>M9</b></td><td>OCR Text Scanner</td><td>ML Kit Text Recognition v2 — <b>Latin + Devanagari</b></td><td><b>Differentiator.</b> Hindi OCR competitors ke paas aksar nahi hota</td></tr>
+    <tr><td class="c"><b>M10</b></td><td>Photo Enhance</td><td>Sharpen + denoise + auto-levels + contrast (<b>CLASSICAL, no ML</b>)</td><td>Naam <b>"Photo Enhance"</b> rakhna, <span class="no">"AI Enhance" kabhi nahi</span></td></tr>
+  </tbody>
+</table>
+
+<h3>2.1 — 8 tools ek app mein kyun? (yeh strategy ka core hai)</h3>
+<ul>
+  <li><b>5 alag ASO entry points:</b> "background remover", "passport photo maker", "photo compressor", "collage maker", "image to pdf" — <b>ek hi app, paanch search queries.</b> Alag-alag apps banate toh 5× kaam hota aur har ek ki authority kam hoti</li>
+  <li><b>Frequency mil jaati hai:</b> ek seller roz 10-40 photos edit karta hai. Yahi cheez ads ke liye natural break points banati hai</li>
+  <li><b>Retention:</b> ek tool ka user dusre tool ko discover karta hai → session length badhti hai → D7 retention badhta hai</li>
+  <li><b>AI-buildable:</b> har tool ek chhota, independent module hai. Ek milestone ek baar mein — AI confuse nahi hota</li>
+</ul>
+
+<div class="box warn">
+  <h4 style="margin-top:0">⚠️ Jo tum DEFINITELY nahi bana sakte</h4>
+  <p style="margin-bottom:8px">Zero AI API ka matlab yeh features <b>structurally impossible</b> hain. AI ko yeh list <b>pehle</b> dikhana, warna woh confidently aisa code likh dega jo chalega hi nahi:</p>
+  <ul style="margin-bottom:0">
+    <li><b>AI background generation</b> ("beach scene daalo") → uski jagah solid colours, gradients, patterns</li>
+    <li><b>True old photo restoration / scratch removal / colourisation</b> → uski jagah classical enhance, aur naam "Photo Enhance"</li>
+    <li><b>Magic eraser / object removal</b> → uski jagah manual clone-stamp</li>
+    <li><b>AI avatars, text-to-image, style transfer</b> → uski jagah classical LUT filter presets (rewarded-unlock surface)</li>
+    <li><b>AI super-resolution upscaling</b> → v1 mein skip, simple Lanczos resize M3 mein already hai</li>
+  </ul>
+</div>
+
+<h3>2.2 — Kya tum kuch kho rahe ho? Data ulta kehta hai.</h3>
+<div class="box verdict">
+  <p><b>Nano Banana = 22 million downloads / 28 din, lekin sirf $181K revenue = $0.008 per download.</b> Yeh generative AI photo apps ki asli haalat hai — <b>virality ≠ monetization.</b></p>
+  <p style="margin-bottom:0">Photo &amp; Video ka $124/mo median aur 21.4% odds <b>generative wow-factor se nahi, specific job solve karne se</b> aate hain. "Mujhe 40 product photos chahiye white background par, abhi, bina internet ke" — yeh ek <b>job</b> hai. Aur job ke liye log paisa dete hain, magic ke liye nahi.</p>
+</div>
+
+<!-- ===== 3 ===== -->
+<h2 id="s3"><span class="num">03</span>Yeh category kyun — numbers</h2>
+
+<h3>3.1 — Category comparison (RevenueCat, 115K apps / $16B tracked)</h3>
+<table>
+  <thead><tr><th>Category</th><th class="c">2-saal mein $1K/mo odds</th><th class="c">$10K/mo odds</th><th class="c">Median monthly rev</th><th class="c">Verdict</th></tr></thead>
+  <tbody>
+    <tr style="background:rgba(110,231,183,.09)"><td><b>Photo &amp; Video</b></td><td class="c"><b>21.4%</b> 🥇</td><td class="c">7.3%</td><td class="c"><b>$124</b> 🥇</td><td class="c"><span class="yes">✅ TUMHARA PICK</span></td></tr>
+    <tr><td>Gaming</td><td class="c">20.0%</td><td class="c"><b>8.9%</b> 🥇</td><td class="c">—</td><td class="c">Solo + AI se banana mushkil</td></tr>
+    <tr><td>Health &amp; Fitness</td><td class="c">—</td><td class="c">—</td><td class="c">—</td><td class="c"><span class="mid">🥈 Backup</span> (better hybrid metrics, lekin Pose Beta + crowded)</td></tr>
+    <tr><td>Utilities</td><td class="c">—</td><td class="c">—</td><td class="c">—</td><td class="c">Frequency nahi hai → ads ZERO</td></tr>
+    <tr><td>Business</td><td class="c"><b>1.6%</b></td><td class="c">—</td><td class="c">—</td><td class="c"><span class="no">❌ Sabse kharab</span></td></tr>
+  </tbody>
+</table>
+
+<h3>3.2 — Market tailwind</h3>
+<div class="kpi">
+  <div><b>+10%</b><span>Google Play YoY growth Q2 2026 — iOS sirf +3%. Android sahi platform hai.</span></div>
+  <div><b>$43.6B</b><span>Play IAP revenue Q2 2026</span></div>
+  <div><b>880M</b><span>India smartphones · <b>97% Android</b> · Tier-2/3 mein +25% YoY</span></div>
+  <div class="g"><b>+830%</b><span>"AI Photo Editor" Play listings growth — lekin yeh traffic generative apps ko milta hai, tumhein nahi. Isliye <b>"AI" keyword par depend mat karo</b>.</span></div>
+</div>
+
+<h3>3.3 — eCPM reality (yeh earning math ka base hai)</h3>
+<table>
+  <thead><tr><th>Ad format</th><th class="c">Tier-1 (US/UK/CA/AU)</th><th class="c">Tier-3 (India)</th></tr></thead>
+  <tbody>
+    <tr><td><b>Rewarded video</b></td><td class="c"><b>$14–22</b> (US Android $16.49)</td><td class="c">$2–3 (India ~$1.85)</td></tr>
+    <tr><td><b>Interstitial</b></td><td class="c">$9–14</td><td class="c">$2–4</td></tr>
+    <tr><td><b>Banner</b></td><td class="c">$0.5–2</td><td class="c"><b>$0.08–0.40</b> ← isliye SKIP</td></tr>
+    <tr style="background:rgba(252,211,77,.07)"><td><b>Photo/video utility apps</b></td><td class="c">rewarded $10–15 · interstitial $7–11</td><td class="c">ARPDAU $0.04–0.09</td></tr>
+  </tbody>
+</table>
+<div class="box gold">
+  <p style="margin-bottom:0">🔑 <b>Ek US user ≈ 15–20× ek Indian user.</b> Yeh tumhare paas sabse powerful <b>free</b> lever hai — ₹0 marketing budget mein bhi. Section 9 mein iska 9× impact dikhaya gaya hai. Aur rewarded video <b>poore mobile ad revenue ka ~62%</b> hai — isliye rewarded tumhara priority #1 hai, interstitial nahi.</p>
+</div>
+
+<!-- ===== 4 ===== -->
+<h2 id="s4"><span class="num">04</span>$0 tech stack (final, locked)</h2>
+
+<table>
+  <thead><tr><th>Layer</th><th>Kya</th><th class="c">Cost</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td><b>Saara photo processing</b></td><td>ML Kit on-device (<b>bundled</b>) + Bitmap/Canvas/RenderEffect</td><td class="c"><span class="yes">$0</span></td><td>Free &amp; unlimited, Google-confirmed</td></tr>
+    <tr><td><b>AI models</b></td><td><span class="no">KOI NAHI</span></td><td class="c"><span class="yes">$0</span></td><td>Zero AI API, zero cloud inference</td></tr>
+    <tr><td><b>Backend / server</b></td><td><span class="no">KOI NAHI</span></td><td class="c"><span class="yes">$0</span></td><td>0 lines of code. Section 5</td></tr>
+    <tr><td>PDF</td><td>PdfBox-Android</td><td class="c"><span class="yes">$0</span></td><td>Apache 2.0, ~2 MB</td></tr>
+    <tr><td>Image loading</td><td>Coil</td><td class="c"><span class="yes">$0</span></td><td>Glide se chhota</td></tr>
+    <tr><td>Local storage</td><td>Room + DataStore</td><td class="c"><span class="yes">$0</span></td><td>No cloud DB</td></tr>
+    <tr><td><b>Ads</b></td><td>AdMob + <b>Google UMP SDK</b></td><td class="c"><span class="yes">$0</span></td><td>UMP <b>mandatory</b> hai EEA/UK fill ke liye</td></tr>
+    <tr><td><b>Subscriptions</b></td><td>RevenueCat + Play Billing</td><td class="c"><span class="yes">$0</span></td><td>&lt;$2,500/mo tak free, phir 1%</td></tr>
+    <tr><td>Analytics + config</td><td>Firebase <b>Spark</b>: Analytics, Crashlytics, <b>Remote Config</b></td><td class="c"><span class="yes">$0</span></td><td><b>Blaze par kabhi mat jaana</b></td></tr>
+    <tr><td>Privacy policy + app-ads.txt</td><td>Cloudflare Pages (<code>*.pages.dev</code>)</td><td class="c"><span class="yes">$0</span></td><td>Unlimited bandwidth, no card</td></tr>
+    <tr><td>AI coding</td><td><b>Google Antigravity</b> + <b>Jules</b> (15 tasks/day) + ChatGPT Free + Copilot Free</td><td class="c"><span class="yes">$0</span></td><td><b>Claude Code = $20/mo → skip.</b> Gemini CLI ka free sign-in <b>18 June 2026 ko band</b> ho gaya</td></tr>
+    <tr style="background:rgba(252,211,77,.09)"><td><b>Google Play Console</b></td><td>One-time registration</td><td class="c"><b>$25</b></td><td><b>TUMHARA TOTAL KHARCHA</b></td></tr>
+  </tbody>
+</table>
+
+<h3>4.1 — Free AI workflow (solo dev ke liye exact process)</h3>
+<div class="flow">1. ChatGPT Free       →  plan banao, SPEC.md ka section discuss karo
+                          (yeh tumhara "senior engineer" hai — code nahi, soch)
+        ↓
+2. SPEC.md            →  GitHub repo mein commit karo
+                          ⭐ AI ko hamesha is file ko padhne se shuru karwao
+        ↓
+3. Reference repos    →  clone karo architecture dekhne ke liye:
+                          • masoomabbas/PDF-Master-Suite
+                          • Chethan616/ClearPDF        (MIT, Kotlin + Compose)
+        ↓
+4. Antigravity        →  agent mode mein milestone-by-milestone build karo
+                          (weekly agent quota — isliye milestones chhote rakho)
+        ↓
+5. Jules              →  chhote independent tasks offload karo (15/day, 3 concurrent)
+                          jaise: countries.json banana, PDF module, OCR module
+        ↓
+6. Quota khatam?      →  Copilot Free (2,000 completions + 50 chats/mo) ya Cline/Aider
+        ↓
+7. Debug              →  error paste karo ChatGPT Free mein</div>
+
+<div class="box bad">
+  <h4 style="margin-top:0">🚨 3 AI-code traps jo tumhein personally hit karenge</h4>
+  <ol style="margin-bottom:0">
+    <li><b>AI default roop se cloud API suggest karega.</b> Uska training data cloud-first hai. "Background remover banao" bolne par woh <b>remove.bg / Clipdrop / Gemini Image</b> suggest karega — working code ke saath jo tumhara $0 budget tod dega.<br><b>Fix:</b> <code>SPEC.md</code> ka section 0 (HARD CONSTRAINT C1) pehli cheez hai jo AI padhega. Usmein saaf likha hai: <i>"If a feature cannot be done on-device, DO NOT implement it."</i></li>
+    <li><b>ML Kit beta API signatures AI ke memory mein purane hain.</b> Subject Segmentation, Selfie Segmentation, Pose Detection, Face Mesh — <b>chaaron Beta hain</b>, signatures badalte rehte hain.<br><b>Fix:</b> har ML Kit feature se pehle <b>official doc page ka snippet copy karke AI ko paste karo</b> + bolo <i>"is exact API ka use karo, memory se signature mat likhna."</i> Yeh ek step ~90% bugs bachata hai. Doc URLs SPEC.md section 3 mein hain.</li>
+    <li><b>Gradle versions stale.</b> AI <code>compileSdk 34</code> aur purane AGP pin kar dega. Tumhein <b>targetSdk 36 + 16 KB page size</b> chahiye (31 Aug 2026 deadline).<br><b>Fix:</b> SPEC.md mein <code>C4 — DO NOT INVENT VERSION NUMBERS</code> hai: AI ko artifact naam likhna hai, version ke liye <code>/* TODO: confirm latest */</code> chhodna hai.</li>
+  </ol>
+</div>
+
+<!-- ===== 5 ===== -->
+<h2 id="s5"><span class="num">05</span>Backend: definitive jawab</h2>
+
+<div class="box verdict">
+  <h3 style="margin-top:0">✅ Tumhein apna backend chahiye hi nahi. Zero. Ek line code nahi.</h3>
+  <p style="margin-bottom:0">Jo 6 kaam server maangte hain, woh <b>Google aur RevenueCat ke servers</b> karte hain. Tum sirf SDK jodte ho. Tumhein kuch host nahi karna, kuch maintain nahi karna, kuch monitor nahi karna.</p>
+</div>
+
+<table>
+  <thead><tr><th>Kaam</th><th class="c">Server chahiye?</th><th>Kaun karta hai</th><th class="c">Cost</th></tr></thead>
+  <tbody>
+    <tr><td>Ads serve karna</td><td class="c"><span class="no">❌</span></td><td>AdMob SDK — <b>phone par</b></td><td class="c">$0</td></tr>
+    <tr><td>Photo processing / BG remover / OCR</td><td class="c"><span class="no">❌</span></td><td>ML Kit — <b>phone par</b></td><td class="c">$0</td></tr>
+    <tr><td>Photo storage</td><td class="c"><span class="no">❌</span></td><td>Phone + user ka apna Drive (SAF)</td><td class="c">$0</td></tr>
+    <tr><td>User accounts / login</td><td class="c"><span class="no">❌ MAT BANAO</span></td><td>—</td><td class="c">$0</td></tr>
+    <tr><td><b>Purchase receipt validation</b></td><td class="c"><span class="yes">✅</span></td><td><b>RevenueCat ka server</b></td><td class="c">$0</td></tr>
+    <tr><td><b>"isPro?" entitlement check</b></td><td class="c"><span class="yes">✅</span></td><td><b>RevenueCat</b> + local cache</td><td class="c">$0</td></tr>
+    <tr><td><b>Subscription lifecycle</b> (expire/cancel/grace)</td><td class="c"><span class="yes">✅</span></td><td><b>RevenueCat</b></td><td class="c">$0</td></tr>
+    <tr><td><b>Ad caps / paywall A-B / kill switch</b></td><td class="c"><span class="yes">✅</span></td><td><b>Firebase Remote Config</b></td><td class="c">$0</td></tr>
+    <tr><td>Analytics + crashes</td><td class="c"><span class="yes">✅</span></td><td><b>Firebase Spark</b></td><td class="c">$0</td></tr>
+    <tr><td>Privacy policy + app-ads.txt</td><td class="c"><span class="yes">✅ static</span></td><td><b>Cloudflare Pages</b></td><td class="c">$0</td></tr>
+    <tr style="background:rgba(251,191,36,.07)"><td>Rewarded SSV (anti-cheat)</td><td class="c"><span class="mid">⚠️ OPTIONAL</span></td><td><b>DEFER → Phase 2</b></td><td class="c">$0</td></tr>
+  </tbody>
+</table>
+
+<h3>5.1 — Subscription ka poora flow: tumhara server kahin nahi</h3>
+<div class="flow">1. User "Go Pro" tap karta hai
+        ↓
+2. Play Billing Library → Google ka payment sheet
+        ↓
+3. Google payment process karta hai (UPI / card / Play balance)
+        ↓
+4. Play Billing tumhare app ko `Purchase` object deta hai (token ke saath)
+        ↓
+5. RevenueCat SDK woh token → REVENUECAT KE SERVER par bhejta hai
+        ↓
+6. RevenueCat ka server → Google Play Developer API se token VALIDATE karta hai
+        ↓
+7. RevenueCat entitlement status wapas bhejta hai
+        ↓
+8. RevenueCat SDK use PHONE PAR CACHE kar deta hai
+        ↓
+9. purchases.entitlements["pro"].isActive  →  app Pro unlock
+
+🔴 Tumhara apna server: is poore chain mein KAHI NAHI HAI</div>
+
+<p>Google Play khud kehta hai ki subscription purchases <b>server-side validate</b> honi chahiye (fraud rokne ke liye). <b>RevenueCat yeh tumhare liye free mein karta hai</b> — isliye maine use "tumhara free backend" kaha. Aur step 8 ki wajah se app <b>offline mein bhi Pro rehta hai</b>, jo tumhare "works offline after one-time setup" USP ke saath perfectly fit hai.</p>
+
+<h3>5.2 — SSV ko defer kyun kiya (mera pichla advice reverse)</h3>
+<p>Report 4 mein maine SSV ko "the ONE thing you need" kaha tha. <b>Woh galat tha.</b> Teen verified reasons:</p>
+<div class="box bad">
+  <ol style="margin-bottom:0">
+    <li><b>SSV optional hai.</b> Google ki docs: <i>"It's used <b>in addition to</b> the standard client-side callback"</i> aur heading hi hai <i>"<b>[Optional]</b> Validate server-side verification callbacks."</i> Bina SSV ke <code>onUserEarnedReward()</code> fire hota hai aur user ko reward mil jaata hai.</li>
+    <li><b>India ke patchy data par honest users "fraud" banenge.</b> Google ke official SDK forum advisor: <i>"There is <b>no retry logic from our SDK</b> to ping the server."</i> Ek developer ne reproduce kiya: ad ke beech network gaya → <code>onUserEarnedReward</code> fire hua → <b>SSV callback kabhi nahi aaya</b> → <i>"it seems to the server as if the user did something fraudulent."</i> Uska conclusion: <i>"This makes server validation <b>absolutely useless</b> if there is no guaranteed delivery."</i> <b>Tumhari audience India + Tier-2/3 + patchy data hai, aur tumhara USP "offline" hai. SSV usse contradict karta hai.</b></li>
+    <li><b>Tum ise test hi nahi kar sakte.</b> <i>"Callbacks fire <b>only for production ads</b>; test ads do not invoke your SSV endpoint."</i> Tumhein closed testing ke 14 din AdMob <b>TEST MODE</b> mein rehna hai → matlab SSV code <b>production mein pehli baar chalega, bina test ke.</b></li>
+  </ol>
+</div>
+<p>Real production incidents: <i>"SSV is the only crediting path, so a misconfigured callback URL means <b>users watch ads for nothing</b>"</i> — aur ek app mein deploy script ne function ko list mein include hi nahi kiya, toh rewards credit hona band ho gaye.</p>
+
+<h3>5.3 — SSV ki jagah: 3 client-side controls (₹0, 1 ghanta)</h3>
+<pre><code>1. HARD DAILY CAP     →  max 8 reward grants/user/day (Remote Config se tunable)
+                         cheater bhi unlimited drain nahi kar sakta
+
+2. CHHOTI VALUE       →  rewarded ad se sirf small + temporary + replaceable cheezein:
+                         ✅ "+5 batch photos", "1 HD export", "24h template unlock"
+                         ❌ "Lifetime Pro", "1 month subscription"  ← KABHI NAHI
+                         Isse forgery ka maximum gain trivial ho jaata hai
+
+3. ABUSE DETECTOR     →  har grant par Firebase event `reward_granted` log karo
+                         (yeh analytics hai, backend nahi)</code></pre>
+
+<h3>5.4 — Phase 2 trigger: kab SSV banana</h3>
+<div class="flow">Har hafte 2 numbers compare karo:
+
+   AdMob dashboard  →  Rewarded impressions      = A
+   Firebase         →  reward_granted events     = B
+
+   B / A  ≈  1.0        →  sab theek, kuch mat karo
+   B / A  &gt;  1.5        →  dhyan se dekho
+   B / A  &gt;  3.0        →  🔴 ab Cloudflare Workers + SSV banao
+
+Logic: har grant ke peeche ek ad impression hona chahiye.
+Yeh detection ₹0 hai — dono dashboards already hain.
+
+⚠️ Production ke baad hi valid — test-mode impressions AdMob dashboard
+   mein count nahi hote. Aur apne licence testers ko exclude karo.</div>
+
+<div class="box info">
+  <p style="margin-bottom:0"><b>Agar woh din aaye toh kahan deploy karna:</b> <b>Cloudflare Workers free tier</b> — 100K requests/day, 10ms CPU, <b>0ms cold start</b> (V8 isolates), unlimited static bandwidth, <b>no credit card</b>, <b>commercial use allowed</b>, aur limit cross par <b>Error 1027 = throttle, bill NAHI</b>. India mein Delhi/Mumbai/Chennai/Bangalore edge nodes. Saath mein <b>D1</b> (5 GB SQLite) aur <b>Pages</b> free. Backup: <b>Deno Deploy</b> (1M req/mo, 20 GiB egress, no card). Poora comparison <code>free-backend-guide-2026.html</code> mein hai.</p>
+</div>
+
+<h3>5.5 — ❌ 6 backend traps jo tumne avoid kiye</h3>
+<table>
+  <thead><tr><th>Platform</th><th>Trap</th></tr></thead>
+  <tbody>
+    <tr><td><b>Vercel Hobby</b></td><td><span class="no">Commercial use PROHIBITED.</span> Tumhara app paisa kamata hai → terms violate → account suspend. Bahut saare "free hosting" guides yeh chhupa dete hain.</td></tr>
+    <tr><td><b>Railway</b></td><td>Free tier 2023 mein mar gaya. Ab <i>"uncapped usage unless you opt in to a hard limit… <b>the first you hear of it is the bill</b>"</i>. Hard limit min $10, hit hone par <b>saara workload offline</b>.</td></tr>
+    <tr><td><b>Fly.io</b></td><td>Oct 7, 2024 ke baad naye accounts ke liye free tier <b>band</b>. Sirf ~2 VM-hours trial, <b>card upfront zaroori</b>, managed Postgres $38/mo.</td></tr>
+    <tr><td><b>Render</b></td><td>15 min idle → sleep, <b>~1 min wake</b> (AdMob SSV timeout ke liye fatal). Bandwidth <b>100 GB → 5 GB</b> cut hua (23 Apr 2026). <b>Free Postgres 30 din mein expire → DELETE.</b> Koi India/Asia region nahi → <b>200-300ms latency</b>. Render khud kehta hai free instances "not for production".</td></tr>
+    <tr><td><b>Supabase</b></td><td><b>5 GB egress cap</b> → <i>"every API request returning a <b>402 error</b>, breaking logins and signups instantly."</i> Graceful degrade nahi hota, app toot jaata hai. 7 din idle → pause. Koi backup nahi.</td></tr>
+    <tr><td><b>Firebase Blaze / GCP</b></td><td>Cloud Functions + Cloud Storage <b>sirf Blaze</b> par, aur <i>"Firebase has <b>no hard spending cap</b>"</i>. <i>"AWS and GCP will charge if you exceed limits without a billing alarm configured."</i> Card zaroori. <b>Spark par raho.</b></td></tr>
+  </tbody>
+</table>
+<p class="src">Heroku ke free dynos Nov 2022 mein mare, PlanetScale ka Hobby plan early 2024 mein gaya. <b>Purane guides par bharosa mat karo</b> — hamesha official pricing page check karo.</p>
+
+<!-- ===== 6 ===== -->
+<h2 id="s6"><span class="num">06</span>⚠️ Naming trap + Play compliance</h2>
+
+<p class="lead">Zero AI API use karne se tum ek <b>poora compliance bucket</b> skip kar dete ho — lekin sirf agar tumne <b>"AI" word bhi chhod diya</b>. Warna wapas usi bucket mein kheench liye jaoge.</p>
+
+<h3>6.1 — Jo tumne avoid kiya (yeh tumhara hidden saving hai)</h3>
+<table>
+  <thead><tr><th>2026 ka AI-app requirement</th><th>Tum par apply hota?</th></tr></thead>
+  <tbody>
+    <tr><td><b>"Thin wrapper" rejection</b> — spam maana jaata hai jo app <i>"provides no useful functionality beyond wrapping a third-party model"</i></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>Retroactive removal sweeps</b> — <i>"Google has been removing apps retroactively, particularly apps that call model APIs"</i></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>Mandatory native in-app report button</b> — reviewers APK review mein khud test karte hain; mailto/external form = rejection. <b>1-2 hafte extra kaam + ek backend</b></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>AI Asset Declaration</b> — icon/feature graphic/screenshots AI-generated hone par listing par <b>public "AI-generated" badge</b></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>Third-party AI data-sharing declarations</b> — Play July 2026 update: <i>"User Data policy covers third-party AI integrations"</i>; Apple 5.1.2(i) covers <i>"LLMs, classic ML and any external reasoning service"</i></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>Content moderation + guardrails</b> banane ki zimmedari</td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+    <tr><td><b>API shutdown risk</b> — <code>gemini-2.5-flash-image-preview</code> <b>15 Jan 2026 ko band</b>; free image tier gaya; Gemini CLI free access <b>18 June 2026 ko gaya</b></td><td class="c"><span class="yes">❌ Nahi</span></td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 — 🚨 Lekin "AI Enhance" naam tumhe wapas us bucket mein daal dega</h3>
+<div class="box bad">
+  <p style="margin-bottom:0">Google Play policy se exact line: <i>"apps featuring conversational LLMs or <b>AI photo enhancers</b> are facing <b>immediate rejections</b> if they lack a direct, in-app offensive content flagging system."</i><br><br>Matlab: agar tumne apne sharpen/denoise feature ka naam <b>"AI Enhance"</b> rakha, toh ek classifier ya reviewer tumhe generative-AI bucket mein daal dega — jabki andar classical image processing hai. <b>Bina crime kiye saza, sirf naam ki wajah se.</b></p>
+</div>
+<p>Aur doosri taraf <b>user review risk</b>: 2026 mein "AI photo editor" search karne wale ke dimaag mein Nano Banana / Remini hai. "AI" bola aur BG remove hua → <b>"fake AI, 1 star"</b> → rating 3.2 → <b>ASO death spiral.</b></p>
+
+<h3>6.3 — Naming rule (yeh follow karo)</h3>
+<table>
+  <thead><tr><th>Feature</th><th class="c">Andar kya hai</th><th class="c">"AI" naam?</th><th>Safe naam</th></tr></thead>
+  <tbody>
+    <tr><td>Background Remover</td><td class="c">Subject Segmentation (<b>real ML</b>)</td><td class="c"><span class="mid">⚠️ Haan, precise</span></td><td><b>"Auto Background Remover"</b> + description mein <i>"on-device ML, no upload"</i></td></tr>
+    <tr><td>ID / Passport Photo</td><td class="c">Face Detection (<b>real ML</b>)</td><td class="c"><span class="mid">⚠️ Haan, precise</span></td><td><b>"Smart Face Crop"</b></td></tr>
+    <tr><td>OCR Scanner</td><td class="c">Text Rec v2 (<b>real ML</b>)</td><td class="c"><span class="mid">⚠️ Haan, precise</span></td><td><b>"Text Scanner (OCR)"</b> — OCR khud credibility deta hai</td></tr>
+    <tr style="background:rgba(248,113,113,.08)"><td><b>Old Photo Enhance</b></td><td class="c">sharpen/denoise (<b>NO ML</b>)</td><td class="c"><span class="no">❌ BILKUL NAHI</span></td><td><b>"Photo Enhance"</b> / <b>"Clarity Boost"</b></td></tr>
+    <tr style="background:rgba(248,113,113,.08)"><td>Batch Resize / Compress</td><td class="c">Bitmap (<b>NO ML</b>)</td><td class="c"><span class="no">❌ NAHI</span></td><td><b>"Batch Resize"</b> / <b>"Photo Compressor"</b></td></tr>
+    <tr style="background:rgba(248,113,113,.08)"><td>Collage / Templates / PDF</td><td class="c">Canvas / PdfBox (<b>NO ML</b>)</td><td class="c"><span class="no">❌ NAHI</span></td><td>Jo kaam karta hai wahi naam</td></tr>
+  </tbody>
+</table>
+<div class="box gold">
+  <p style="margin-bottom:0">📌 <b>Kabhi mat likho:</b> "AI Enhance" · "AI Restore" · "AI Generator" · "AI Avatar" · "AI Colorize" · "AI Retouch" · "AI Beauty" · "AI Photo Studio". <b>Har broad claim ko verifiable statement se replace karo</b> — Play ka metadata policy exactly yahi maangta hai, aur <i>"review teams are increasingly strict about implied promises."</i></p>
+</div>
+
+<h3>6.4 — "AI" ki jagah yeh 3 words (jo koi AI-API app claim nahi kar sakta)</h3>
+<table>
+  <thead><tr><th>Word</th><th>Kyun powerful</th><th>Kahan</th></tr></thead>
+  <tbody>
+    <tr><td><b>OFFLINE</b> <span class="mid">(dhyan se)</span></td><td>Har AI-API app ko internet chahiye. India mein patchy data + Tier-2/3 ke liye yeh real value hai. <b>Lekin wording:</b> "Works offline after one-time setup" — "100% offline" NAHI (BG Remover ka model pehli baar download hota hai).</td><td>Screenshot #2, short description, feature list ka pehla point</td></tr>
+    <tr><td><b>UNLIMITED</b></td><td>Unka har generation paisa lagta hai isliye free tier cap karna padta hai. Nano Banana ne toh free tier <b>poora band</b> kar diya. Tumhara cost ₹0 hai → tum <b>sach mein</b> unlimited de sakte ho. <b>Yeh structural advantage hai, marketing nahi.</b></td><td>Screenshot #3, paywall copy</td></tr>
+    <tr><td><b>NO UPLOAD</b></td><td>"Photos never leave your phone." AI apps ke liye yeh structurally jhooth hai. Sellers ke liye business-critical (unreleased product photos).</td><td>Screenshot #4, privacy policy, Data Safety</td></tr>
+  </tbody>
+</table>
+<blockquote><b>Naya pitch (CORRECTED):</b> "Background remove, ID photos, batch resize — <b>works offline after one-time setup</b>, unlimited, aur <b>photos kabhi upload nahi hoti</b>."<br><span style="font-style:normal;color:var(--mut);font-size:13.5px">Teeno verifiable. <b>"100% offline" mat likho</b> — Subject Segmentation ka model pehli baar download hota hai (see §7.1). "Photos never leave your phone" hamesha sach hai: model neeche aata hai, photos kabhi upar nahi jaati. Yeh exactly woh cheez hai jo Play maangta hai — <i>"swap broad claims for verifiable statements."</i></span></blockquote>
+
+<h3>6.5 — Baaki Play compliance (ad apps ke liye)</h3>
+<table>
+  <thead><tr><th>Kaam</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td><b>Target audience = 18+</b></td><td>Warna <b>Families ad policy</b> lag jaati hai — personalised ads band, eCPM gir jaata hai</td></tr>
+    <tr><td><b>"Contains ads" = Yes</b></td><td>Honestly declare</td></tr>
+    <tr><td><b>UMP SDK integrate karo</b></td><td><b>Mandatory</b> EEA/UK traffic ke liye — bina iske wahan fill rate ~zero</td></tr>
+    <tr><td><b>Data Safety honestly</b></td><td>AdMob ke device identifiers <b>zaroor</b> declare karo. Misdeclaring data safety <b>#1 Play removal reason</b> hai. Tumhara form simple hoga: photos device se bahar jaati hi nahi</td></tr>
+    <tr><td><b>Privacy policy</b></td><td>Public URL (Cloudflare Pages) + in-app link. Naam lo: AdMob, RevenueCat, Firebase. Ad-personalization opt-out explain karo</td></tr>
+    <tr><td><b>app-ads.txt</b></td><td><b>FREE mein ho sakta hai</b> — neeche section 10.2</td></tr>
+    <tr><td><b>Paywall transparency</b></td><td>Exact price + billing period + auto-renew + trial-to-paid date + cancellation path. Ek bhi missing = policy violation</td></tr>
+    <tr><td><b>ID photo claims</b></td><td><span class="no">"Guaranteed acceptance" KABHI MAT LIKHNA.</span> Use: <i>"Formatted to official government dimensions. Always check your country's latest rules."</i></td></tr>
+    <tr><td><b>AdMob TEST MODE</b></td><td>Poore closed test ke dauran ON. <b>Apne ads par click karna ya testers se karwana = PERMANENT AdMob ban</b></td></tr>
+    <tr><td><b>No AI-generated store art</b></td><td>Real app screenshots use karo → <b>koi AI Asset Declaration nahi, koi public badge nahi</b></td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 7 ===== -->
+<h2 id="s7"><span class="num">07</span>ML Kit size math + AAB + 16 KB</h2>
+
+<p class="lead">AI API ka bill ₹0 hai, lekin <b>models ka APK size</b> tumhara naya real constraint hai.</p>
+
+<h3>7.1 — Bundled vs Unbundled</h3>
+<table>
+  <thead><tr><th class="c"></th><th>Unbundled (Play Services)</th><th><b>Bundled (APK mein)</b></th></tr></thead>
+  <tbody>
+    <tr><td><b>Gradle prefix</b></td><td><code>com.google.android.gms:play-services-mlkit-*</code></td><td><b><code>com.google.mlkit:*</code></b></td></tr>
+    <tr><td>APK size</td><td class="c"><span class="yes">Chhota (~200-800 KB)</span></td><td class="c"><span class="no">Bada (~2.4-7 MB/model)</span></td></tr>
+    <tr><td>Pehli baar use par</td><td class="c"><span class="no">Model download ka wait</span></td><td class="c"><span class="yes">Turant available</span></td></tr>
+    <tr><td>Sach mein offline?</td><td class="c"><span class="mid">Partially</span> — pehli baar internet chahiye</td><td class="c"><span class="yes">Haan, 100%</span></td></tr>
+    <tr style="background:rgba(110,231,183,.08)"><td><b>Tumhara choice (Subject Seg.)</b></td><td class="c"><span class="yes">✅ UNBUNDLED — koi option nahi</span></td><td class="c"><span class="no">❌ artifact exist nahi karta</span></td></tr>
+  </tbody>
+</table>
+<div class="box bad">
+  <h4 style="margin-top:0">🚨 CORRECTION (verified 2026-10-29): Subject Segmentation ka BUNDLED artifact EXIST HI NAHI KARTA</h4>
+  <p>Pehle maine "BUNDLED choose karo" likha tha. <b>Woh galat tha.</b> Maine Maven Central aur Google ke <code>com/google/mlkit/group-index.xml</code> dono check kiye, aur official doc padha (<i>developers.google.com/ml-kit/vision/subject-segmentation/android</i>, last updated <b>2026-10-28</b>):</p>
+  <ul>
+    <li>Sirf <b>unbundled</b> variant publish hua hai: <code>com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1</code> — aur yeh <b>ek hi version</b> hai jo kabhi release hua. Koi stable release nahi.</li>
+    <li>Google ka doc khud kehta hai: app-size impact <b>~200 KB</b>, aur <i>"Users might have to wait for the model to download before first use."</i></li>
+    <li><b>Selfie Segmentation bundled hai</b> (<code>16.0.0-beta6</code>) lekin woh <b>sirf insaan</b> segment karta hai — handbag, shoe, bottle ke liye bekaar. Substitute nahi ban sakta.</li>
+    <li>Sabse khatarnaak line: <i>"Requests you make before the download has completed <b>produce no results</b>."</i> Crash nahi — <b>chupchaap khaali output</b>. User ko lagega app toota hai.</li>
+  </ul>
+  <p style="margin-bottom:0"><b>Iska matlab:</b> choice tumhare haath mein hai hi nahi. M1 unbundled hi banega. Neeche diye 3 fixes already code mein implement hain (<code>SubjectSegmentationEngine.kt</code>):</p>
+  <ol style="margin-bottom:0">
+    <li><b>Install-time auto-download:</b> manifest mein <code>&lt;meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" android:value="subject_segment"/&gt;</code> — zyada tar devices par model install ke saath hi aa jaata hai.</li>
+    <li><b>Explicit <code>ModuleInstallClient</code> state machine:</b> READY / DOWNLOADING / NEEDS_NETWORK / UNSUPPORTED. Kabhi bhi khaali result ko "processing" mein chhupaaya nahi gaya.</li>
+    <li><b>Dummy warm-up inference</b> background mein — Google khud kehta hai pehla inference slow hota hai.</li>
+  </ol>
+</div>
+<div class="box warn">
+  <h4 style="margin-top:0">⚠️ Iska USP par asar — "100% OFFLINE" bolna BAND karo</h4>
+  <p style="margin-bottom:0">BG Remover pehli baar chalne par internet maangega. "100% offline" claim karna = <b>Play ke Deceptive Behavior / misleading-metadata clause</b> ka seedha shikaar, aur wahi clause hai jo AI-wrapper apps ko retroactively sweep karta hai. <b>Naya, hamesha-sach pitch:</b> <i>"Your photos never leave your phone"</i> + <i>"Works offline after one-time setup"</i>. Model neeche aata hai — <b>photos kabhi upar nahi jaati.</b> Yeh 100% sach hai. Baaki 7 tools pehle din se hi sach mein offline hain (Face Detection 16.1.7 aur Text Recognition 16.0.1 dono bundled hain).</p>
+</div>
+
+<h3>7.2 — Official sizes (Google docs se verified)</h3>
+<table>
+  <thead><tr><th>ML Kit API</th><th class="c">Unbundled</th><th class="c"><b>Bundled</b></th><th class="c">Tum use karoge?</th></tr></thead>
+  <tbody>
+    <tr><td>Face Detection</td><td class="c">~800 KB</td><td class="c"><b>~6.9 MB</b></td><td class="c"><span class="yes">✅ M2</span></td></tr>
+    <tr><td>Text Recognition v2 (Latin)</td><td class="c">~260 KB/script</td><td class="c"><b>~4 MB/script/arch</b></td><td class="c"><span class="yes">✅ M9</span></td></tr>
+    <tr><td>Text Recognition v2 (Devanagari)</td><td class="c">~260 KB</td><td class="c"><b>~4 MB/arch</b></td><td class="c"><span class="yes">✅ M9 — USP</span></td></tr>
+    <tr style="background:rgba(248,113,113,.07)"><td><b>Subject Segmentation</b> (Beta, <code>16.0.0-beta1</code>)</td><td class="c"><b>~200 KB</b><br><span class="yes">Google doc verified</span></td><td class="c"><span class="no">EXIST NAHI KARTA</span></td><td class="c"><span class="yes">✅ M1 — UNBUNDLED, MAIN HOOK</span></td></tr>
+    <tr><td>Image Labeling</td><td class="c">~200 KB</td><td class="c">~5.7 MB</td><td class="c"><span class="no">❌ v1 mein nahi</span></td></tr>
+    <tr><td>Barcode Scanning</td><td class="c">~200 KB</td><td class="c">~2.4 MB</td><td class="c"><span class="no">❌ nahi</span></td></tr>
+    <tr><td>Face Mesh (Beta)</td><td class="c">—</td><td class="c">~6.4 MB (<b>bundled only</b>)</td><td class="c"><span class="no">❌ v1 mein nahi</span></td></tr>
+    <tr><td>Selfie Segmentation (Beta)</td><td class="c">—</td><td class="c">est. 5-10 MB</td><td class="c"><span class="no">❌ Subject Seg. kaafi</span></td></tr>
+  </tbody>
+</table>
+<p class="src">Google ka general rule: <i>"By using ML Kit you will increase your app size (<b>2 to 10 MB per model</b>)."</i> Subject Segmentation ka number Google publish nahi karta — <b>M1 ke turant baad APK Analyzer se measure karo, guess mat karo.</b></p>
+
+<h3>7.3 — 🚨 Architecture trap (sabse badi galti)</h3>
+<div class="box bad">
+  <p>ML Kit models <b>native <code>.so</code> libraries</b> hain → 4 architectures ke liye alag compile hote hain: <code>armeabi-v7a</code>, <code>arm64-v8a</code>, <code>x86</code>, <code>x86_64</code>.</p>
+  <pre><code>Universal APK (galat):  4 × ~15 MB = ~60 MB sirf models  + ~18 MB base = ~78 MB  ❌
+App Bundle / AAB (sahi): 1 × ~15 MB = ~15 MB             + ~18 MB base = ~33 MB  ✅</code></pre>
+  <p style="margin-bottom:0"><b>Real-world proof:</b> ek team ne bundled face model se <b>+16 MB</b> report kiya jabki Google ka official number 6.9 MB hai — farq <b>multi-arch duplication</b> ka hai. Isi wajah se unhone bundled chhod diya. <b>Tumhein chhodna nahi hai</b> — kyunki AAB tumhare liye <b>waise bhi mandatory</b> hai, toh splitting free mein mil jaati hai.</p>
+</div>
+
+<h3>7.4 — Total size budget</h3>
+<div class="flow">Subject Segmentation (UNBUNDLED)     ~0.2 MB   ✅ Google doc verified
+Face Detection (bundled, 16.1.7)      ~6.9 MB
+Text Recognition Latin (bundled)      ~4 MB
+Text Recognition Devanagari           ~4 MB
+──────────────────────────────────────────────
+ML Kit models total                   ~15 MB   (pehle ~23 MB likha tha)
+
++ Compose + Coil + PdfBox + Room      ~8 MB
++ AdMob + UMP + RevenueCat + Firebase ~6 MB
++ app code + resources                ~4 MB
+──────────────────────────────────────────────
+Expected AAB download size            ~33 MB   ✅  (pehle ~41 MB)
+Play limit: 200 MB. Tum 16% par ho — plenty of headroom.
+
+Agar measured total 70 MB cross kare → RUKO, aur models add mat karo.
+
+⚠️ Yeh estimate hai, naap hua number nahi. M1 ke turant baad Android Studio ke
+APK Analyzer se ASLI size nikaalo aur yahan update karo. 16 KB page alignment
+bhi wahin verify karo: zipalign -c -P 16 -v 4 app-release.aab</div>
+
+<div class="box info">
+  <h4 style="margin-top:0">💡 Size bachane ke 3 tips</h4>
+  <ul style="margin-bottom:0">
+    <li><b>Face Detection mein <code>PERFORMANCE_MODE_FAST</code></b> use karo, ACCURATE nahi — ID photo ke liye kaafi hai</li>
+    <li><b>Image Labeling + Barcode v1 mein add hi mat karo</b> — 8 MB bachega, koi feature loss nahi</li>
+    <li><b>Devanagari OCR ko optional download</b> bana sakte ho (4 MB bachega) — <span class="mid">lekin main v1 mein bundled rakhne ki sifarish karta hoon</span>, simplicity ke liye — 7/8 tools pehle din se offline hain</li>
+  </ul>
+</div>
+
+<h3>7.5 — ⚠️ 16 KB page size (naya gotcha)</h3>
+<div class="box warn">
+  <p><b>31 August 2026 se <code>targetSdkVersion 36</code> mandatory</b>, aur uske saath <b>16 KB memory page size</b> requirement. Native <code>.so</code> libs ko 16 KB aligned hona chahiye — <b>aur ML Kit models native libs hain.</b></p>
+  <p style="margin-bottom:0"><b>Purane ML Kit versions → Android 15+ 16 KB devices par crash.</b> Fix: latest versions + build ke baad verify karo:<br>
+  <code>zipalign -c -P 16 -v 4 app-release.apk</code> &nbsp;ya&nbsp; Android Studio → APK Analyzer → <code>.so</code> alignment check.<br>
+  <b>AI tools aksar purane stable versions pin kar dete hain — gradle version numbers khud verify karo.</b> Isi liye SPEC.md mein <code>C4 — DO NOT INVENT VERSION NUMBERS</code> constraint hai.</p>
+</div>
+
+<!-- ===== 8 ===== -->
+<h2 id="s8"><span class="num">08</span>Hybrid monetization — ads + subscription</h2>
+
+<h3>8.1 — Hybrid kyun (data)</h3>
+<div class="kpi">
+  <div><b>4.5–5×</b><span>Rewarded-ad dekhne wale users purchase karne ki probability — ads <b>funnel ka top</b> hain, competitor nahi</span></div>
+  <div><b>+30% / +33%</b><span>Hybrid se IAP aur LTV uplift</span></div>
+  <div><b>4.6×</b><span>Subscription ARPU vs ad-only ARPU</span></div>
+  <div class="g"><b>62%</b><span>Poore mobile ad revenue ka share <b>rewarded video</b> ka hai → priority #1</span></div>
+  <div class="w"><b>96–97%</b><span>DAU non-payers hote hain. Mid-tier 2–3%, whales ~1%</span></div>
+  <div class="b"><b>1,000 subs</b><span>@ $10 ≈ <b>$8,500 net</b> — jo 100,000 ad-only users se zyada hai</span></div>
+</div>
+
+<h3>8.2 — Core rule: paying user ko KABHI forced ad mat dikhao</h3>
+<table>
+  <thead><tr><th>Tier</th><th class="c">DAU share</th><th>Kya dikhega</th></tr></thead>
+  <tbody>
+    <tr><td>🔵 <b>Non-payers</b></td><td class="c">96–97%</td><td>Rewarded (unlimited, user-initiated) + capped interstitial + native</td></tr>
+    <tr><td>🟡 <b>Purchase-intent</b> (paywall dekha, trial start kiya)</td><td class="c">2–3%</td><td><b>Halka load</b> — interstitial OFF, rewarded allowed</td></tr>
+    <tr><td>🟢 <b>Payers (Pro)</b></td><td class="c">~1%</td><td><b>ZERO forced ads.</b> Rewarded sirf agar woh khud choose karein</td></tr>
+  </tbody>
+</table>
+<div class="box bad">
+  <p style="margin-bottom:0">⚠️ <b>Entitlement-ad-SDK desync #2 revenue-killer hai.</b> Agar user ne pay kar diya aur ad SDK ko pata nahi chala, toh woh ads dekhega → <b>refund + 1-star review.</b> Isi liye <code>AdPolicy</code> ko <b>single source of truth</b> banaya gaya hai aur koi feature screen directly <code>showInterstitial()</code> call nahi kar sakta. Industry quote: <i>"'Remove ads' needs a <b>server-side entitlement check</b>, not just client-side"</i> — RevenueCat yeh tumhare liye karta hai, aur offline cache bhi rakhta hai.</p>
+</div>
+
+<h3>8.3 — Exact ad caps</h3>
+<table>
+  <thead><tr><th>Rule</th><th class="c">Value</th><th>Kyun</th></tr></thead>
+  <tbody>
+    <tr><td><b>Rewarded</b></td><td class="c"><b>Priority #1</b><br>grant cap 8/day</td><td>62% of ad revenue. Cap <i>grants</i> par hai, <i>views</i> par nahi</td></tr>
+    <tr><td>First interstitial delay</td><td class="c"><b>90 s</b></td><td>60–90s delay se <b>D1 +5–8%, revenue loss zero</b></td></tr>
+    <tr><td>Interstitial gap</td><td class="c"><b>180–240 s</b></td><td>Industry floor</td></tr>
+    <tr><td>Interstitials / day</td><td class="c"><b>Max 3</b></td><td>Ek disruptive interstitial = <b>churn +6–7%</b>; reward screen par = <b>3× quit rate</b>; <b>52% repeated exposure par quit kar denge</b></td></tr>
+    <tr><td>Day 0–2</td><td class="c"><b>ZERO full-screen</b></td><td>Onboarding ke dauran suppression</td></tr>
+    <tr><td>Placement</td><td class="c"><b>Sirf export/save ke BAAD</b></td><td>Natural break point. Navigation buttons ke <b>pehle</b> ad dikhao, baad mein nahi</td></tr>
+    <tr><td>App-open ads</td><td class="c"><span class="no">DISABLED</span></td><td>Never a full-screen ad on launch — top uninstall trigger</td></tr>
+    <tr><td><b>Banner</b></td><td class="c"><span class="no">SKIP FOREVER</span></td><td>India eCPM <b>$0.08–0.40</b>, bad UX, accidental-click = <b>AdMob ban risk</b></td></tr>
+    <tr><td>Mediation + bidding</td><td class="c">Day 90+</td><td>Revenue <b>+20–40%</b>, lekin sirf <b>~10,000 daily impressions</b> ke baad</td></tr>
+  </tbody>
+</table>
+
+<h3>8.4 — Rewarded ad placements (exact, koi aur nahi)</h3>
+<table>
+  <thead><tr><th>Reward</th><th>Trigger</th><th class="c">Value class</th></tr></thead>
+  <tbody>
+    <tr><td>Watermark removal (1 export)</td><td>Free user export karta hai</td><td class="c"><span class="yes">Small ✅</span></td></tr>
+    <tr><td>Premium template 24h unlock</td><td>🔒 template par tap</td><td class="c"><span class="yes">Small ✅</span></td></tr>
+    <tr><td>+5 photos is batch</td><td>Free batch (1) cross hone par</td><td class="c"><span class="yes">Small ✅</span></td></tr>
+    <tr><td>+3 HD export credits</td><td>Daily HD limit par</td><td class="c"><span class="yes">Small ✅</span></td></tr>
+    <tr><td>One-off full-res export</td><td>"Export in 4K (free)" par tap</td><td class="c"><span class="yes">Small ✅</span></td></tr>
+    <tr style="background:rgba(248,113,113,.08)"><td><b>Pro / Lifetime / Trial extension</b></td><td>—</td><td class="c"><span class="no">❌ KABHI NAHI</span></td></tr>
+  </tbody>
+</table>
+<p><b>Rule:</b> rewarded ad se sirf <b>small + temporary + replaceable</b> cheezein. Yeh SSV na hone ke nuksaan ko trivial bana deta hai — forgery ka maximum gain itna chhota hai ki mehnat bekaar hai.</p>
+
+<h3>8.5 — Subscription design</h3>
+<table>
+  <thead><tr><th>Product</th><th class="c">Global</th><th class="c">India</th><th>Trial</th></tr></thead>
+  <tbody>
+    <tr><td><code>pro_weekly</code></td><td class="c"><b>$6.99/wk</b></td><td class="c"><b>₹99/wk</b></td><td>7-din</td></tr>
+    <tr><td><code>pro_yearly</code> ⭐ anchor</td><td class="c"><b>$34.99/yr</b></td><td class="c"><b>₹999/yr</b></td><td>7-din · <b>per-week equivalent dikhao</b></td></tr>
+    <tr><td><code>pro_lifetime</code></td><td class="c">$59.99</td><td class="c">₹1,999</td><td>— · <b>Day 60+ par add karo</b></td></tr>
+  </tbody>
+</table>
+<div class="box gold">
+  <h4 style="margin-top:0">🔑 Trial ≥ 7 din — isse compromise mat karna</h4>
+  <p style="margin-bottom:0">Trial → paid conversion: <b>25.5% (≤4 din)</b> vs <b>37–43% (≥7 din)</b>. Bahut saare devs "3-din trial" optimize karte hain aur <b>~15 percentage points</b> conversion kho dete hain. Median market prices hain $5.99/wk · $10/mo · $34.80/yr — tumhara pricing isi band mein hai.</p>
+</div>
+
+<h3>8.6 — Free vs Pro</h3>
+<table>
+  <thead><tr><th></th><th>Free</th><th><b>Pro</b></th></tr></thead>
+  <tbody>
+    <tr><td>Background removal</td><td><b>Unlimited</b> ⭐ (deliberate generous hook)</td><td>Unlimited</td></tr>
+    <tr><td>Exports / day</td><td>3</td><td><b>Unlimited</b></td></tr>
+    <tr><td>Resolution</td><td>SD (≤1080 px)</td><td><b>HD / 4K / original</b></td></tr>
+    <tr><td>Watermark</td><td>Haan</td><td><b>Nahi</b></td></tr>
+    <tr><td><b>Batch size</b></td><td><b>1 photo</b></td><td><b>100 photos</b> ⭐ sabse strong paywall</td></tr>
+    <tr><td>Templates</td><td>10</td><td>200+</td></tr>
+    <tr><td>ID photo countries</td><td>10</td><td>30+</td></tr>
+    <tr><td>OCR scans / day</td><td>5</td><td>Unlimited</td></tr>
+    <tr style="background:rgba(110,231,183,.08)"><td><b>Forced ads</b></td><td>Rewarded + capped interstitial + native</td><td><b>ZERO</b></td></tr>
+  </tbody>
+</table>
+
+<h3>8.7 — Paywall: "soft-hard hybrid"</h3>
+<div class="flow">Onboarding screen 1 → 2 → 3
+                            ↓
+                    ┌───────────────────┐
+                    │      PAYWALL      │
+                    │   7-din free trial │
+                    │   ₹999/yr anchor   │
+                    │                    │
+                    │  [Start Free Trial]│
+                    │                    │
+                    │  "Continue with    │
+                    │   free version"  ←─┼── ⭐ yeh escape ZAROORI hai
+                    └───────────────────┘
+                     ↓                ↓
+                 🟢 Pro tier     🔵 Ad-supported tier</div>
+<p><b>Kyun hybrid:</b> Hard paywall D14 RPI <b>$2.32</b> deta hai vs freemium <b>$0.27</b>, aur D35 conversion <b>10.7% vs 2.1%</b>. Lekin India jaise low-ARPU market mein cold paywall <b>ad inventory ko destroy</b> kar deta hai. Hybrid dono capture karta hai.</p>
+<p><b>Contextual paywalls</b> (zyada intent = zyada conversion): 2nd batch photo par · 4th export of the day par · 🔒 template par · HD export button par.</p>
+<div class="box info">
+  <p style="margin-bottom:0">💡 <b>Offers use karo:</b> sirf <b>9.3%</b> apps introductory/win-back offers use karti hain. RevenueCat mein dono free built-in hain. Yeh easy upside hai jo almost koi nahi leta.</p>
+</div>
+
+<!-- ===== 9 ===== -->
+<h2 id="s9"><span class="num">09</span>Earning projections</h2>
+<p class="lead">Assumptions: photo/video utility eCPMs · <b>15% Play fee kaat chuka hoon</b> · MAU = DAU × 3.5 · 3% download→paid · 85% ad fill · 8 rewarded views/DAU ka 20% · 1.2 interstitials/DAU.</p>
+
+<table>
+  <thead><tr><th>Stage</th><th class="c">DAU</th><th class="c">Tier-1 traffic</th><th class="c">Ads</th><th class="c">Subs</th><th class="c"><b>Total/mo</b></th><th class="c">Percentile</th></tr></thead>
+  <tbody>
+    <tr><td><b>Launch</b> (Week 8)</td><td class="c">150</td><td class="c">25%</td><td class="c">₹1,900</td><td class="c">₹3,500</td><td class="c"><b>₹5,400</b></td><td class="c">median</td></tr>
+    <tr><td><b>3–6 mahine</b></td><td class="c">800</td><td class="c">35%</td><td class="c">₹16,100</td><td class="c">₹29,500</td><td class="c"><b>₹45,600</b></td><td class="c">top ~30%</td></tr>
+    <tr style="background:rgba(110,231,183,.09)"><td><b>"Chal gaya"</b></td><td class="c">3,000</td><td class="c">45%</td><td class="c">₹80,500</td><td class="c">₹1,47,500</td><td class="c"><b>₹2.28 lakh</b></td><td class="c">top ~17.3%</td></tr>
+    <tr style="background:rgba(252,211,77,.09)"><td><b>Strong</b></td><td class="c">10,000</td><td class="c">50%</td><td class="c">₹3,07,000</td><td class="c">₹5,63,000</td><td class="c"><b>₹8.7 lakh</b></td><td class="c">top ~4.6%</td></tr>
+  </tbody>
+</table>
+
+<div class="box bad">
+  <h4 style="margin-top:0">🌍 Sabse powerful FREE lever: geography</h4>
+  <p style="font-size:18px;margin-bottom:8px"><b>3,000 DAU with 45% Tier-1 traffic = ₹2.28 lakh/mo<br>3,000 DAU with 0% Tier-1 traffic = ₹24,900/mo</b></p>
+  <p style="margin-bottom:0"><b>9× ka farq — sirf geography se.</b> Aur iske liye ₹0 chahiye: Play Console mein <b>Tier-1 countries prioritize karo</b>, listing <b>English mein</b> rakho (Hindi ek <i>additional</i> custom listing hai, primary nahi), screenshots par <b>$ aur £ ke use-cases</b> dikhao (Etsy, eBay, Amazon), aur <b>r/EtsySellers · r/eBay · r/smallbusiness · r/reselling</b> par launch karo — <b>r/AndroidDev par nahi</b> (wahan sab Indian devs hain, buyers nahi).</p>
+</div>
+
+<h3>9.1 — Reality check (yeh zaroor padho)</h3>
+<div class="box warn">
+  <ul style="margin-bottom:0">
+    <li><b>83% apps 2 saal mein $1K/mo tak nahi pahunchte.</b> Median app <b>$72/month</b> kamata hai Year 1 mein</li>
+    <li>2-saal odds: <b>17.3% → $1K/mo</b> · <b>4.6% → $10K/mo</b> · <b>1.7% → $25K/mo</b></li>
+    <li><b>Top 10% apps 94.5% revenue capture karte hain</b></li>
+    <li>$10K MRR ke liye $4.99 price par <b>2,004 users</b> chahiye</li>
+    <li>Photo &amp; Video ki <b>price resistance 20.3%</b> hai (2nd worst category) → mitigate karne ke liye ise <b>"business/seller tool"</b> ki tarah position karo, "fun photo app" ki tarah nahi. Business ke liye paisa ek investment hai, kharcha nahi</li>
+    <li><b>Paid UA loss-making hai:</b> Android CPI ~$3.40 vs day-60 tak $0.34/install earned. ₹0 marketing budget actually ek <b>advantage</b> hai, majboori nahi</li>
+  </ul>
+</div>
+<p style="margin-bottom:0"><b>Iska matlab yeh nahi ki mat karo.</b> Iska matlab hai: ₹25 + 8 hafte ka downside <b>bahut chhota</b> hai, aur upside (₹2.28 lakh/mo) <b>bahut bada</b>. Yeh ek asymmetric bet hai. Lekin <b>pehle app se shaadi mat karo</b> — 3 apps ka portfolio banao, jo chale usme double down karo.</p>
+
+<!-- ===== 10 ===== -->
+<h2 id="s10"><span class="num">10</span>Poora $25 bill of materials</h2>
+
+<h3>10.1 — Sab kuch</h3>
+<table>
+  <thead><tr><th>Phase</th><th>Item</th><th class="c">Cost</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="10"><b>Development</b></td><td>Android Studio</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td><b>Google Antigravity</b> (AI agent, no card)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td><b>Jules</b> (15 tasks/day, 3 concurrent, Gemini 2.5 Pro)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>ChatGPT Free (planning + debug)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>GitHub Copilot Free (2,000 completions + 50 chats/mo)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Kotlin + Jetpack Compose + Room + DataStore + Coil</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td><b>ML Kit</b> — Subject Seg, Face Detection, Text Rec v2 ×2</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>PdfBox-Android</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Figma Free / Canva Free (icon + screenshots)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>GitHub repo (code + CI)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td rowspan="5"><b>Accounts</b></td><td><b>Google Play Console</b></td><td class="c"><b>$25 ← AKELA PAID</b></td></tr>
+    <tr><td>AdMob</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Firebase (Spark)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>RevenueCat</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Cloudflare</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td rowspan="6"><b>Production</b></td><td>AdMob SDK + UMP SDK</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Play Billing Library</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>RevenueCat (receipts + entitlements + lifecycle)</td><td class="c"><span class="yes">$0</span> (&lt;$2,500/mo)</td></tr>
+    <tr><td>Firebase Analytics + Crashlytics + <b>Remote Config</b></td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Cloudflare Pages (privacy policy + app-ads.txt)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>ML Kit inference (unlimited, forever)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td rowspan="3"><b>Marketing</b></td><td>ASO (title, keywords, screenshots)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Reddit: r/EtsySellers · r/eBay · r/smallbusiness · r/reselling</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td>Instagram Reels / YouTube Shorts (before-after demos)</td><td class="c"><span class="yes">$0</span></td></tr>
+    <tr><td><b>NOT NEEDED</b></td><td>UptimeRobot · domain · hosting · testers · paid UA</td><td class="c"><span class="yes">$0</span></td></tr>
+  </tbody>
+</table>
+
+<div class="box verdict" style="text-align:center">
+  <p style="font-size:26px;font-weight:800;margin:0 0 6px">TOTAL: $25 ≈ ₹2,100 (ek hi baar)</p>
+  <p style="font-size:19px;margin:0;color:var(--mut)">MONTHLY: ₹0 &nbsp;·&nbsp; CREDIT CARD: kahin nahi</p>
+</div>
+
+<h3>10.2 — 🆕 app-ads.txt FREE mein (mera pichla advice correct)</h3>
+<p>Pehle maine kaha tha "domain kharidna padega, skip karo." <b>Woh galat tha.</b> Yeh ₹0 mein ho jaata hai:</p>
+<div class="flow">1. Cloudflare Pages par project banao   →   photostudiopro.pages.dev
+
+2. Do files rakho:
+     /index.html      ← privacy policy
+     /app-ads.txt     ← ek line:
+
+   google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+   (pub-XXXX = tumhara AdMob publisher ID)
+
+3. Play Console → Store presence → Developer website:
+     https://photostudiopro.pages.dev
+
+4. AdMob dashboard → app-ads.txt field mein wahi line paste karo</div>
+<div class="box gold">
+  <p style="margin-bottom:0">💰 <b>Kyun zaroori hai:</b> app-ads.txt ke bina kuch ad buyers <b>bid hi nahi karte</b> → eCPM <b>10–30% kam</b>. ₹2.28 lakh/mo wale scenario mein yeh <b>₹23,000–68,000/month</b> ka farq hai. <b>15 minute ka kaam — zaroor karo.</b> <code>*.pages.dev</code> ek valid domain root hai aur Google ka crawler use padh leta hai. Bonus: privacy policy bhi wahin host ho jaati hai.</p>
+</div>
+
+<h3>10.3 — Free kahan khatam hota hai (3 jagah)</h3>
+<table>
+  <thead><tr><th>Kab</th><th>Kya hoga</th><th class="c">Trap?</th></tr></thead>
+  <tbody>
+    <tr><td>RevenueCat par <b>$2,500/mo tracked revenue</b> cross</td><td><b>1%</b> fee = $25/mo</td><td class="c"><span class="yes">❌ Nahi</span> — iska matlab tum $2,500 kama rahe ho</td></tr>
+    <tr><td>Cloudflare Workers <b>10M req/mo</b> cross (Phase 2)</td><td>Workers Paid <b>$5/mo</b></td><td class="c"><span class="yes">❌ Nahi</span> — aur tum Phase 2 par ho hi nahi</td></tr>
+    <tr style="background:rgba(248,113,113,.08)"><td><b>Firebase Blaze enable kar liya</b></td><td><b>Koi hard spending cap nahi</b>. Bill badhta jaayega</td><td class="c"><span class="no">🔴 HAA — KABHI MAT KARNA</span></td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 11 ===== -->
+<h2 id="s11"><span class="num">11</span>8-week launch plan</h2>
+
+<table>
+  <thead><tr><th class="c">Week</th><th>Kaam</th><th>Deliverable</th></tr></thead>
+  <tbody>
+    <tr><td class="c"><b>W1</b></td><td>⭐ <b>Day 1: Play Console registration</b> ($25 + identity verification, <b>2–7 din lagte hain</b>) · Firebase + AdMob + RevenueCat + Cloudflare accounts · Competitor ke <b>1-star reviews mine karo</b> · Competitor ke <b>paywall screenshots</b> capture karo · <b>Testers recruit karna SHURU karo</b> (yeh sabse slow kaam hai)</td><td>Saare accounts ready · 20+ tester leads</td></tr>
+    <tr><td class="c"><b>W2–3</b></td><td>SPEC.md repo mein · <b>M0 + M1 + M2 + M3</b> build karo (BG Remover, ID Photo, Batch Resize) · <code>AdPolicy</code> ka <b>empty shell</b> saath mein banao (baad mein wire hoga) · countries.json (Jules ko offload karo)</td><td>3 core tools working, offline, bundled models</td></tr>
+    <tr><td class="c"><b>W4</b></td><td><b>M4:</b> RevenueCat + Play Billing + paywall + AdMob + UMP + <code>AdPolicy</code> wire + <code>RewardGuard</code> + <b>M5:</b> Remote Config + kill switches · Play Billing <b>Licence Testing</b> setup</td><td>Poora monetization loop working</td></tr>
+    <tr><td class="c"><b>W5</b></td><td><b>M12 ka pehla hissa:</b> Store listing (6 screenshots — neeche) · Data Safety form · <b>18+ declare</b> · Privacy policy Cloudflare Pages par · <b>app-ads.txt</b> · Closed testing track par AAB upload · <b>"12+ testers opted in" confirm karo</b></td><td>Closed test LIVE · 14-din clock START</td></tr>
+    <tr><td class="c"><b>W6–7</b></td><td>⏳ <b>Yeh 14 din fixed hain, koi shortcut nahi.</b> Is dauraan <b>M6–M11</b> banao (White BG, Collage, PDF, OCR, Enhance, Settings) · har 3–4 din mein testers ko naya build do · production questionnaire draft karo · <b>AdMob TEST MODE ON rakho</b></td><td>Saare 8 tools complete</td></tr>
+    <tr><td class="c"><b>W8</b></td><td><b>M12:</b> 16 KB verify · release AAB · <b>TEST MODE OFF</b> (BuildConfig.DEBUG se automated) · Production · <b>Staged rollout 10% → 50% → 100%</b> · Reddit launch</td><td>🚀 LIVE</td></tr>
+  </tbody>
+</table>
+
+<h3>11.1 — 6 screenshots ka exact order</h3>
+<div class="flow">1. BEFORE / AFTER background removal        →  "Tap once. Done."
+   ⭐ yeh sabse important hai — pehli 2 seconds mein decide hota hai
+
+2. Airplane-mode icon + app kaam karta hua  →  "WORKS OFFLINE — No upload, ever"
+   ⚠️ "100% OFFLINE" mat likhna (BG Remover pehli baar model download karta hai)
+
+3. Counter: "Photos edited today: 47"       →  "UNLIMITED free edits. No daily cap."
+
+4. Shield + phone lock                      →  "Your photos NEVER leave your phone"
+
+5. Passport grid with 30+ country flags     →  "ID photos for 30+ countries — instant"
+
+6. 100 photos processing                    →  "Resize 100 photos in seconds (Pro)"
+
+⚠️ SAB REAL APP SCREENS HONE CHAHIYE:
+   • Fake screenshots = rejection
+   • AI-generated art = AI Asset Declaration + public "AI-generated" badge
+   • Yeh 6 screenshots tumhare 5 advantages ka VISUAL PROOF hain</div>
+
+<h3>11.2 — W1 par sabse pehle kya karna hai</h3>
+<div class="box gold">
+  <p style="margin-bottom:0"><b>Play Console registration DAY 1 par karo — code likhna shuru karne se pehle.</b> Identity verification mein <b>2–7 din</b> lagte hain, aur personal accounts (13 Nov 2023 ke baad) ke liye <b>closed testing + 12 testers + 14 din continuous opt-in</b> mandatory hai production se pehle. Yeh <b>fixed wait</b> hai jo tum compress nahi kar sakte. Agar W1 par register nahi kiya toh yeh wait tumhare W6-7 mein aayega aur poora timeline 2 hafte slip ho jaayega. <b>Sept 2026 se identity verification mandatory hai.</b></p>
+</div>
+
+<!-- ===== 12 ===== -->
+<h2 id="s12"><span class="num">12</span>Post-launch roadmap</h2>
+
+<table>
+  <thead><tr><th>Phase</th><th>Kya on karo</th><th class="c">Condition (guardrail)</th></tr></thead>
+  <tbody>
+    <tr><td><b>Day 0–30</b></td><td>Rewarded + subscription <b>only</b>. <b>Interstitials OFF</b> (Remote Config se)</td><td class="c">Baseline retention measure karo</td></tr>
+    <tr><td><b>Day 30–60</b></td><td>Interstitials ON at <b>1/day</b>, 90s delay</td><td class="c"><span class="mid">Sirf agar</span> D7 &gt; 15% <b>aur</b> crash-free &gt; 99.5%</td></tr>
+    <tr><td><b>Day 60–90</b></td><td><code>pro_lifetime</code> IAP add · native ads · <b>7-din A/B tests</b></td><td class="c"><span class="mid">Sirf agar</span> blended ARPDAU na gira ho</td></tr>
+    <tr><td><b>Day 90+</b></td><td><b>AdMob Mediation + bidding</b> (+20–40% revenue) · win-back offers · <b>Hindi / Spanish / Portuguese</b> localization</td><td class="c"><span class="mid">Sirf agar</span> ~10,000 daily impressions</td></tr>
+    <tr><td><b>Trigger-based</b></td><td>Cloudflare Workers + <b>AdMob SSV</b></td><td class="c"><span class="no">Sirf agar</span> reward_granted / impressions &gt; 3.0</td></tr>
+  </tbody>
+</table>
+
+<div class="box bad">
+  <p style="margin-bottom:0">🚨 <b>Sabse badi galti: teeno layers launch par ek saath bolt kar dena.</b> ~72% of games hybrid run karte hain, lekin jo fail hote hain woh <b>day 1 par sab kuch on</b> kar dete hain. Industry data: <i>"teams gained 15–25% ad revenue then lost more to churn <b>within 2 months</b>"</i> — <b>ad overload #1 killer hai.</b> Phase-wise jao, Remote Config se control karo, har change ko <b>7 din</b> test karo.</p>
+</div>
+
+<h3>12.1 — Remote Config: tumhara superpower</h3>
+<p>Ad caps, paywall variant, trial length, har tool ka kill switch — <b>sab Firebase Remote Config mein</b>. Iska matlab:</p>
+<ul>
+  <li>Retention gir gayi? <b>Usi din</b> ad frequency kam kar do — Play review ka wait nahi</li>
+  <li>Ek tool crash kar raha hai? <b><code>tool_enabled_ocr = false</code></b> → turant hide</li>
+  <li>Paywall variant test karna hai? <b><code>paywall_variant = "hard"</code></b> → 7 din measure → revert</li>
+  <li>Abuse dikha? <b><code>ads_rewarded_daily_cap = 3</code></b> → turant</li>
+</ul>
+<p style="margin-bottom:0"><b>Yeh ₹0 hai, Spark plan mein hai, aur yeh tumhein ek din mein iterate karne ki taakat deta hai jabki tumhare competitors ko 1–7 din ka Play review wait karna padta hai.</b></p>
+
+<!-- ===== 13 ===== -->
+<h2 id="s13"><span class="num">13</span>North Star metric + guardrails</h2>
+
+<div class="box verdict">
+  <p style="font-size:19px;margin-bottom:8px"><b>North Star = BLENDED ARPDAU</b></p>
+  <p style="margin-bottom:0"><code>(ad revenue + IAP + subscription revenue) ÷ DAU</code> — ek din ka, har din</p>
+</div>
+
+<div class="box bad">
+  <p style="margin-bottom:0">⚠️ <b>Ads aur IAP ko alag-alag silos mein kabhi report mat karo.</b> Yehi woh galti hai jisse teams "ad revenue 20% badha!" celebrate karti hain jabki subscription conversion chupchap gir rahi hoti hai — aur net ARPDAU <b>girta</b> hai. Ek hi number dekho: blended ARPDAU.</p>
+</div>
+
+<h3>13.1 — Ad frequency badhane ka rule</h3>
+<div class="flow">Ad frequency BADHAO sirf agar DONO conditions true hon:
+
+   ✅ Blended ARPDAU badha
+   ✅ D7 retention ≤ 1 percentage point gira
+
+Warna REVERT karo.
+
+⏱️ Har test MINIMUM 7 DIN chale.
+   3-din ka test HAMESHA jhootha conclusion deta hai: "more ads wins."
+   Retention damage 5–14 din mein dikhta hai, revenue turant.</div>
+
+<h3>13.2 — Guardrails (har hafte check karo)</h3>
+<table>
+  <thead><tr><th>Metric</th><th class="c">Target</th><th>Agar gire toh</th></tr></thead>
+  <tbody>
+    <tr><td>D1 retention</td><td class="c">&gt; 35%</td><td>Onboarding dekko — paywall jaldi aa raha hai?</td></tr>
+    <tr style="background:rgba(252,211,77,.07)"><td><b>D7 retention</b></td><td class="c"><b>&gt; 15%</b></td><td><b>Ads kam karo. Yeh sabse important guardrail hai</b></td></tr>
+    <tr><td>D30 retention</td><td class="c">&gt; 8%</td><td>Tool variety dekho</td></tr>
+    <tr><td>Trial starts / installs</td><td class="c">&gt; 25%</td><td>Paywall placement/copy</td></tr>
+    <tr><td><b>Trial → paid</b></td><td class="c"><b>&gt; 35%</b></td><td>Trial length 7+ din hai? Value deliver ho rahi hai?</td></tr>
+    <tr><td>Rewarded engagement</td><td class="c">15–20% of DAU</td><td>Placements discoverable hain?</td></tr>
+    <tr style="background:rgba(248,113,113,.07)"><td><b>Crash-free sessions</b></td><td class="c"><b>&gt; 99.5%</b></td><td><b>Turant fix — OOM crashes photo apps ka #1 uninstall reason hain</b></td></tr>
+    <tr><td>Refund rate</td><td class="c">&lt; 2%</td><td>Entitlement-ad desync check karo</td></tr>
+    <tr><td>Play rating</td><td class="c">&gt; 4.3 ★</td><td>1-star reviews padho — sabse sasti research</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 14 ===== -->
+<h2 id="s14"><span class="num">14</span>7 revenue-killing mistakes</h2>
+
+<table>
+  <thead><tr><th class="c">#</th><th>Galti</th><th>Kya karna hai</th></tr></thead>
+  <tbody>
+    <tr><td class="c"><b>1</b></td><td><b>Teeno layers launch par ek saath bolt kar dena</b></td><td>Day 0–30 rewarded + subs only. Interstitials Day 30+. Lifetime Day 60+. Mediation Day 90+</td></tr>
+    <tr><td class="c"><b>2</b></td><td><b>Payers ko ads dikhana</b> / entitlement-ad-SDK desync</td><td><code>AdPolicy</code> = single source of truth. Koi screen directly <code>showInterstitial()</code> call nahi kar sakti. Refund rates isi se badhte hain</td></tr>
+    <tr><td class="c"><b>3</b></td><td><b>Ad placement ko set-and-forget samajhna</b></td><td>Har threshold Remote Config mein. Har hafte ARPDAU + D7 dekho. 7-din tests</td></tr>
+    <tr><td class="c"><b>4</b></td><td><b>Geography ignore karna</b></td><td><b>9× ka farq.</b> Tier-1 prioritize, English listing, seller subreddits par launch</td></tr>
+    <tr><td class="c"><b>5</b></td><td><b>Low-ARPU market mein cold paywall se shuru karna</b></td><td>India mein <b>rewarded ads se lead karo</b>, paywall se nahi. Soft-hard hybrid + "continue free" escape</td></tr>
+    <tr><td class="c"><b>6</b></td><td><b>Rewarded grants uncapped chhodna</b></td><td><code>RewardGuard</code>: 8/day cap + sirf small/temporary rewards. Pro/lifetime kabhi ad se mat do</td></tr>
+    <tr><td class="c"><b>7</b></td><td><b>Banner ads lagana</b></td><td>India eCPM $0.08–0.40, UX kharab, accidental-click = <b>permanent AdMob ban</b>. Skip forever</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 15 ===== -->
+<h2 id="s15"><span class="num">15</span>Risk register</h2>
+
+<table>
+  <thead><tr><th>Risk</th><th class="c">Prob.</th><th class="c">Impact</th><th>Mitigation</th></tr></thead>
+  <tbody>
+    <tr><td><b>App chalta hi nahi</b> (83% apps $1K/mo tak nahi pahunchte)</td><td class="c"><span class="no">High</span></td><td class="c">₹2,100 + 8 hafte</td><td>Downside chhota hai. <b>3 apps ka portfolio banao</b>, jo chale usme double down</td></tr>
+    <tr><td><b>Subject Segmentation Beta quality</b> — hair/fine edges par Photoroom se kamzor</td><td class="c"><span class="mid">Med</span></td><td class="c">Reviews</td><td><b>"Perfect" kabhi mat bolo.</b> Lead with "your photos never leave your phone, unlimited, no upload" — woh cheez jo Photoroom <b>nahi</b> de sakta. 1–2px feather lagao edge par</td></tr>
+    <tr><td><b>Photo &amp; Video price resistance 20.3%</b> (2nd worst)</td><td class="c"><span class="mid">Med</span></td><td class="c">Conversion</td><td><b>"Business/seller tool"</b> ki tarah position karo, "fun photo app" ki tarah nahi. Business ke liye paisa investment hai</td></tr>
+    <tr><td><b>12 testers nahi milte</b></td><td class="c"><span class="mid">Med</span></td><td class="c">Launch delay</td><td><b>18–25 recruit karo.</b> Section 16</td></tr>
+    <tr><td><b>OOM crashes mid-range devices par</b></td><td class="c"><span class="mid">Med</span></td><td class="c">Rating + uninstalls</td><td>Bitmap recycle + bounded pool (max 2 concurrent) + <code>inBitmap</code> reuse. SPEC.md ka architectural rule #4</td></tr>
+    <tr><td><b>AI code ML Kit beta signatures hallucinate kare</b></td><td class="c"><span class="no">High</span></td><td class="c">Build time</td><td><b>Har feature se pehle official doc snippet paste karo</b> + "memory se signature mat likhna"</td></tr>
+    <tr><td><b>AI cloud API suggest kar de</b></td><td class="c"><span class="no">High</span></td><td class="c">Budget</td><td>SPEC.md <code>C1 — ZERO CLOUD APIs</code> pehli cheez AI padhega</td></tr>
+    <tr><td><b>Play Billing AI ka sabse weak area hai</b></td><td class="c"><span class="mid">Med</span></td><td class="c">Revenue</td><td><b>RevenueCat ke official docs use karo</b>, raw Play Billing nahi. <b>Licence Testing</b> se verify karo</td></tr>
+    <tr><td><b>targetSdk 36 / 16 KB stale gradle</b></td><td class="c"><span class="mid">Med</span></td><td class="c">Crash / rejection</td><td>SPEC.md <code>C3</code> + <code>C4</code>. Build ke baad <code>zipalign -c -P 16 -v 4</code></td></tr>
+    <tr><td><b>Free tier terms badal jaayein</b></td><td class="c"><span class="mid">Med</span></td><td class="c">Low</td><td>Tumhare paas <b>koi metered service hai hi nahi</b> — yeh risk already eliminate ho chuka hai. RevenueCat $2,500/mo par 1% lega, jo problem nahi</td></tr>
+    <tr><td><b>Rewarded ad abuse</b> (modified APK)</td><td class="c"><span class="mid">Low-Med</span></td><td class="c">&lt;1-2% revenue</td><td><code>RewardGuard</code> 8/day cap + small rewards only + weekly <code>grants/impressions</code> ratio check. Phase 2 SSV agar ratio &gt; 3</td></tr>
+    <tr><td><b>AdMob account ban</b></td><td class="c"><span class="mid">Low</span></td><td class="c"><span class="no">Catastrophic</span></td><td><b>Apne ads par KABHI click mat karo, testers se bhi mat karwao.</b> Poore closed test mein TEST MODE. Banner ads skip (accidental clicks)</td></tr>
+    <tr><td><b>"AI" naming se rejection</b></td><td class="c"><span class="mid">Low</span></td><td class="c">Launch delay</td><td>Section 6.3 ka naming rule strictly follow karo. Title mein "AI" nahi</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 16 ===== -->
+<h2 id="s16"><span class="num">16</span>12-tester bottleneck — sabse underrated risk</h2>
+
+<div class="box bad">
+  <p style="margin-bottom:0"><b>Rule:</b> 13 Nov 2023 ke baad bane <b>personal</b> Play accounts ke liye, production access se pehle <b>closed testing mein ≥12 testers ka continuously 14 din tak opted-in rehna zaroori</b> hai. Yeh requirement <b>per app</b> hai — har naye app ke liye dobara. <b>Organization accounts (free D-U-N-S number) exempt hain.</b></p>
+</div>
+
+<h3>16.1 — Recruit kaise karo (₹0)</h3>
+<table>
+  <thead><tr><th>Source</th><th>Kitne</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td>Family + friends + classmates</td><td class="c">8–12</td><td>Sabse reliable. WhatsApp par direct bhejo</td></tr>
+    <tr><td>WhatsApp / Telegram groups</td><td class="c">5–8</td><td>College groups, society groups, seller groups</td></tr>
+    <tr><td><b>r/AndroidClosedTesting</b> + <b>r/androiddev</b></td><td class="c">5–10</td><td><b>Mutual testing</b> — tum unka app test karo, woh tumhara. Yeh community actively yeh karti hai</td></tr>
+    <tr><td>Discord dev servers (Kotlin, Android, Firebase)</td><td class="c">3–6</td><td></td></tr>
+    <tr><td>LinkedIn / X post</td><td class="c">2–5</td><td>Incentive: <b>lifetime Pro unlock</b> — tumhara cost ₹0, unke liye real value</td></tr>
+    <tr style="background:rgba(110,231,183,.08)"><td><b>TARGET</b></td><td class="c"><b>18–25</b></td><td><b>12 nahi.</b> Kuch opt-out kar denge, kuch link follow nahi karenge, kuch ke paas compatible device nahi hoga</td></tr>
+  </tbody>
+</table>
+
+<h3>16.2 — Setup mein log kahan galti karte hain</h3>
+<ul>
+  <li><b>Dedicated WhatsApp group banao</b> testers ka — 14 din tak unhein engaged rakhna hai</li>
+  <li><b>Exact opt-in instructions do, screenshots ke saath.</b> "Link par jao aur opt-in karo" kaafi nahi hai</li>
+  <li>⚠️ <b>Play Console ka closed-test opt-in URL bhejo, Play Store ka listing URL NAHI.</b> Yeh #1 galti hai — store URL se opt-in nahi hota</li>
+  <li><b>"Continuously opted in"</b> ka matlab hai 14 din ke beech opt-out kiya toh clock reset. Isliye group mein Day 7 aur Day 12 par reminder bhejo</li>
+  <li>Play Console mein <b>"12+ testers opted in"</b> ka confirmation <b>khud check karo</b> — assume mat karo</li>
+</ul>
+
+<div class="box info">
+  <h4 style="margin-top:0">💡 App #2 se: Organization account</h4>
+  <p style="margin-bottom:0"><b>Organization accounts 12-tester rule se EXEMPT hain.</b> Iske liye ek <b>free D-U-N-S number</b> chahiye, jo lene mein <b>2–6 hafte</b> lagte hain. Pehle app ke liye late hai, lekin <b>app #2 se pehle apply kar do</b> — free hai, aur har baar 12 testers dhundhne ka jhanjhat khatam.</p>
+</div>
+
+<!-- ===== 17 ===== -->
+<h2 id="s17"><span class="num">17</span>SPEC.md kaise use karo</h2>
+
+<p class="lead">Maine <code>SPEC.md</code> bana diya hai — <b>yahi woh file hai jo AI ko doge</b>. Usmein section 0 mein 5 HARD CONSTRAINTS hain jo AI ko galti karne se rokenge.</p>
+
+<h3>17.1 — Exact workflow</h3>
+<div class="flow">1. GitHub par repo banao:  photo-studio-pro
+
+2. SPEC.md usmein commit karo (root par)
+
+3. Antigravity / Jules kholo, repo connect karo
+
+4. Yeh KICKOFF PROMPT paste karo (SPEC.md section 17 mein bhi hai):
+
+   ─────────────────────────────────────────────────────────────
+   Read SPEC.md in this repository completely, including section 0
+   (HARD CONSTRAINTS).
+
+   Confirm back to me, in under 150 words:
+   1. The three hard constraints C1, C2, C3, in your own words.
+   2. Which milestone you will start with, and which ones you will
+      NOT touch yet.
+   3. Any place where you believe SPEC.md is ambiguous or
+      contradictory. Ask me before guessing.
+
+   Then begin Milestone M0 only: [gradle + package structure + theme
+   + navigation shell + empty tool screens]. NO API keys, NO network
+   calls, NO server code, NO ML Kit integration yet.
+
+   Stop after M0 and report. Wait for my approval before M1.
+   ─────────────────────────────────────────────────────────────
+
+5. M0 approve karo → phir M1 maango → phir M2 → ...
+
+6. Har ML Kit milestone se pehle:
+   ⭐ Official doc page kholo → code snippet copy karo → AI ko paste karo
+      + bolo "is exact API ka use karo, memory se signature mat likhna"
+
+7. Har milestone ke baad:
+   ✅ Airplane mode test karo
+   ✅ APK Analyzer se size measure karo
+   ✅ Unit tests chalao</div>
+
+<h3>17.2 — 5 rules jo tumhein khud follow karne hain</h3>
+<div class="box gold">
+  <ol style="margin-bottom:0">
+    <li><b>Poora app ek saath mat mangwana.</b> Ek milestone ek baar mein. AI context kho deta hai aur quality girti hai</li>
+    <li><b>Har milestone ke baad khud test karo</b> — airplane mode + ek mid-range phone par. AI ka "ho gaya" bharosa nahi hai</li>
+    <li><b>Version numbers khud verify karo</b> — gradle mein AI jo likhe use Google ke official page se cross-check karo</li>
+    <li><b>Play Billing khud samjho</b> — yeh AI ka sabse weak area hai. RevenueCat docs padho, Licence Testing use karo, real purchase mat karo</li>
+    <li><b>AdMob TEST MODE ka switch <code>BuildConfig.DEBUG</code> se automated rakho</b>, manual nahi. Ek bhool = permanent ban</li>
+  </ol>
+</div>
+
+<h3>17.3 — SPEC.md mein kya-kya hai</h3>
+<table>
+  <thead><tr><th class="c">§</th><th>Section</th><th>Kyun zaroori</th></tr></thead>
+  <tbody>
+    <tr><td class="c">0</td><td><b>HARD CONSTRAINTS C1–C5</b></td><td>Zero cloud API · Zero backend · targetSdk 36 + 16KB + AAB · Version numbers invent mat karo · Koi placeholder nahi</td></tr>
+    <tr><td class="c">1</td><td>Product + naming rules</td><td>Forbidden strings ki list ("AI Enhance" etc.)</td></tr>
+    <tr><td class="c">2</td><td>12 Milestones (M0–M12)</td><td>Exact build order + dependencies</td></tr>
+    <tr><td class="c">3</td><td>Tech stack + forbidden deps + doc URLs</td><td>Kya allowed hai, kya nahi</td></tr>
+    <tr><td class="c">4</td><td>Gradle baseline + size budget + 16 KB verify</td><td>Copy-paste ready</td></tr>
+    <tr><td class="c">5</td><td>Package layout + 6 architectural rules</td><td><code>AdPolicy</code> single source of truth wala rule yahan hai</td></tr>
+    <tr><td class="c">6</td><td>8 tools ka full detail + acceptance criteria</td><td>Har tool ke checkboxes</td></tr>
+    <tr><td class="c"><b>7</b></td><td><b>⭐ AdPolicy</b> — full Kotlin code</td><td><b>Poore project ki sabse important file</b></td></tr>
+    <tr><td class="c"><b>8</b></td><td><b>⭐ RewardGuard</b> + abuse detection</td><td>Backend ke bina anti-cheat</td></tr>
+    <tr><td class="c">9</td><td>RemoteFlags keys</td><td>Har tunable number</td></tr>
+    <tr><td class="c">10</td><td>Subscription: entitlements, products, free vs Pro, paywall</td><td>Exact prices + product IDs</td></tr>
+    <tr><td class="c">11</td><td>Data layer: Room schema, DataStore, privacy rules</td><td>No accounts, SAF only</td></tr>
+    <tr><td class="c"><b>12</b></td><td><b>WHAT NOT TO BUILD</b></td><td>16 cheezein explicitly forbidden — AI ko yeh dikhana sabse zaroori</td></tr>
+    <tr><td class="c">13</td><td>Testing requirements</td><td><code>AdPolicyTest</code> ke exact cases listed</td></tr>
+    <tr><td class="c">14</td><td>Phase 2 (SSV) — <b>DO NOT BUILD NOW</b></td><td>Recorded so it's not lost</td></tr>
+    <tr><td class="c">15</td><td>M12 store-readiness checklist</td><td>Build + Play Console + "never do"</td></tr>
+    <tr><td class="c">16</td><td>North Star + guardrails</td><td>Blended ARPDAU</td></tr>
+    <tr><td class="c">17</td><td><b>Kickoff prompt</b></td><td>Copy-paste ready</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 18 ===== -->
+<h2 id="s18"><span class="num">18</span>Sabhi files + sources</h2>
+
+<h3>18.1 — Tumhare workspace mein</h3>
+<table>
+  <thead><tr><th>File</th><th class="c">Status</th><th>Kya hai</th></tr></thead>
+  <tbody>
+    <tr style="background:rgba(110,231,183,.09)"><td><code><b>master-plan-2026.html</b></code></td><td class="c"><span class="yes">⭐ YEH FILE</span></td><td>Final consolidated plan. <b>Ab bas yahi padhni hai</b></td></tr>
+    <tr style="background:rgba(110,231,183,.09)"><td><code><b>SPEC.md</b></code></td><td class="c"><span class="yes">⭐ BUILD FILE</span></td><td><b>AI ko yeh do.</b> GitHub repo mein commit karo</td></tr>
+    <tr><td><code>hybrid-monetization-plan-2026.html</code></td><td class="c"><span class="mid">⚠️ 95% valid</span></td><td>Deep monetization detail (ad caps, paywall, ARPDAU). Naam badla: "AI Photo Studio" → <b>"Photo Studio Pro"</b></td></tr>
+    <tr><td><code>free-backend-guide-2026.html</code></td><td class="c"><span class="mid">⚠️ SSV part outdated</span></td><td>14-platform comparison + traps <b>abhi bhi valid</b>. Lekin SSV ko "zaroori" bataya gaya hai — <b>ab Phase 2 par defer hai</b>. Section 5.2 padho</td></tr>
+    <tr><td><code>zero-budget-app-plan-2026.html</code></td><td class="c"><span class="yes">✅ Valid</span></td><td>ML Kit table, AI toolchain, tester sourcing detail</td></tr>
+    <tr><td><code>android-app-category-research-2026.html</code></td><td class="c"><span class="no">❌ Stack invalid</span></td><td>Category data valid, lekin cloud-AI stack tumhare rule ke against. <b>Use mat karo</b></td></tr>
+  </tbody>
+</table>
+
+<h3>18.2 — Sources</h3>
+<div class="box">
+  <ol class="src">
+    <li><b>RevenueCat — State of Subscription Apps 2026</b> (115K apps, $16B tracked). Median app $72/mo at Year 1; 2-yr odds 17.3%→$1K, 4.6%→$10K, 1.7%→$25K. Photo &amp; Video 21.4%/7.3%, median $124/mo (highest), Business 1.6% (worst). Hard paywall D14 RPI $2.32 vs freemium $0.27; D35 conv 10.7% vs 2.1%. Trial→paid 25.5% (≤4d) vs 37–43% (≥7d). Median prices $5.99/wk, $10/mo, $34.80/yr. Geo D60 RPI: NA $0.55, EU $0.33, India+SEA $0.11. Subscription ARPU 4.6× ad-only. Offer usage only 9.3%. Top 10% capture 94.5% of revenue. H&amp;F download-to-paid 2.9%, D14 RPI $0.48.</li>
+    <li><b>AdMob eCPM data 2026</b> (Revenuelab, SuccessMate, MonetizeMore). Rewarded T1 $14–22 (US Android $16.49), T3 $2–3 (India ~$1.85); banner India $0.08–0.40; interstitial T1 $9–14. Photo/video utilities: rewarded $10–15, interstitial $7–11, ARPDAU $0.04–0.09. One US user ≈ 15–20× an Indian user. Mediation/bidding lifts revenue 20–40%.</li>
+    <li><b>Hybrid monetization</b> — Vmobify (June 2026): ~72% of games hybrid; rewarded-ad users 4.5–5× more likely to purchase; hybrid lifts IAP ~30%, LTV ~33%; suppress ads for active spenders; track blended ARPDAU; in India lead with rewarded ads not cold paywalls; #1 killer = ad overload (teams gained 15–25% ad revenue then lost more to churn within 2 months). GameGrowthAdvisor: non-payers 96–97% of DAU, mid-tier 2–3%, whales ~1%; rewarded video ≈ 62% of all mobile ad revenue. Cas.ai: "'Remove ads' needs a server-side entitlement check, not just client-side" — desync hits refund rates. Playio (Deloitte + Google, 7,000 gamers): one disruptive interstitial = churn +6–7%, on a reward screen = 3× quit rate, 52% would quit after repeated exposure; 60–90s first-ad delay = D1 +5–8% with no revenue loss; 7-day minimum test duration. MWM.ai: productivity/utility apps get "usually ZERO" interstitials. Webizm (Oct 2026): ≤1 interstitial per 180–240s, max 3–4/user/day, suppress full-screen ads Day 0–2, neglecting rewarded SSV enables client-side exploits. Adapty: show ads before navigation buttons, exclude payers. Mellowtel: "High-frequency ongoing value → subscriptions; low-frequency broad-reach utilities → ads."</li>
+    <li><b>Market + Play gates.</b> Play IAP $43.6B Q2 2026, Play +10% YoY vs iOS +3%. 83% never reach $1K/mo in 2 yrs. Users for $10K MRR at $4.99 → 2,004. 1,000 subs @ $10 ≈ $8,500 net &gt; 100,000 ad-only users. Android CPI ~$3.40 vs $0.34/install earned by day 60. Price resistance: Business 5.7%, Utilities 6.1% (lowest), Photo &amp; Video 20.3% (2nd worst). India: 880M smartphones, 97% Android, Tier-2 +25% YoY. Fastest-growing listings: Kling +1086%, AI Photo Editor +830%; Nano Banana 22M DL/28d but only $181K revenue. $25 one-time fee; personal accounts after 13 Nov 2023 need closed testing with ≥12 testers opted-in continuously 14 days (per app; Organization accounts with a free D-U-N-S number are exempt). Identity verification mandatory from Sept 2026. Target API 36 from 31 Aug 2026; 64-bit + 16 KB page size.</li>
+    <li><b>$0-critical: cloud AI is no longer free.</b> FelloAI / AIFreeAPI (Oct 2026): Gemini image API "Free Tier: Not available" for Nano Banana 2 / Gemini 3.1 Flash Image Preview; paid $0.039–0.067 per 1K image (Flash), $0.134–0.24 (Pro). Free images only in the consumer Gemini app (~20/day, watermarked). <code>gemini-2.5-flash-image-preview</code> shut down 15 Jan 2026. Free text tier: Gemini 3.x Flash 20 RPD, Flash-Lite 500 RPD, per project.</li>
+    <li><b>ML Kit on-device is free and unlimited.</b> developers.google.com/ml-kit; StackOverflow 68256475 (Google-verified): "free and unlimited, you will not be charged." Official size tables: Face Detection 800 KB unbundled / 6.9 MB bundled; Text Recognition v2 260 KB / 4 MB per script per architecture; Image Labeling 200 KB / 5.7 MB; Barcode 200 KB / 2.4 MB; custom labeling 200 KB / 3.8 MB. Oleur speaker deck: "2 to 10 MB per model"; Face Mesh beta bundled only ~6.4 MB, capped at 2 faces, ~14ms on Pixel 3. Banuba: "Google ML Kit is offered at no cost under Google's terms of service." ReactiveDroid: bundled face model increased their app by 16 MB (multi-architecture) — the architecture-multiplication trap.</li>
+    <li><b>Free AI coding toolchain 2026</b> (PromptToProd, Oct 2026): Gemini CLI free sign-in ENDED 18 June 2026. Google Antigravity = free, no card, weekly agent quota. Jules = free async agent, 15 tasks/day, 3 concurrent, Gemini 2.5 Pro. Copilot Free 2,000 completions + 50 chat/mo. ChatGPT Free unlimited text. Cursor Hobby free. OpenCode/Cline/Aider free OSS. Claude Code = NO free plan ($20/mo).</li>
+    <li><b>Free backend hosting (verified Sept–Oct 2026).</b> Cloudflare Workers/Pages: 100K req/day, 10ms CPU, 1MB script, unlimited static bandwidth, no credit card, commercial use allowed, 0ms cold start (V8 isolates), exceeding returns Error 1027 = throttle not a bill; RahulDhole rates it 🟢 Best choice with "Hard Spending Limit ✅ Yes (practical)". Free ecosystem: Pages 500 builds/mo + 100 projects; D1 5 GB + 5M rows read/day; R2 10 GB no egress fees; KV 100K reads/1K writes per day; Workers AI 10K neurons/day; 300+ edge locations incl. India. Deno Deploy Free: 1M req/mo, 20 GiB egress, 10 CPU-hours, Deno KV 1 GiB, no card, but only 1 day of logs. Flaviocopes: "For anything commercial, cross off Vercel Hobby." Bex.co: "Vercel's free Hobby plan bans commercial use." ExpressTech: Railway killed its free tier in 2023, one-time $5 trial, "uncapped usage unless you opt in to a hard limit… the first you hear of it is the bill", hard limit minimum $10 and hitting it takes every workload offline; Fly.io no free tier for accounts after Oct 7 2024, card required, managed Postgres $38/mo; Render free Postgres hard-expires at 30 days then is deleted. SnapDeploy: Render bandwidth cut 100 GB → 5 GB on 23 Apr 2026; Render free sleeps after 15 min idle with ~1 min wake and "suspends rather than bills" without a payment method; Render itself says free instances are not for production. ProductGrowth: Render has no India or Asia region — closest Oregon or Frankfurt, 200–300ms latency from India. CheckThat.ai / CloudZero: Supabase free-tier users hitting the 5 GB egress cap report "every API request returning a 402 error, breaking logins and signups instantly"; pause after 7 days idle; no automatic backups. BudgetForge: Firebase Spark free excludes Cloud Functions and Cloud Storage (Blaze only) and "Firebase has no hard spending cap". Pickuma: "AWS and GCP will charge if you exceed limits without a billing alarm configured"; Heroku killed free dynos Nov 2022; PlanetScale dropped Hobby early 2024; Oracle Cloud Always Free Arm VM is the only genuinely free 24/7 process. TechPlained: "Cloudflare, Deno, Fly.io and Railway all permit commercial use on free plans" (note: Fly.io/Railway have since changed). ViggoZ/free-services: the $0 API stack pattern — "no card on file, so a forgotten project cannot surprise you with a bill."</li>
+    <li><b>Google Play AI policy 2026.</b> AppsOps (July 2026): spam clause covers apps that "provide no useful functionality beyond wrapping a third-party model"; thin wrappers increasingly rejected at the review stage; retroactive removal sweeps of apps calling model APIs without differentiated value; "lead with the use case, not the model." Deesu (Oct 2026): mandatory AI Asset Declaration in Play Console Store Presence covering icon 512×512, feature graphic 1024×500, screenshots and promo video; auto-attached public "AI-generated" badge; updates halted in review queues when classifiers detect undeclared synthetic media; "apps featuring conversational LLMs or AI photo enhancers are facing immediate rejections" without in-app flagging; In-App Generative AI Policy requires a native report dialog (mailto or external form = rejection); declaring AI assets does not penalize ASO indexing; real app screenshots need no declaration. AppSubmitter (Oct 2026): Deceptive Behavior — top cause is "a listing that promises more than the app does"; Misleading Claims covers false claims in title, description, icon or screenshots and "functionally impossible" apps. Gamine (April 2026): "Review teams are increasingly strict about implied promises"; example risk "'AI-generated missions' when feature is experimental or region-limited"; "swap broad claims for verifiable statements." REVERA (March 2026): App Promotion policy requires marketing to accurately reflect functionality; "If AI is a key feature, failure to mention it may be regarded as misleading." Unstore (April 2026): GenAI policy requires moderation tools, in-app reporting and clear AI labelling. The Android News (April 2026): crackdown on apps with misleading titles or fake functionality; Data Safety disclosures expanded. Forasoft (Oct 2026): Apple 5.1.2(i) from 13 Nov 2025 requires explicit consent plus naming the provider for third-party AI data sharing, covering "LLMs, classic ML and any external reasoning service"; Play July 2026 update states the User Data policy covers third-party AI integrations; rejection shares — crashes ~18–20%, placeholders ~12–15%, misleading metadata ~10–12%.</li>
+    <li><b>AdMob rewarded SSV (verified Oct 2026).</b> Google AdMob Help 9603226: SSV "is used in addition to the standard client-side callback"; you must Verify URL before setup completes. Google AdMob Help 7311747: SSV "acts as an additional layer of validation… performed in addition to the standard client-side callback." Google Mobile Ads SDK Forum (Google advisor Justin): "There is no retry logic from our SDK to ping the server" — a user briefly offline mid-ad fires <code>onUserEarnedReward</code> but the SSV callback never arrives, so "it seems to the server as if the user did something fraudulent"; the developer's conclusion: "This makes server validation absolutely useless if there is no guaranteed delivery." Google AdMob Unity docs: heading is "[Optional] Validate server-side verification callbacks." rdlabo.dev: "Callbacks fire only for production ads; test ads do not invoke your SSV endpoint." GitHub dmadan86/waves PR#1287: "SSV is the only crediting path, so a misconfigured callback URL means users watch ads for nothing"; a deploy script omitting the function meant Google could not reach the callback and rewards were not credited. GitHub jdorta2206/stop-el-juego PR#15 and PR#247: AdMob's Verify URL flow calls the callback without <code>custom_data</code>, which must return HTTP 200 without granting a reward; a real reward-forgery bug where a client-reported <code>clientState=earned</code> minted rewards before SSV arrived.</li>
+    <li><b>Reference repos</b> (MIT, Kotlin + Compose): <code>masoomabbas/PDF-Master-Suite</code>, <code>Chethan616/ClearPDF</code>.</li>
+  </ol>
+</div>
+
+<div class="footer">
+  <p><b>⚠️ Aakhri disclaimer:</b> Free tier terms, ML Kit versions, Play policies aur pricing <b>baar-baar badalte hain</b>. Is report ke apne findings hi iska proof hain — Heroku, PlanetScale, Railway aur Fly.io ke free tiers mar gaye; Render ne bandwidth 100 GB → 5 GB kiya; Google ne free image API band kiya; Gemini CLI ka free access gaya; Vercel Hobby commercial use ban karta hai.</p>
+  <p><b>Deploy ya signup karne se pehle official pricing page khud check karo:</b> developers.cloudflare.com/workers/platform/pricing · revenuecat.com/pricing · firebase.google.com/pricing · supabase.com/pricing · developers.google.com/ml-kit</p>
+  <p style="margin-bottom:0"><b>Ab agla step:</b> GitHub repo banao → <code>SPEC.md</code> commit karo → Day 1 par Play Console registration ($25) → Section 17.1 ka kickoff prompt paste karo → M0 maango. <i>Prepared 29 October 2026.</i></p>
+</div>
+
+</div>
+</body>
+</html>

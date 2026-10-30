@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  We back up preferences and the local usage counters only.
+  NEVER back up image files — that would put user photos into Google's cloud,
+  which would contradict the "your photos never leave your phone" claim and
+  require a Data Safety declaration change. SPEC.md section 11.
+-->
+<full-backup-content>
+    <include domain="sharedpref" path="." />
+    <include domain="database" path="usage.db" />
+    <exclude domain="file" path="exports/" />
+    <exclude domain="cache" path="." />
+</full-backup-content>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand">#FF2F6FED</color>
+    <color name="brand_dark">#FF1B4FBF</color>
+    <color name="accent">#FF00B894</color>
+    <color name="ic_launcher_background">#FF0F1724</color>
+    <color name="checker_a">#FFFFFFFF</color>
+    <color name="checker_b">#FFE2E6EC</color>
+</resources>

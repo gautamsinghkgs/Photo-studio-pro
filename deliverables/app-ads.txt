@@ -1,0 +1,13 @@
+# app-ads.txt — publish this at the ROOT of your Cloudflare Pages site:
+#   https://<your-project>.pages.dev/app-ads.txt
+#
+# Then paste the SAME line into AdMob -> Apps -> your app -> app-ads.txt.
+# Missing this file can cut your eCPM by 10-30%.
+#
+# ⚠️ Replace pub-XXXXXXXXXXXXXXXX with your real AdMob publisher ID.
+#    Find it in AdMob -> Account -> Settings -> Publisher ID.
+#    It starts with "pub-" and is 16 digits.
+#
+# The trailing token f08c47fec0942fa0 is Google's fixed TAG_ID — do NOT change it.
+
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

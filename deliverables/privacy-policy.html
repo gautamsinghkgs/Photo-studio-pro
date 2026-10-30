@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Photo Studio Pro</title>
+<style>
+ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.65;color:#1a1f27;max-width:760px;margin:0 auto;padding:28px 20px 80px;background:#fff}
+ h1{font-size:26px;margin:0 0 4px} h2{font-size:19px;margin:34px 0 8px;border-bottom:1px solid #e6e9ee;padding-bottom:6px}
+ .meta{color:#66707d;font-size:13px;margin-bottom:22px}
+ .hl{background:#eaf4ec;border-left:4px solid #2e7d4f;padding:12px 16px;border-radius:6px;margin:18px 0}
+ table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+ th,td{border:1px solid #dfe3e8;padding:8px 10px;text-align:left;vertical-align:top}
+ th{background:#f5f7fa} code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font-size:13px}
+ a{color:#2f6fed} ul{padding-left:22px} li{margin:4px 0}
+ .foot{margin-top:40px;padding-top:16px;border-top:1px solid #e6e9ee;color:#66707d;font-size:13px}
+</style>
+</head>
+<body>
+
+<h1>Privacy Policy — Photo Studio Pro</h1>
+<p class="meta">Last updated: <strong>29 October 2026</strong> &nbsp;·&nbsp; Effective: <strong>29 October 2026</strong></p>
+
+<div class="hl">
+<strong>The short version:</strong> your photos are processed entirely on your device. We have no server,
+no database and no upload endpoint, so there is nowhere for your photos to go. We do not require an
+account, an email address, or a phone number. The only personal data collected is advertising and
+analytics data handled by third-party SDKs, described in full below.
+</div>
+
+<h2>1. Who we are</h2>
+<p>Photo Studio Pro ("the App") is an Android application published on Google Play by
+<strong>[YOUR LEGAL NAME AS IT APPEARS IN PLAY CONSOLE]</strong> ("<em>we</em>", "<em>us</em>").
+Contact: <strong>[YOUR-EMAIL@DOMAIN]</strong>.</p>
+<p>We operate <strong>no backend server</strong>. The App contains no code that transmits your photos,
+your contact list, your location, or any user-created content to us or to anyone else.</p>
+
+<h2>2. Photos and images</h2>
+<p>All image processing — background removal, face detection for ID photos, resizing, compression,
+collages, OCR and enhancement — runs <strong>locally on your device</strong> using Google ML Kit and the
+Android graphics framework.</p>
+<ul>
+  <li>Photos you select are read into your device's memory, processed, and written to a location
+      <strong>you</strong> choose via the Android file picker. They are never sent to us.</li>
+  <li>Temporary copies may be written to the App's private cache directory to make an export possible.
+      These are deleted by the App or by Android when storage is reclaimed.</li>
+  <li>The App <strong>excludes your exports from Android cloud backup</strong>, so processed photos are not
+      copied to your Google account backup by us. (Your own choice to back up your device storage
+      separately is outside our control.)</li>
+  <li>We have no ability to view, recover, or delete your photos, because we never receive them.</li>
+</ul>
+
+<h2>3. The one-time model download (important, and we are explicit about it)</h2>
+<p>The Background Remover uses Google's <strong>Subject Segmentation</strong> model, delivered through
+Google Play services rather than being bundled inside the App. On first use, <strong>the machine-learning
+model itself may be downloaded to your device over the internet</strong> by Google Play services.</p>
+<p><strong>Only the model travels. Your photos do not.</strong> Segmentation inference happens on your
+device after the model arrives. This is why we describe the App as working
+<em>"offline after one-time setup"</em> rather than claiming it needs no internet at all. The other
+tools work offline from the very first launch.</p>
+
+<h2>4. Data we do not collect</h2>
+<table>
+<tr><th>Data type</th><th>Collected?</th></tr>
+<tr><td>Photos, images, videos you process</td><td><strong>No</strong> — never leaves your device</td></tr>
+<tr><td>Name, email, phone number</td><td><strong>No</strong> — there is no account or signup</td></tr>
+<tr><td>Contacts, calendar, SMS, call logs</td><td><strong>No</strong></td></tr>
+<tr><td>Precise or approximate location</td><td><strong>No</strong> — the App requests no location permission</td></tr>
+<tr><td>Camera / microphone access</td><td><strong>No</strong> — the App requests neither permission</td></tr>
+<tr><td>Health, fitness, biometric data</td><td><strong>No</strong> — face detection runs on-device and
+    no facial template, measurement or biometric identifier is stored or transmitted</td></tr>
+<tr><td>Files on your device beyond what you select</td><td><strong>No</strong> — the App requests no
+    storage permission; it uses the Android system photo picker</td></tr>
+</table>
+<p>The App declares exactly two Android permissions. <code>INTERNET</code> is required for the
+advertising, analytics and purchase SDKs described below. <code>ACCESS_NETWORK_STATE</code> lets the
+App tell you honestly whether the one-time machine-learning model can be downloaded right now,
+rather than showing you a spinner that never ends. Neither permission reads your photos, your
+contacts, your location or any other personal data. The App requests no camera, microphone or
+storage permission — it uses the Android system photo picker, which grants access to only the
+individual photos you select.</p>
+
+<h2>5. Data collected by third-party SDKs</h2>
+<p>The App embeds the following third-party SDKs. Each may collect data independently of us, under its
+own privacy policy. We do not receive their raw data.</p>
+
+<h3>5.1 Google Mobile Ads (AdMob) and the User Messaging Platform</h3>
+<ul>
+  <li><strong>Purpose:</strong> to show advertising, and to record your ad-tracking consent choice.</li>
+  <li><strong>May collect:</strong> advertising identifier, coarse/approximate location derived from IP
+      address, device information, app information, ad interaction data (impressions and clicks), and
+      diagnostic data.</li>
+  <li><strong>Policy:</strong> <a href="https://policies.google.com/privacy">policies.google.com/privacy</a></li>
+  <li><strong>Your control:</strong> on Android 13+ you can revoke the advertising identifier under
+      Settings → Privacy → Ads. In the EEA/UK/Switzerland we request your consent through the Google
+      User Messaging Platform before personalising ads; you can change that choice at any time under
+      <em>Settings → Personalisation &amp; ads</em> inside the App. If you decline, you will still see
+      ads, but they will be non-personalised.</li>
+</ul>
+
+<h3>5.2 Google Analytics for Firebase and Firebase Crashlytics</h3>
+<ul>
+  <li><strong>Purpose:</strong> to understand which tools are used and to diagnose crashes.</li>
+  <li><strong>May collect:</strong> app-instance identifier, usage events (which tool was opened, whether
+      an export completed, whether an ad was shown), device model, OS version, app version, country,
+      and crash stack traces.</li>
+  <li><strong>Explicitly never collected:</strong> your photos, and any content of your photos. Crash
+      reports do not contain image data.</li>
+  <li><strong>Policy:</strong> <a href="https://firebase.google.com/support/privacy">firebase.google.com/support/privacy</a></li>
+</ul>
+
+<h3>5.3 Google Firebase Remote Config</h3>
+<ul>
+  <li><strong>Purpose:</strong> to let us turn a feature or an ad format off without waiting for a Play
+      Store update, and to tune ad frequency if it is harming your experience.</li>
+  <li><strong>May collect:</strong> app-instance identifier and configuration fetch logs.</li>
+</ul>
+
+<h3>5.4 RevenueCat (purchases and subscriptions)</h3>
+<ul>
+  <li><strong>Purpose:</strong> to validate your Google Play purchase and to keep your Pro entitlement
+      working, including offline.</li>
+  <li><strong>May collect:</strong> an anonymous app-user identifier generated on your device, your
+      Google Play purchase token, product identifiers, purchase and expiry dates, and country.</li>
+  <li><strong>Explicitly never collected:</strong> your name, email, or payment card number. Google Play
+      handles payment directly; the App and RevenueCat never see your card details.</li>
+  <li><strong>Policy:</strong> <a href="https://www.revenuecat.com/privacy">revenuecat.com/privacy</a></li>
+</ul>
+
+<h3>5.5 Google Play Services (ML Kit model delivery)</h3>
+<ul>
+  <li><strong>Purpose:</strong> to deliver the Subject Segmentation model described in section 3.</li>
+  <li><strong>Policy:</strong> <a href="https://policies.google.com/privacy">policies.google.com/privacy</a></li>
+</ul>
+
+<h2>6. Advertising in detail</h2>
+<p>The App shows <strong>rewarded video ads</strong>, which you choose to watch in exchange for a small
+temporary benefit such as removing the watermark from one export. Rewarded ads are always optional and
+always initiated by you.</p>
+<p>We may also show <strong>interstitial ads</strong> after you complete and save an export. We have
+deliberately limited these: none appear during your first two days of use, none appear within the first
+90 seconds of a session, none appear while you are setting up the App, at least three minutes pass
+between them, and no more than three appear per day. If you are a paying Pro subscriber, or are in a
+free trial, <strong>you will never see an interstitial ad</strong>.</p>
+<p><strong>Banner ads are permanently disabled</strong> in this App, to avoid accidental clicks.</p>
+
+<h2>7. Purchases and subscriptions</h2>
+<p>Subscriptions are sold and billed by <strong>Google Play</strong>, not by us. Your subscription
+automatically renews at the end of each period unless you cancel at least 24 hours before the renewal
+date. You can manage or cancel it at any time in the Google Play Store app under
+<em>Payments &amp; subscriptions → Subscriptions</em>. Cancelling does not remove access until the end
+of the period you have already paid for. Refund requests are handled by Google Play under its
+refund policy.</p>
+
+<h2>8. Children</h2>
+<p>The App is <strong>not directed at children under 18</strong> and we do not knowingly collect data
+from children. The App is not enrolled in Google Play's Families programme and does not use
+Families-certified ad formats. If you believe a child has provided personal data through the App,
+contact us and we will delete it.</p>
+
+<h2>9. Data retention</h2>
+<ul>
+  <li><strong>Photos:</strong> never retained by us, because never received.</li>
+  <li><strong>Usage counters</strong> (exports today, ads shown today): stored on your device only, in
+      the App's private storage, and reset daily. Cleared when you clear App data or uninstall.</li>
+  <li><strong>Pro entitlement:</strong> cached on your device so Pro keeps working offline, and held by
+      RevenueCat for as long as your Google Play purchase record exists.</li>
+  <li><strong>Analytics and crash data:</strong> retained by Google under its own retention settings.</li>
+</ul>
+
+<h2>10. Your rights</h2>
+<p>Depending on where you live, you may have the right to access, correct, delete, or restrict the
+processing of your personal data, and to object to or withdraw consent for ad personalisation.</p>
+<p>Because we hold no personal data about you directly, most of these rights are exercised against the
+SDK providers listed in section 5, or through the controls on your device:</p>
+<ul>
+  <li><strong>Withdraw ad personalisation:</strong> Settings inside the App → <em>Personalisation &amp; ads</em>,
+      or Android Settings → Privacy → Ads → Reset advertising ID.</li>
+  <li><strong>Delete all App data:</strong> Android Settings → Apps → Photo Studio Pro → Storage → Clear data.</li>
+  <li><strong>Google's controls:</strong> <a href="https://myaccount.google.com/privacy">myaccount.google.com/privacy</a></li>
+  <li><strong>EU users:</strong> you may lodge a complaint with your national data protection authority.</li>
+</ul>
+<p>To exercise any right against us, email <strong>[YOUR-EMAIL@DOMAIN]</strong>. We respond within 30 days.</p>
+
+<h2>11. Data security and international transfers</h2>
+<p>Photos remain on your device, so they are not transferred anywhere. The SDK providers listed in
+section 5 may transfer the data described there to the United States and other countries, under their
+own safeguards (for Google, the
+<a href="https://cloud.google.com/terms/eu-model-contract-clauses">EU Model Contract Clauses</a>).</p>
+
+<h2>12. Changes to this policy</h2>
+<p>We may update this policy. When we do, the "Last updated" date at the top changes and the new version
+is published at this same address. If a change materially expands data collection, we will present it
+inside the App before it takes effect. Continued use after a change means you accept the updated policy.</p>
+
+<h2>13. Contact</h2>
+<p><strong>[YOUR LEGAL NAME]</strong><br>
+Email: <strong>[YOUR-EMAIL@DOMAIN]</strong><br>
+This policy is published at: <strong>https://[YOUR-PROJECT].pages.dev/</strong></p>
+
+<div class="foot">
+<p><strong>Third-party attributions.</strong> This App uses open-source software: Jetpack Compose, Coil
+and PdfBox-Android, each licensed under the Apache License 2.0. Machine learning is provided by Google
+ML Kit, subject to the
+<a href="https://developers.google.com/ml-kit/terms">ML Kit Terms of Service</a>.</p>
+<p><strong>A note on wording.</strong> We describe our on-device machine-learning features precisely —
+"Auto Background Remover", "Smart Face Crop", "Text Scanner (OCR)". We deliberately avoid the word
+"AI" elsewhere, because our enhancement and clean-up tools use classical image algorithms rather than
+generative models, and we would rather understate than overstate what the App does.</p>
+</div>
+
+</body>
+</html>

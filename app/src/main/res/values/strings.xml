@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ⭐ NAMING RULES (SPEC.md section 1 / master-plan section 6.3)
+  These strings are a Google Play compliance surface, not just copy.
+  FORBIDDEN anywhere in this file: "AI Enhance", "AI Restore", "AI Generator",
+  "AI Avatar", "AI Colorize", "AI Retouch", "AI Beauty", "AI Photo Studio".
+  Classical image processing must be named classically. "AI" may appear ONLY
+  where a real ML Kit model runs, and only with a precise qualifier.
+  Also forbidden: any claim of "guaranteed" ID-photo acceptance.
+-->
+<resources>
+    <string name="app_name">Photo Studio Pro</string>
+    <string name="app_tagline">Offline photo toolkit for sellers &amp; creators</string>
+
+    <!-- Three pillars. These are the honest, verifiable claims. -->
+    <string name="pillar_no_upload">Your photos never leave your phone</string>
+    <string name="pillar_offline">Works offline after a one-time setup</string>
+    <string name="pillar_unlimited">Unlimited background removal, free</string>
+
+    <!-- Home / tools -->
+    <string name="home_title">Tools</string>
+    <string name="home_subtitle">Everything runs on your device. No account, no upload.</string>
+
+    <string name="tool_bgremover">Background Remover</string>
+    <string name="tool_bgremover_desc">Cut out any subject automatically</string>
+    <string name="tool_idphoto">Passport &amp; ID Photo</string>
+    <string name="tool_idphoto_desc">Official sizes for 30+ countries</string>
+    <string name="tool_batch">Batch Resize &amp; Compress</string>
+    <string name="tool_batch_desc">Resize up to 100 photos at once</string>
+    <string name="tool_whitebg">White Background</string>
+    <string name="tool_whitebg_desc">Marketplace-ready product shots</string>
+    <string name="tool_collage">Collage</string>
+    <string name="tool_collage_desc">Layouts, borders and templates</string>
+    <string name="tool_pdf">Photo to PDF</string>
+    <string name="tool_pdf_desc">Combine photos into a PDF, or split one</string>
+    <string name="tool_ocr">Text Scanner</string>
+    <string name="tool_ocr_desc">Extract printed text — English and Hindi</string>
+    <string name="tool_enhance">Photo Enhance</string>
+    <string name="tool_enhance_desc">Sharpen, denoise, auto-levels</string>
+
+    <!-- Tool arriving in a later milestone. This is the honest M0 state defined
+         in SPEC.md section 2 — NOT a "Coming Soon" placeholder. It states what
+         the tool is and when it lands. -->
+    <string name="later_title">Arriving in a later build</string>
+    <string name="later_body">This tool is part of milestone %1$s. It is not hidden or paywalled — it simply has not been built yet. Everything already in the app is fully functional.</string>
+    <string name="later_back">Back to tools</string>
+
+    <!-- Common -->
+    <string name="pick_photo">Choose a photo</string>
+    <string name="pick_photos">Choose photos</string>
+    <string name="export">Export</string>
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Try again</string>
+    <string name="done">Done</string>
+    <string name="processing">Working…</string>
+    <string name="before">Before</string>
+    <string name="after">After</string>
+
+    <!-- Background remover -->
+    <string name="bg_model_downloading">Setting up background remover…</string>
+    <string name="bg_model_downloading_body">This happens once, in the background. It downloads a small model to your phone — your photos are never uploaded.</string>
+    <string name="bg_model_needs_network">Background remover needs a one-time setup</string>
+    <string name="bg_model_needs_network_body">Connect to the internet once so the model can be downloaded to your phone. After that it works offline forever. Your other tools work right now.</string>
+    <string name="bg_transparent">Transparent</string>
+    <string name="bg_solid">Solid colour</string>
+    <string name="bg_gradient">Gradient</string>
+    <string name="bg_result_empty">No clear subject found</string>
+    <string name="bg_result_empty_body">Try a photo where the subject stands out from the background, is at least 512×512 pixels, and is in focus.</string>
+
+    <!-- ID photo -->
+    <string name="id_country">Country / document</string>
+    <string name="id_search_country">Search</string>
+    <string name="id_guide_head_size">Head height</string>
+    <string name="id_guide_eye_line">Eye line</string>
+    <string name="id_guide_background">Background</string>
+    <string name="id_guide_pass">Looks correct</string>
+    <string name="id_guide_warn">Check this</string>
+    <string name="id_print_sheet">Print sheet</string>
+    <string name="id_disclaimer">Formatted to official government dimensions. Always check your country\'s latest rules before submitting — requirements change.</string>
+    <string name="id_no_face">No face found</string>
+    <string name="id_no_face_body">Use a photo with one clearly visible face, looking straight at the camera.</string>
+    <string name="id_multiple_faces">More than one face found</string>
+
+    <!-- Batch -->
+    <string name="batch_free_limit_title">Free version resizes 1 photo at a time</string>
+    <string name="batch_free_limit_body">Upgrade to Pro to resize up to 100 photos in one batch — or watch a short video to add 5 more photos to this batch.</string>
+    <string name="batch_watch_ad">Watch a video · add 5 photos</string>
+    <string name="batch_go_pro">See Pro</string>
+    <string name="batch_target_size">Target file size</string>
+    <string name="batch_strip_exif">Location and camera data are always removed</string>
+    <string name="batch_format_png">PNG (larger, lossless) — off = JPEG</string>
+    <string name="batch_summary">%1$d photos · %2$s → %3$s saved</string>
+
+    <!-- Monetization -->
+    <string name="pro_badge">PRO</string>
+    <string name="paywall_title">Photo Studio Pro</string>
+    <string name="paywall_subtitle">For people who edit photos every day</string>
+    <string name="paywall_continue_free">Continue with the free version</string>
+    <string name="paywall_restore">Restore purchase</string>
+    <string name="paywall_terms">Subscription renews automatically until cancelled. Payment is charged to your Google Play account. Cancel any time in Play Store → Payments &amp; subscriptions → Subscriptions.</string>
+    <string name="paywall_trial_info">%1$d-day free trial, then %2$s.</string>
+    <string name="reward_granted">Unlocked · %1$s</string>
+    <string name="reward_cap_reached">Daily limit reached. Come back tomorrow, or upgrade to Pro for no limits.</string>
+    <string name="reward_ad_failed">That video did not load. Please try again in a moment.</string>
+
+    <!-- Settings / legal -->
+    <string name="settings">Settings</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_privacy_summary">No photo ever leaves your device. Read exactly what the ad and billing SDKs do.</string>
+    <string name="settings_rate">Rate this app</string>
+    <string name="settings_share">Tell a friend</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+
+    <!-- Errors -->
+    <string name="err_generic">Something went wrong. Please try again.</string>
+    <string name="err_oom">That photo is very large. Try a smaller image, or close other apps and retry.</string>
+
+    <!-- ================= ONBOARDING ================= -->
+    <!-- Slide 2 must NOT claim "100% offline": Background Remover downloads its
+         ML model once via Google Play services. "Works offline after one-time
+         setup" is the verifiably true wording. See SPEC.md section 1. -->
+    <string name="onb_1_title">Cut out any background</string>
+    <string name="onb_1_body">Products, people, objects — export with a transparent background, or place them on white or black. Background removal is unlimited and free, with no daily cap and no credits.</string>
+    <string name="onb_2_title">Your photos never leave your phone</string>
+    <string name="onb_2_body">No account, no email, no upload. Every image is processed on this device. Works offline after one-time setup — only the machine-learning model is downloaded, never your photos.</string>
+    <string name="onb_3_title">Eight tools, one app</string>
+    <string name="onb_3_body">ID photos for 30+ countries, batch resize and compress, white backgrounds for marketplaces, collages, photo to PDF, text scanning with Devanagari support, and photo enhance.</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_see_pro">See Pro — start free trial</string>
+
+    <!-- ================= BATCH: output folder (SAF) ================= -->
+    <string name="batch_save_to">Save to</string>
+    <string name="batch_save_to_none">No folder chosen yet</string>
+    <string name="batch_choose_folder">Choose folder</string>
+
+    <!-- ================= M6 WHITE BACKGROUND ================= -->
+    <string name="wb_strength">Strength</string>
+    <string name="wb_even_lighting">Even out lighting</string>
+    <string name="wb_body">Push a wall or table background to pure white for marketplace listings. This is a classical threshold-and-flood algorithm, not a generative model — it cannot invent detail.</string>
+    <string name="wb_tip">Works best when the subject is clearly darker than the background and the lighting is fairly even.</string>
+
+    <!-- ================= M7 COLLAGE ================= -->
+    <string name="collage_layout">Layout</string>
+    <string name="collage_spacing">Spacing</string>
+    <string name="collage_border">Border</string>
+    <string name="collage_corners">Corner radius</string>
+    <string name="collage_ratio">Aspect ratio</string>
+    <string name="collage_need_more">Pick %1$d photos for this layout</string>
+    <string name="collage_free_limit">Free templates are limited. Watch a short video to unlock all templates for 24 hours.</string>
+
+    <!-- ================= M8 PDF ================= -->
+    <string name="pdf_to_pdf">Photos to PDF</string>
+    <string name="pdf_to_images">PDF to photos</string>
+    <string name="pdf_page_size">Page size</string>
+    <string name="pdf_fit">Fit</string>
+    <string name="pdf_fill">Fill (crops)</string>
+    <string name="pdf_margin">Margin</string>
+    <string name="pdf_pages_out">%1$d page(s) written</string>
+    <string name="pdf_images_out">%1$d image(s) extracted</string>
+    <string name="pdf_pick_pdf">Choose a PDF</string>
+    <string name="pdf_empty">Add photos first</string>
+
+    <!-- ================= M9 OCR ================= -->
+    <string name="ocr_script">Script</string>
+    <string name="ocr_scan">Scan text</string>
+    <string name="ocr_copy">Copy</string>
+    <string name="ocr_copied">Text copied</string>
+    <string name="ocr_nothing">No text found in this image</string>
+    <string name="ocr_nothing_body">Try a sharper photo with better lighting. Text works best when it fills most of the frame and is not at a steep angle.</string>
+    <string name="ocr_free_limit">Free scans used up for today. Pro scans without limit.</string>
+    <string name="ocr_blocks">%1$d text block(s) found</string>
+
+    <!-- ================= M10 ENHANCE ================= -->
+    <string name="enh_auto">Auto enhance</string>
+    <string name="enh_brightness">Brightness</string>
+    <string name="enh_contrast">Contrast</string>
+    <string name="enh_saturation">Saturation</string>
+    <string name="enh_sharpness">Sharpness</string>
+    <string name="enh_denoise">Reduce noise</string>
+    <string name="enh_wb">Auto white balance</string>
+    <string name="enh_reset">Reset</string>
+    <string name="enh_compare">Hold to compare</string>
+    <!-- Naming rule: this tool is classical image processing. Calling it "AI
+         Enhance" or "AI Restore" is what gets apps rejected and swept under
+         Play's AI & deception policy. Keep it "Photo Enhance". -->
+    <string name="enh_honest">Photo Enhance uses classical algorithms — auto levels, grey-world white balance, unsharp masking and edge-preserving denoise. It improves exposure and sharpness; it cannot recover detail that was never captured, and it does not restore damaged old photos.</string>
+
+    <!-- ================= SETTINGS: data deletion ================= -->
+    <!-- Required: the Data Safety form answers YES to "do you provide a way for
+         users to request that their data is deleted?", and the privacy policy
+         promises an in-app path. Removing this row means changing BOTH of those. -->
+    <string name="settings_delete_data">Delete my data</string>
+    <string name="settings_delete_data_summary">Clears everything this app stores on your device</string>
+    <string name="settings_delete_data_warn">This clears your daily usage counters, your saved preferences and your offline Pro status on this device. Your photos are never stored by us, so there is nothing of yours to delete from a server — we have no server. If you are a Pro subscriber, your purchase stays on your Google account and you can restore it any time with Restore purchases. This cannot be undone.</string>
+    <string name="settings_delete_confirm">Delete everything</string>
+</resources>
