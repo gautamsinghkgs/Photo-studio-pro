@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,6 +10,15 @@ plugins {
     // Uncomment AFTER adding app/google-services.json (YOUR-TURN.md step 5)
     // alias(libs.plugins.google.services)
     // alias(libs.plugins.firebase.crashlytics)
+}
+
+// Kotlin 2.3 removed the old `kotlinOptions { jvmTarget = "17" }` DSL — it is now a
+// hard compile ERROR, not a warning (workflow run #2, app/build.gradle.kts:87).
+// The replacement is the compilerOptions DSL on the top-level kotlin extension.
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
 
 android {
@@ -84,7 +94,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = false
     }
-    kotlinOptions { jvmTarget = "17" }
 
     buildFeatures {
         compose = true
