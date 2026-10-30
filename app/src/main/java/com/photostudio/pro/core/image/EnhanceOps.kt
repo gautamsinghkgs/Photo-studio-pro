@@ -142,9 +142,63 @@ object EnhanceOps {
         return bmp
     }
 
-    /** Brightness (-255..255), contrast (-1..1), saturation (-1..1), gamma. */
+    /**
+     * The one call the Enhance screen makes.
+     *
+     * @param brightness -255..255   @param contrast -1..1
+     * @param saturation -1..1       @param gamma    0.2..5
+     * @param sharpness  0..1.5      unsharp-mask amount (bug #22: this parameter
+     *                               did not exist, so the two sliders on the
+     *                               Enhance screen were inert — an inert control
+     *                               is the same bug class as #10)
+     * @param denoise    0..60       strength of the edge-preserving 3x3 filter
+     *
+     * Filter ORDER is deliberate: denoise -> colour -> sharpen. Sharpening before
+     * denoising amplifies exactly the sensor noise the user asked to remove, and
+     * colour maths after sharpening would clip the halos the mask just created.
+     */
     fun adjust(src: Bitmap, brightness: Int = 0, contrast: Float = 0f,
-               saturation: Float = 0f, gamma: Float = 1f): Bitmap {
+               saturation: Float = 0f, gamma: Float = 1f,
+               sharpness: Float = 0f, denoise: Int = 0): Bitmap {
+        val colourNeutral = brightness == 0 && contrast == 0f &&
+                saturation == 0f && gamma == 1f
+        if (colourNeutral && sharpness <= 0f && denoise <= 0) return src
+
+        // `cur` is always either `src` (caller-owned, never recycled here) or a
+        // bitmap this function created — intermediates are recycled as we go so a
+        // 12 MP photo does not hold three full buffers at once (SPEC.md OOM rule).
+        var cur = src
+
+        if (denoise > 0) {
+            // slider 0..60 -> luma threshold 40..6. A SMALLER threshold means fewer
+            // neighbours qualify for the average, i.e. gentler smoothing; 60 is the
+            // strongest setting the UI offers.
+            val threshold = (40 - denoise.coerceIn(0, 60) * 34 / 60).coerceIn(6, 40)
+            // Qualified call: the `denoise` PARAMETER shadows the `denoise` FUNCTION.
+            val d = EnhanceOps.denoise(cur, threshold)
+            if (d !== cur && cur !== src) cur.recycle()
+            cur = d
+        }
+
+        if (!colourNeutral) {
+            val a = adjustColour(cur, brightness, contrast, saturation, gamma)
+            if (a !== cur && cur !== src) cur.recycle()
+            cur = a
+        }
+
+        if (sharpness > 0f) {
+            val s = unsharpMask(cur, sharpness.coerceIn(0f, 1.5f))
+            if (s !== cur && cur !== src) cur.recycle()
+            cur = s
+        }
+
+        return cur
+    }
+
+    /** The per-pixel colour pass, split out of [adjust] so it can be chained with
+     *  the spatial filters. Returns a NEW bitmap unless every parameter is neutral. */
+    private fun adjustColour(src: Bitmap, brightness: Int, contrast: Float,
+                             saturation: Float, gamma: Float): Bitmap {
         if (brightness == 0 && contrast == 0f && saturation == 0f && gamma == 1f) return src
         val w = src.width; val h = src.height
         val px = IntArray(w * h); src.getPixels(px, 0, w, 0, 0, w, h)

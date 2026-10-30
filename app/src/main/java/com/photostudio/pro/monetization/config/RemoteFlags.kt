@@ -3,6 +3,7 @@ package com.photostudio.pro.monetization.config
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.photostudio.pro.monetization.ads.AdPolicy
+import com.photostudio.pro.monetization.ads.FlagSource
 
 /**
  * Every tunable number in the app lives here, fetched from Firebase Remote
@@ -39,7 +40,7 @@ object RemoteFlagKeys {
     const val TOOL_ENABLED_PREFIX         = "tool_enabled_"
 }
 
-class RemoteFlags(private val config: FirebaseRemoteConfig) {
+class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
 
     init {
         // In-app defaults are the SAFE values. If fetch fails, the app still
@@ -53,7 +54,7 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) {
                 RemoteFlagKeys.ADS_REWARDED_ENABLED       to true,
                 RemoteFlagKeys.ADS_REWARDED_DAILY_CAP     to 8L,
                 RemoteFlagKeys.ADS_NATIVE_ENABLED         to false,
-                RemoteFlagKeys.PAYWALL_AFTER_SCREONS      to 3L,
+                RemoteFlagKeys.PAYWALL_AFTER_SCREENS      to 3L,
                 RemoteFlagKeys.PAYWALL_VARIANT            to "soft_hard",
                 RemoteFlagKeys.FREE_EXPORTS_PER_DAY       to 3L,
                 RemoteFlagKeys.FREE_BATCH_SIZE            to 1L,
@@ -88,14 +89,14 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) {
             .addOnCompleteListener { /* ignored — defaults are already safe */ }
     }
 
-    val interstitialsEnabled: Boolean get() = config.getBoolean(RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED)
-    val firstAdDelayMs: Long          get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_DELAY_MS)
-    val interstitialGapMs: Long       get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS)
-    val interstitialDailyCap: Int     get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP).toInt()
-    val rewardedEnabled: Boolean      get() = config.getBoolean(RemoteFlagKeys.ADS_REWARDED_ENABLED)
+    override val interstitialsEnabled: Boolean get() = config.getBoolean(RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED)
+    override val firstAdDelayMs: Long          get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_DELAY_MS)
+    override val interstitialGapMs: Long       get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS)
+    override val interstitialDailyCap: Int     get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP).toInt()
+    override val rewardedEnabled: Boolean      get() = config.getBoolean(RemoteFlagKeys.ADS_REWARDED_ENABLED)
     val rewardedDailyCap: Int         get() = config.getLong(RemoteFlagKeys.ADS_REWARDED_DAILY_CAP).toInt()
-    val nativeEnabled: Boolean        get() = config.getBoolean(RemoteFlagKeys.ADS_NATIVE_ENABLED)
-    val paywallAfterScreens: Int      get() = config.getLong(RemoteFlagKeys.PAYWALL_AFTER_SCREONS).toInt()
+    override val nativeEnabled: Boolean        get() = config.getBoolean(RemoteFlagKeys.ADS_NATIVE_ENABLED)
+    val paywallAfterScreens: Int      get() = config.getLong(RemoteFlagKeys.PAYWALL_AFTER_SCREENS).toInt()
     val paywallVariant: String        get() = config.getString(RemoteFlagKeys.PAYWALL_VARIANT)
     val freeExportsPerDay: Int        get() = config.getLong(RemoteFlagKeys.FREE_EXPORTS_PER_DAY).toInt()
     val freeBatchSize: Int            get() = config.getLong(RemoteFlagKeys.FREE_BATCH_SIZE).toInt()

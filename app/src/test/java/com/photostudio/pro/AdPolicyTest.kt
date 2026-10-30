@@ -1,7 +1,10 @@
 package com.photostudio.pro
 
 import com.photostudio.pro.monetization.ads.AdPolicy
+import com.photostudio.pro.monetization.ads.EntitlementSource
+import com.photostudio.pro.monetization.ads.FlagSource
 import com.photostudio.pro.monetization.ads.UsageCounters
+import com.photostudio.pro.monetization.billing.EntitlementManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -220,11 +223,16 @@ class AdPolicyTest {
 
     // ---- Fakes. Kept hand-written: no Mockito on a solo zero-budget project. ----
 
+    // These fakes implement the SEAMS (EntitlementSource / FlagSource), not the
+    // real classes: EntitlementManager needs a Context and RemoteFlags needs a
+    // FirebaseRemoteConfig, and neither exists on a plain JVM. Both are final, so
+    // subclassing them never compiled — the unit tests had literally never been
+    // through a real compile before 2026-10-30 (bug #28).
     private class FakeEntitlements(
         isPro: Boolean, isInTrial: Boolean = false, intent: Boolean = false,
-    ) : com.photostudio.pro.monetization.billing.EntitlementManager() {
-        private val s = State(isPro, isInTrial, intent)
-        override fun snapshot(): State = s
+    ) : EntitlementSource {
+        private val s = EntitlementManager.State(isPro, isInTrial, intent)
+        override fun snapshot(): EntitlementManager.State = s
     }
 
     private class FakeFlags(
@@ -234,7 +242,7 @@ class AdPolicyTest {
         override val interstitialDailyCap: Int = AdPolicy.DEFAULT_INTERSTITIAL_DAILY_CAP,
         override val rewardedEnabled: Boolean = true,
         override val nativeEnabled: Boolean = false,
-    ) : com.photostudio.pro.monetization.config.RemoteFlags()
+    ) : FlagSource
 
     private class FakeUsage(
         override val interstitialsToday: Int = 0,

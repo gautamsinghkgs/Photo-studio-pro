@@ -86,6 +86,25 @@ object ExportOps {
         }.getOrNull()
 
     /**
+     * Same destination as [toShareUri], but for bytes that are ALREADY encoded.
+     *
+     * ID Photo searches for the quality that lands under a government portal's KB
+     * ceiling; re-encoding from the bitmap here would throw that search away and
+     * could put the file back over the limit. Sharing the exact bytes also means
+     * the file the user receives, the file a folder-save would write, and the size
+     * reported to analytics are all the same three numbers.
+     */
+    fun toShareUri(context: Context, data: ByteArray, name: String, format: Format): Uri? =
+        runCatching {
+            val dir = java.io.File(context.cacheDir, "exports").apply { mkdirs() }
+            val file = java.io.File(dir, "$name.${format.ext}")
+            file.outputStream().use { it.write(data) }
+            androidx.core.content.FileProvider.getUriForFile(
+                context, "${context.packageName}.fileprovider", file
+            )
+        }.getOrNull()
+
+    /**
      * Save into a user-picked folder via the Storage Access Framework.
      * We never request READ/WRITE_EXTERNAL_STORAGE or READ_MEDIA_IMAGES —
      * SAF keeps us out of the sensitive-permission review path entirely.

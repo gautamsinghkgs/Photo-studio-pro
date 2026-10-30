@@ -15,7 +15,13 @@
 
 [versions]
 # --- Build toolchain (match your Android Studio install if it complains) ---
-agp                = "8.13.2"     # latest 8.x stable. AGP 9.5.0 also exists — 8.x is safer for a first build
+agp                = "9.1.1"     # REQUIRED — see bug #16. The 2026 AndroidX stack
+                                  # (Compose 1.12.1 / core 1.19.1 / navigation 2.10.2 /
+                                  # lifecycle 2.11.0) declares
+                                  # minAndroidGradlePluginVersion=9.1.0 + minCompileSdk=37
+                                  # in its AAR metadata, so 8.13.2 fails checkAarMetadata.
+                                  # AGP 9.1.1 (April 2026): Gradle 9.3.1 min, Build-Tools
+                                  # 36.0.0, JDK 17, supports API 37.
 kotlin             = "2.3.21"     # latest stable 2.3.x
 ksp                = "2.3.12"
 
@@ -50,9 +56,21 @@ revenuecat         = "6.5.2"
 
 # --- Firebase (Spark plan only — see SPEC.md C2) ---
 firebaseBom        = "35.1.0"
+# ⚠️ The `-ktx` Firebase artifacts DO NOT EXIST in BOM 35.1.0 — the BOM lists zero
+# ktx entries (firebase-analytics-ktx stopped at 22.5.0, June 2025). A dependency
+# with no version fails resolution: "Could not find com.google.firebase:
+# firebase-analytics-ktx:." (bug #15, found by a local Gradle resolve on 2026-10-30).
+# Since BOM 32.x the Kotlin extensions live INSIDE the main artifacts, so
+# `firebase-analytics` / `firebase-config` / `firebase-crashlytics` are correct and
+# our imports (com.google.firebase.analytics.FirebaseAnalytics, ...remoteconfig.*)
+# already point at the non-ktx packages.
 
 # --- Third party ---
-coil               = "3.6.3"          # NOTE: Coil 3 group is io.coil-kt.coil3
+# coil REMOVED — bug #29. The app never loads a network image: every Image() in
+# every screen paints a locally-decoded Bitmap via BitmapPainter. Coil 3 pulled in
+# coil-core + coil-compose + okio for nothing (~2 MB of the AAB budget). If you ever
+# add URL-based image loading, re-add:
+#   coil = "3.6.3"   (group io.coil-kt.coil3)
 pdfbox             = "2.0.27.0"
 coroutines         = "1.11.0"
 serializationJson  = "1.12.0"
@@ -90,14 +108,21 @@ mlkit-text-recognition-devanagari = { group = "com.google.mlkit",       name = "
 play-services-ads              = { group = "com.google.android.gms",   name = "play-services-ads",            version.ref = "playServicesAds" }
 ump                            = { group = "com.google.android.ump",   name = "user-messaging-platform",      version.ref = "ump" }
 
-revenuecat-store-google        = { group = "com.revenuecat.purchases",  name = "purchases-store-google",       version.ref = "revenuecat" }
+# ⚠️ Must be the UMBRELLA artifact `purchases`, NOT `purchases-store-google` (bug #17).
+# Verified by unzipping both AARs: purchases-store-google-6.5.2.aar contains ONLY the
+# Google billing wrapper (45 classes under com/revenuecat/purchases/google/). The public
+# entry points we import — Purchases, PurchasesConfiguration, LogLevel, CustomerInfo,
+# interfaces.ReceiveCustomerInfoCallback and ListenerConversionsKt (getOfferingsWith /
+# purchaseWith) — live in purchases-6.5.2.aar, which pulls store-google + purchases-core-*
+# transitively. Depending on the store artifact alone leaves 69 "Unresolved reference"
+# compile errors in EntitlementManager.kt and PurchaseFlow.kt.
+revenuecat-purchases           = { group = "com.revenuecat.purchases",  name = "purchases",                    version.ref = "revenuecat" }
 
 firebase-bom                   = { group = "com.google.firebase",       name = "firebase-bom",                 version.ref = "firebaseBom" }
-firebase-analytics             = { group = "com.google.firebase",       name = "firebase-analytics-ktx" }
-firebase-crashlytics           = { group = "com.google.firebase",       name = "firebase-crashlytics-ktx" }
-firebase-config                = { group = "com.google.firebase",       name = "firebase-config-ktx" }
+firebase-analytics             = { group = "com.google.firebase",       name = "firebase-analytics" }
+firebase-crashlytics           = { group = "com.google.firebase",       name = "firebase-crashlytics" }
+firebase-config                = { group = "com.google.firebase",       name = "firebase-config" }
 
-coil-compose                   = { group = "io.coil-kt.coil3",          name = "coil-compose",                 version.ref = "coil" }
 pdfbox-android                 = { group = "com.tom-roush",             name = "pdfbox-android",               version.ref = "pdfbox" }
 kotlinx-coroutines-android     = { group = "org.jetbrains.kotlinx",     name = "kotlinx-coroutines-android",   version.ref = "coroutines" }
 kotlinx-serialization-json     = { group = "org.jetbrains.kotlinx",     name = "kotlinx-serialization-json",   version.ref = "serializationJson" }
@@ -107,7 +132,8 @@ kotlinx-coroutines-test        = { group = "org.jetbrains.kotlinx",     name = "
 
 [plugins]
 android-application = { id = "com.android.application",             version.ref = "agp" }
-kotlin-android      = { id = "org.jetbrains.kotlin.android",        version.ref = "kotlin" }
+# kotlin-android is GONE on purpose: AGP 9 has built-in Kotlin support and applying
+# org.jetbrains.kotlin.android is a hard build failure (bug #16).
 kotlin-compose      = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization= { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp                 = { id = "com.google.devtools.ksp",             version.ref = "ksp" }

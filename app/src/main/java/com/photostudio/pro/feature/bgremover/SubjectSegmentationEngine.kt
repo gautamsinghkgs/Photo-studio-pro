@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.google.android.gms.common.moduleinstall.InstallStatusListener
 import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.android.gms.common.moduleinstall.ModuleInstallStatusUpdate
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
@@ -64,11 +65,12 @@ import kotlin.coroutines.resumeWithException
  *     -> [warmUp] does exactly that.
  *
  * ──────────────────────────────────────────────────────────────────────────
- * 🔎 VERIFY BEFORE FIRST BUILD (I cannot compile here — no Android SDK):
- *    the four `com.google.mlkit.vision.segmentation.subject.*` imports and the
- *    `ModuleInstall*` imports are the beta surface. Open the doc URL above,
- *    copy its import list, and diff it against this file. Everything else in
- *    here (the mask maths, the warm-up, the fallbacks) is plain Kotlin.
+ * ✅ VERIFIED BY A REAL COMPILE on 2026-10-30 (Gradle 9.3.1 + AGP 9.1.1 +
+ *    compileSdk 37 inside the sandbox): the four
+ *    `com.google.mlkit.vision.segmentation.subject.*` imports resolve, and the
+ *    ModuleInstall surface used here was confirmed with javap against the
+ *    play-services-base AAR in the resolved dependency cache. `SubjectSegmenter`
+ *    extends `Detector<SubjectSegmentationResult>, OptionalModuleApi`.
  * ──────────────────────────────────────────────────────────────────────────
  */
 class SubjectSegmentationEngine(private val context: Context) {
@@ -122,25 +124,47 @@ class SubjectSegmentationEngine(private val context: Context) {
             // ModuleInstallClient manage it.
             val listener = object : InstallStatusListener {
                 override fun onInstallStatusUpdated(update: ModuleInstallStatusUpdate) {
+                    // ⚠️ The constants are `ModuleInstallStatusUpdate.InstallState.STATE_*`
+                    // ints, verified with javap against play-services-base inside the
+                    // resolved Gradle cache (bug #18). The full set is: STATE_UNKNOWN,
+                    // STATE_PENDING, STATE_DOWNLOADING, STATE_DOWNLOAD_PAUSED,
+                    // STATE_INSTALLING, STATE_COMPLETED, STATE_CANCELED, STATE_FAILED.
+                    // There is no INSTALLED / DOWNLOADED / REQUIRES_USER_CONFIRMATION.
                     when (update.installState) {
-                        ModuleInstallStatusUpdate.InstallState.COMPLETED,
-                        ModuleInstallStatusUpdate.InstallState.INSTALLED ->
+                        ModuleInstallStatusUpdate.InstallState.STATE_COMPLETED -> {
+                            // `this` == the InstallStatusListener. Referencing the local
+                            // `val listener` inside its own initializer does not compile.
+                            install.unregisterListener(this)
                             if (cont.isActive) cont.resume(ModelState.READY)
-                        ModuleInstallStatusUpdate.InstallState.REQUIRES_USER_CONFIRMATION,
-                        ModuleInstallStatusUpdate.InstallState.PENDING,
-                        ModuleInstallStatusUpdate.InstallState.DOWNLOADING,
-                        ModuleInstallStatusUpdate.InstallState.DOWNLOADED,
-                        ModuleInstallStatusUpdate.InstallState.INSTALLING ->
+                        }
+                        ModuleInstallStatusUpdate.InstallState.STATE_PENDING,
+                        ModuleInstallStatusUpdate.InstallState.STATE_DOWNLOADING,
+                        ModuleInstallStatusUpdate.InstallState.STATE_DOWNLOAD_PAUSED,
+                        ModuleInstallStatusUpdate.InstallState.STATE_INSTALLING ->
                             Events.logSegmentationModelNotReady("downloading")
-                        ModuleInstallStatusUpdate.InstallState.FAILED,
-                        ModuleInstallStatusUpdate.InstallState.UNKNOWN ->
+                        ModuleInstallStatusUpdate.InstallState.STATE_CANCELED,
+                        ModuleInstallStatusUpdate.InstallState.STATE_FAILED,
+                        ModuleInstallStatusUpdate.InstallState.STATE_UNKNOWN -> {
+                            install.unregisterListener(this)
                             if (cont.isActive) cont.resume(ModelState.NEEDS_NETWORK)
+                        }
                     }
                 }
             }
-            install.registerListener(listener)
+            // There is NO ModuleInstallClient.registerListener() — the listener is
+            // attached through the request builder (javap-verified, bug #18):
+            //   ModuleInstallClient.installModules(ModuleInstallRequest)
+            //   ModuleInstallRequest.Builder.addApi(OptionalModuleApi)
+            //   ModuleInstallRequest.Builder.setListener(InstallStatusListener)
+            // SubjectSegmenter itself implements OptionalModuleApi (verified in
+            // play-services-mlkit-subject-segmentation-16.0.0-beta1.aar), so no cast
+            // is needed.
+            val request = ModuleInstallRequest.newBuilder()
+                .addApi(segmenter)
+                .setListener(listener)
+                .build()
 
-            install.installModules(listOf(segmenter))
+            install.installModules(request)
                 .addOnSuccessListener { response ->
                     val already = runCatching { response.areModulesAlreadyInstalled() }.getOrDefault(false)
                     if (already) {

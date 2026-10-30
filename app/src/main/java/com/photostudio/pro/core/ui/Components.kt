@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -61,7 +63,11 @@ fun ToolScaffold(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        // An extension property cannot be used fully-qualified at the
+                        // call site — it needs the import above. ArrowBack lives in
+                        // material-icons-core; material-icons-extended is frozen at
+                        // 1.7.8 and does NOT contain the core icon set (bug #19).
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 },
                 actions = { actions() },
@@ -114,7 +120,8 @@ fun EmptyState(
 ) {
     Column(
         Modifier.fillMaxSize().padding(28.dp),
-        horizontalArrangement = Arrangement.Center,
+        // Column has verticalArrangement + horizontalAlignment. There is no
+        // horizontalArrangement parameter on Column — that belongs to Row (bug #19).
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

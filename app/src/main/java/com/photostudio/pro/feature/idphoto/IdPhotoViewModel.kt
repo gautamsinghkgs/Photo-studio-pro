@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.photostudio.pro.core.image.BitmapOps
 import com.photostudio.pro.core.image.EnhanceOps
 import com.photostudio.pro.core.image.ExportOps
+import com.photostudio.pro.core.util.ExportFlow
 import com.photostudio.pro.core.util.ServiceLocator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -249,39 +250,44 @@ class IdPhotoViewModel : ViewModel() {
         return sheet
     }
 
-    fun export(ctx: Context, asSheet: Boolean, onNeedPro: () -> Unit, onDone: (Uri?) -> Unit) {
-        val ui = _state.value.ui as? Ui.Ready ?: return onDone(null)
-        val spec = _state.value.spec ?: return onDone(null)
-        val isPro = ServiceLocator.entitlements.snapshot().isPro
-        if (!isPro && ServiceLocator.usage.exportsToday >= ServiceLocator.flags.freeExportsPerDay)
-            return onNeedPro()
+    /**
+     * Export. Now routed through [ExportFlow.run] like every other image tool.
+     *
+     * The KB ceiling stays the reason this tool exists: government portals hard-reject
+     * oversized uploads, and hitting that ceiling is the detail that earns a 5-star
+     * review from a student applying for a visa. `Plan.FixedDimensions` hands the
+     * quality search to ExportFlow so it runs on the FINAL pixels (after any
+     * watermark), and tells it to skip the free-tier 1080px downscale — these files
+     * are validated on pixel dimensions, so shrinking them would break the very check
+     * the tool exists to pass.
+     *
+     * Do NOT call `AdCoordinator.afterExportCompleted` from the Screen: `run` already
+     * does, and both export buttons share this one path.
+     */
+    fun export(
+        ctx: Context,
+        activity: android.app.Activity?,
+        treeUri: Uri?,
+        asSheet: Boolean,
+        onDone: (ExportFlow.Outcome) -> Unit,
+    ) {
+        val ui = _state.value.ui as? Ui.Ready ?: return onDone(ExportFlow.Outcome.Failed("no_image"))
+        val spec = _state.value.spec ?: return onDone(ExportFlow.Outcome.Failed("no_spec"))
 
         _state.value = _state.value.copy(exporting = true)
         viewModelScope.launch {
-            val uri = withContext(Dispatchers.IO) {
-                runCatching {
-                    val bmp = if (asSheet) ui.printSheet else ui.cropPreview
-                    val out = if (isPro) bmp else ExportOps.watermark(bmp, "Photo Studio Pro")
-                    // Honour the spec's file-size ceiling. Government portals
-                    // reject oversized uploads, and this is the detail that
-                    // earns a 5-star review from a student applying for a visa.
-                    val targetBytes = spec.maxKb * 1024
-                    val (bytes, quality) = ExportOps.searchQualityForTargetSize(
-                        targetBytes = targetBytes, tolerancePct = 8,
-                    ) { q -> ExportOps.encode(out, ExportOps.Format.JPEG, q).size }
-                    val encoded = ExportOps.encode(out, ExportOps.Format.JPEG, quality)
-                    val name = "idphoto_${spec.id}_${if (asSheet) "sheet" else "single"}_${System.currentTimeMillis()}"
-                    val shareUri = ExportOps.toShareUri(ctx, out, name, ExportOps.Format.JPEG, quality)
-                    if (out !== bmp) out.recycle()
-                    ServiceLocator.prefs.noteExport()
-                    ServiceLocator.usage.refresh()
-                    com.photostudio.pro.analytics.Events.logExportCompleted(
-                        "idphoto", bmp.width, bmp.height, bytes, isPro)
-                    shareUri
-                }.getOrNull()
-            }
+            val out = ExportFlow.run(
+                ctx = ctx, activity = activity,
+                source = if (asSheet) ui.printSheet else ui.cropPreview,
+                toolId = "idphoto",
+                fileName = "idphoto_${spec.id}_${if (asSheet) "sheet" else "single"}" +
+                           "_${System.currentTimeMillis()}",
+                format = ExportOps.Format.JPEG,
+                treeUri = treeUri,
+                plan = ExportFlow.Plan.FixedDimensions(maxBytes = spec.maxKb * 1024),
+            ) { _state.value = _state.value.copy(exporting = false) }
             _state.value = _state.value.copy(exporting = false)
-            onDone(uri)
+            onDone(out)
         }
     }
 

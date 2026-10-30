@@ -40,7 +40,8 @@ import com.photostudio.pro.core.util.ServiceLocator
 import com.photostudio.pro.monetization.billing.EntitlementManager
 import com.photostudio.pro.monetization.billing.PurchaseFlow
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.ui.platform.LocalActivity
+// LocalActivity comes from activity-compose, NOT from compose.ui.platform (bug #24).
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 

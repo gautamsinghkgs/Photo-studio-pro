@@ -97,10 +97,13 @@ class FaceEngine(context: Context) {
         return FaceGeometry(
             box = Rect(b),
             eyeLineY = eyeY,
-            leftEyeOpen = leftEyeOpenProbability.takeIf { it != Face.UNCOMPUTED_PROBABILITY },
-            rightEyeOpen = rightEyeOpenProbability.takeIf { it != Face.UNCOMPUTED_PROBABILITY },
+            // ML Kit 17.1.0 has NO Face.UNCOMPUTED_PROBABILITY constant (javap-verified
+            // against play-services-mlkit-face-detection): the probability getters
+            // return a nullable Float, and null already means "not computed" (bug #23).
+            leftEyeOpen = leftEyeOpenProbability,
+            rightEyeOpen = rightEyeOpenProbability,
             headHeightPx = b.height(),
-            smiling = smilingProbability.takeIf { it != Face.UNCOMPUTED_PROBABILITY },
+            smiling = smilingProbability,
         )
     }
 

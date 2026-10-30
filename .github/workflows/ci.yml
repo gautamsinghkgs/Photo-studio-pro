@@ -1,9 +1,13 @@
 # =============================================================================
 #  WHY THIS FILE IS THE MOST VALUABLE THING IN THE REPO
 # =============================================================================
-#  The environment this project was written in has no Android SDK, no Gradle,
-#  only JDK 11 (AGP 8.13 needs 17), 2 GB of RAM and no /dev/kvm. So NOT ONE LINE
-#  of the 55 Kotlin files has ever been through a real Android compile.
+#  The environment this project was WRITTEN in had no Android SDK, no Gradle and
+#  only JDK 11 (AGP 9.1.1 needs 17). That is no longer true: on 2026-10-30 a full
+#  toolchain (JDK 17 + Gradle 9.3.1 + Android SDK platform 37.0 + build-tools
+#  36.0.0) was installed inside that same sandbox and `:app:compileDebugKotlin`
+#  was driven to BUILD SUCCESSFUL, so all 55 Kotlin files HAVE now been through a
+#  real Android compile. This workflow stays valuable as the regression gate and
+#  as the only machine that can produce the signed release AAB.
 #
 #  GitHub's runners have JDK 17, the Android SDK and 7 GB of RAM. Pushing this
 #  repo gives you a machine that CAN compile it — for free, without a credit
@@ -35,12 +39,14 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # AGP 8.13.x requires JDK 17. Not 11, not 21-by-default.
+  # AGP 9.1.1 requires JDK 17. Not 11, not 21-by-default.
   JAVA_TOOL_OPTIONS: -Xmx3g
   # Keep Gradle's own daemon heap below the runner's 7 GB so the Kotlin compiler
   # does not get OOM-killed mid-run.
   ORG_GRADLE_PROJECT_org.gradle.jvmargs: -Xmx3g -XX:MaxMetaspaceSize=768m
-  GRADLE_VERSION: "8.13"
+  # AGP 9.1.1 needs Gradle >= 9.3.1 (its documented minimum AND default).
+  # 8.13 fails with "Minimum supported Gradle version is 9.3.1".
+  GRADLE_VERSION: "9.3.1"
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -91,7 +97,7 @@ jobs:
           echo "/opt/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
           gradle --version
 
-      - name: Ensure Android SDK platform 36 + build tools
+      - name: Ensure Android SDK platform 37.0 + build tools
         run: |
           SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
           SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
@@ -113,7 +119,13 @@ jobs:
           echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
           yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
-          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
+          # compileSdk 37 is REQUIRED by the 2026 AndroidX stack (Compose 1.12.1,
+          # core 1.19.1, navigation 2.10.2, lifecycle 2.11.0, coil 3.6.3): their
+          # AAR metadata declares minCompileSdk=37 + minAndroidGradlePluginVersion
+          # =9.1.0, so platform 36 fails checkAarMetadata. The sdkmanager package
+          # is named "platforms;android-37.0" (minor-version naming), NOT android-37.
+          # build-tools 36.0.0 is the AGP 9.1.1 default; 35.0.0 is no longer used.
+          "$SDKMAN" "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
 
       # The Firebase plugins are commented out in app/build.gradle.kts until a
       # real google-services.json exists. If you have uncommented them but not
@@ -175,7 +187,7 @@ jobs:
             "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
           sudo unzip -q /tmp/gradle.zip -d /opt
           echo "/opt/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
-      - name: Ensure Android SDK platform 36 + build tools
+      - name: Ensure Android SDK platform 37.0 + build tools
         run: |
           SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
           SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
@@ -197,7 +209,13 @@ jobs:
           echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
           yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
-          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
+          # compileSdk 37 is REQUIRED by the 2026 AndroidX stack (Compose 1.12.1,
+          # core 1.19.1, navigation 2.10.2, lifecycle 2.11.0, coil 3.6.3): their
+          # AAR metadata declares minCompileSdk=37 + minAndroidGradlePluginVersion
+          # =9.1.0, so platform 36 fails checkAarMetadata. The sdkmanager package
+          # is named "platforms;android-37.0" (minor-version naming), NOT android-37.
+          # build-tools 36.0.0 is the AGP 9.1.1 default; 35.0.0 is no longer used.
+          "$SDKMAN" "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
       - name: Run unit tests
         run: gradle testDebugUnitTest --stacktrace --no-daemon
       # The HTML report names every failing test and shows the assertion
@@ -229,7 +247,7 @@ jobs:
             "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
           sudo unzip -q /tmp/gradle.zip -d /opt
           echo "/opt/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
-      - name: Ensure Android SDK platform 36 + build tools
+      - name: Ensure Android SDK platform 37.0 + build tools
         run: |
           SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
           SDKMAN="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
@@ -251,7 +269,13 @@ jobs:
           echo "ANDROID_HOME=$SDK_ROOT" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
           yes | "$SDKMAN" --licenses > /dev/null 2>&1 || true
-          "$SDKMAN" "platforms;android-36" "build-tools;36.0.0" "build-tools;35.0.0" "platform-tools"
+          # compileSdk 37 is REQUIRED by the 2026 AndroidX stack (Compose 1.12.1,
+          # core 1.19.1, navigation 2.10.2, lifecycle 2.11.0, coil 3.6.3): their
+          # AAR metadata declares minCompileSdk=37 + minAndroidGradlePluginVersion
+          # =9.1.0, so platform 36 fails checkAarMetadata. The sdkmanager package
+          # is named "platforms;android-37.0" (minor-version naming), NOT android-37.
+          # build-tools 36.0.0 is the AGP 9.1.1 default; 35.0.0 is no longer used.
+          "$SDKMAN" "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
       - name: Provide a placeholder google-services.json if one is missing
         run: |
           if [ ! -f app/google-services.json ]; then

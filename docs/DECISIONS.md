@@ -106,36 +106,61 @@ days), Supabase free (5 GB egress then HTTP 402), Gemini image free tier (gone),
 This distinction matters more than anything else in this repo.
 
 ### ✅ Verified against primary sources
+- **RevenueCat `purchases:6.5.2` API shape** — inspected the AAR *and* sources jar from
+  Maven Central on 2026-10-30. `*With` extensions exist; callback interfaces are named
+  `*Callback`, not `*Listener`; `UpdatedCustomerInfoListener` is a Java SAM interface.
+  Three compile errors fixed from this (README §7.4). **Method: when an SDK's history is
+  messy, download its sources jar — do not trust training data.**
+- **ML Kit Subject Segmentation public package** — `com.google.mlkit.vision.segmentation.subject`
+  with exactly five public classes, confirmed by listing the beta AAR's `classes.jar`.
 - **Every dependency version** in `gradle/libs.versions.toml` was resolved from live Maven
   metadata on 2026-10-29. Note androidx artifacts live on `dl.google.com`, not Maven Central.
-- **AGP 8.13.2 ↔ Kotlin 2.3 pairing** confirmed by the official AGP 8.13 release notes
-  (updated 2026-10-28): *"AGP 8.13.2 uses R8 8.13.19 which supports Kotlin 2.3."* Same page:
-  Gradle minimum **8.13**, JDK **17**, SDK Build Tools 35.0.0, max API 36.1.
+- **AGP 9.1.1 ↔ Kotlin 2.3.21 ↔ Gradle 9.3.1** — no longer taken from a release-notes
+  table: this combination **built the project** on 2026-10-30. Requirements per Google's
+  AGP 9.0 notes + `kotl.in/gradle/agp-built-in-kotlin`: Gradle ≥ 9.1.0, JDK 17, Build Tools
+  **36.0.0**, max API **37.0**, *built-in* Kotlin (so `org.jetbrains.kotlin.android` must
+  NOT be applied), new-DSL interfaces only, non-final R class, `targetSdk` defaults to
+  `compileSdk`.
 - **Subject Segmentation is unbundled-only** (see 2.1).
-- **`purchases-ui-ktx` does not exist** — Maven returned empty. That is why the paywall is
-  hand-built rather than using RevenueCat's paywall UI.
-- **117 unit tests pass**, compiled and executed against the real production sources with
-  kotlinc 1.9.24 + JUnit 4 on 2026-10-29. Not mirrors, not copies.
+- **`purchases-ui-ktx` is empty** on Maven — that is why the paywall is hand-built. The API
+  we call lives only in the umbrella `com.revenuecat.purchases:purchases:6.5.2`.
+- **`com.google.android.gms.common.moduleinstall` ships inside `play-services-base`**
+  (47 classes, confirmed with `javap`) — there is no separate artifact to add.
+- **ML Kit's `Face` has no `UNCOMPUTED_PROBABILITY`**; the three probability getters return
+  a nullable `java.lang.Float`. The real classes live in
+  `play-services-mlkit-face-detection-17.1.0.aar`; `com.google.mlkit:face-detection:16.1.7`
+  is a stub that delegates to Play services.
+- **117 unit tests pass under real Gradle** — `:app:testDebugUnitTest`, 2026-10-30, 0 failures,
+  0 skipped, confirmed by parsing `app/build/test-results/**/*.xml`. The earlier
+  kotlinc-1.9.24 stub-harness result was **not** equivalent; see bug **#28**.
 
-### ⚠️ NEVER compiled by an Android toolchain
-Not one of the 55 Kotlin files has been through a real Android compile. The authoring
-environment had no Android SDK, no Gradle, JDK 11 only (AGP needs 17), 2 GB RAM, and no
-`/dev/kvm` so no emulator. **Expect compile errors. That is the expected state, not a
-defect.** `.github/workflows/ci.yml` exists precisely to close this gap.
+### ✅ It compiles. Two stages still cannot be verified locally.
+`:app:compileDebugKotlin` and `:app:testDebugUnitTest` are both **green** under AGP 9.1.1 /
+Gradle 9.3.1 / JDK 17 / compileSdk 37 inside the authoring sandbox (2026-10-30), after six
+compile rounds and bugs **#15–#29**. Resources, all three manifest tasks,
+`processDebugResources`, `checkDebugAarMetadata` and javac are green too.
+
+**Blocked by sandbox RAM, not by the code:** `assembleDebug` / `bundleRelease`. D8 is
+OOM-killed at `dexBuilderDebug` with 2 GB total. So **dexing, R8, resource shrinking,
+packaging, the 16 KB zipalign check and the AAB size measurement have never run anywhere** —
+the CI runner (7 GB) is the first place they can. No emulator has ever run either (no
+`/dev/kvm` in the sandbox).
 
 ### ⚠️ Specifically unverified
-- The exact `com.google.mlkit.vision.segmentation.subject.*` and
-  `com.google.android.gms.common.moduleinstall.*` import paths — beta surface, and AI
-  training data is stale on beta packages. **Diff against the doc's import list.** Flagged
-  in a header comment inside `SubjectSegmentationEngine.kt`.
-- `monetization/billing/PurchaseFlow.kt` has never run against a real RevenueCat offering.
-  The RevenueCat API has changed shape several times (callbacks → `awaitX` coroutines →
-  `*With` scope extensions) and training data mixes all three. It is isolated in one file
-  for exactly this reason.
+- **R8 and resource shrinking.** `isMinifyEnabled` + `isShrinkResources` have never executed.
+  The classic first failure is *"Missing class detected while running R8"* → add that package
+  as `-dontwarn` in `app/proguard-rules.pro`. The second thing only a release build can
+  answer: whether `material-icons-extended` really shrinks from ~7,000 icons to the ~13 used.
+- **Runtime behaviour of everything.** Compiling proves *shape*, not semantics: whether the
+  Subject Segmentation model downloads and how fast, whether ML Kit returns usable
+  probabilities for a real face, whether the Compose screens render, whether a real purchase
+  round-trips. `PurchaseFlow.kt` is isolated in one file for exactly this reason.
 - The ~33 MB size estimate is arithmetic, not a measurement. The `release` CI job reports
   the real number. If it exceeds 70 MB, stop and add no more models.
-- Compose BOM `2026.09.00` and the rest will drift. All versions live in
-  `gradle/libs.versions.toml` and nowhere else.
+- Versions will drift. All of them live in `gradle/libs.versions.toml` and nowhere else —
+  except the one unavoidable literal inside the root `buildscript { }` block (catalog
+  accessors do not exist on the build classpath). `check_wiring.py` reports that as a *note*
+  so it stays visible instead of being silently forgotten.
 
 ---
 
@@ -176,13 +201,29 @@ defect.** `.github/workflows/ci.yml` exists precisely to close this gap.
 
 ---
 
-## 6. Bugs found — 12 total, 11 fixed, 1 parked
+## 6. Bugs found — 32 total, 31 fixed, 1 parked
 
 Do not "simplify" these back. Each was a real defect.
 
 **Found by:** 5 by unit tests · 3 by the resource linter or by reading · **4 by the wiring
-audit**. The wiring bugs could not have been caught by a compiler — every individual piece
-compiled fine, and only the *connection* was missing.
+audit** · 2 by CI runs · **15 by pointing a real Android toolchain at the code** (six compile
+rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
+`ExportFlow` refactor**.
+
+There are three complementary classes here, and each one demands a different defence:
+
+- **#1–#12 could not have been caught by a compiler.** Every piece compiled fine and only the
+  *connection* was missing. Defence: `tools/check_wiring.py` as a CI gate.
+- **#15–#29 could not have been caught by reading.** Every one was a plausible-looking API
+  that does not exist, a coordinate that does not resolve, a name spelled wrong at the call
+  site, or a dependency that is never called. Defence: **install the toolchain and run it** —
+  README §7.2 has the exact command lines, and they work inside a 2 GB sandbox.
+- **#30–#31 were invisible to both.** A counter that was written but never gated, and a
+  failure sentinel that only one of two paths handled. They surfaced only because somebody
+  had to *move* that code onto `ExportFlow` and therefore read every line of it. Defence:
+  **refactors are audits** — when you move a function, read for missing gates, not just for
+  compile errors. That is also why the double-ad trap is documented *before* the refactor
+  instead of after it.
 
 | # | Bug | Why it mattered |
 |---|---|---|
@@ -198,6 +239,26 @@ compiled fine, and only the *connection* was missing.
 | 10 | The Batch **"Remove location and camera data" switch was inert** | The pipeline is `BitmapFactory.decode` → `Bitmap` → `Bitmap.compress()`. A `Bitmap` carries no EXIF, so re-encoding always produced a file with no GPS, no camera model and no timestamps. The switch therefore could not do anything, and its OFF position **promised to keep data the app never keeps**. Fails in the privacy-safe direction, but a false UI claim is still a Play Deceptive-Behaviour exposure. Replaced with honest static text in both locales; the dead `STRIP_EXIF` key and its two accessors were deleted |
 | 11 | **M8 PDF produced no ad decision at all** | `PdfScreen(adsReady, …)` received the flag from `Nav.kt` and never read it, so saving a PDF never asked `AdPolicy` anything. It was the only one of the eight tools with no post-save ad hook — lost inventory on a genuine natural break point. Now wired, and `check_wiring.py` asserts that every feature which exports either uses `ExportFlow` or calls `afterExportCompleted` |
 | 12 | `AdPolicy.canShowInterstitialPure()` accepted `dailyCap` and **ignored it** | Behaviour was correct — the cap is enforced in the impure wrapper, which has the persisted counter — but the signature lied: a caller passing `dailyCap = 0` would expect ads off and silently get ads. Parameter removed and all 117 tests re-run to confirm. Found by a `kotlinc` warning, which is the same shape as bug #5 |
+| 13 | **CI assumed `sdkmanager` was on PATH** | It is not, on current GitHub Ubuntu runners (runner-images#13674); the legacy `tools/` dir is gone. Run #1 died in 0 s at the SDK step, before any Kotlin. Fixed by resolving `cmdline-tools/latest/bin/sdkmanager` with a download fallback. **A 0-second step failure means "tool not found", not "code wrong"** |
+| 14 | **`kotlinOptions { jvmTarget }` is an error in Kotlin 2.3** | Build script died before any source compiled (run #2, "1 error"). Now `compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }` |
+| 15 | **Firebase `-ktx` coordinates do not exist under BOM 35.1.0** | Gradle reported `Could not find com.google.firebase:firebase-analytics-ktx:` — a trailing colon and *no version* means the BOM does not manage that coordinate at all (`-ktx` metadata ends at 22.5.0; BOM 35.1.0 manages analytics 24.0.0 / config 24.0.1 / crashlytics 21.0.1). Every Firebase dependency switched to the non-`-ktx` name; the imports already pointed at those packages |
+| 16 | **`checkDebugAarMetadata` failed with 36 issues** | The 2026 AndroidX generation declares `minCompileSdk=37` **and** `minAndroidGradlePluginVersion=9.1.0` in its AAR metadata. Downgrading one library only moves the failure to the next, so the whole toolchain moved: AGP **9.1.1**, Gradle **9.3.1**, compileSdk **37**, Build-Tools **36.0.0**. `targetSdk` stays **36** because that is what Play enforces |
+| 17 | **`org.jetbrains.kotlin.android` is incompatible with AGP 9** | AGP 9 has *built-in* Kotlin; applying both is an error, and so is the old variant API. KGP 2.3.21 now arrives via a root `buildscript { classpath }` override and `kotlinOptions` became `kotlin { compilerOptions { … } }`. The escape hatch `android.builtInKotlin=false` was deliberately **not** used — it is removed in AGP 10, so it would have been a second migration |
+| 18 | **Wrong RevenueCat coordinate → 69 errors at once** | `purchases-store-google` carries only 45 store classes: no `Purchases`, no `PurchasesConfiguration`, no `*With` extensions; `purchases-ui-ktx` is empty. Every billing type in the project was unresolved *simultaneously*, which is the signature of an artifact problem, not a code problem. Fixed by the umbrella **`com.revenuecat.purchases:purchases:6.5.2`** (142 classes) |
+| 19 | **The `ModuleInstall` API was invented from memory** | There is no `registerListener` (only `unregisterListener`); `installModules` returns `Task<ModuleInstallResponse>`; the request is built with `ModuleInstallRequest.newBuilder().addApi(…).setListener(…)`; and the whole package ships **inside `play-services-base`**. Subject Segmentation's deferred-install path would have crashed at runtime even if it had compiled — it gates the BG Remover, the app's free-tier hook |
+| 20 | **`PAYWALL_AFTER_SCREONS` — a typo at the *usage* sites** | The declaration was spelled correctly, so grepping for the correct name found nothing and the hunt went down homoglyph / encoding / blank-line-formatting dead ends. This flag gates the paywall-after-N-exports lever, i.e. directly gates revenue. Fixed with a byte-level replace plus a re-count assertion (retyping it by hand reproduced the typo twice) |
+| 21 | **Fully-qualified extension properties do not resolve** | `Icons.AutoMirrored.Filled.ArrowBack` written as a receiver chain cannot compile — extension properties need an `import` — and it lives in `material-icons-core`, not `-extended` (which only has `ArrowBackIos`/`ArrowBackIosNew`). Same round: `LocalActivity` → `androidx.activity.compose`, `TextButton` → compiled into material3's `ButtonKt`. Three screens would not build |
+| 22 | **`android.graphics.Color` vs Compose `Color` in `CollageScreen`** | Collage state holds the background colour as an **Int**, so comparing it to a Compose `Color` is a type error, and `Color.WHITE` is valid only in the pure ops files. Compare and assign via `toArgb()`. The same identifier being legal in one file and illegal in the next is why the pure/impure split (§5.5) has to stay |
+| 23 | **Three Collage colour swatches were inert** | They rendered but had no `clickable`, so a user could tap a background colour forever and nothing would happen. Same deceptive-UI class as #10, and no compiler will ever flag a missing click handler — only a wiring audit or a finger |
+| 24 | **`EnhanceOps.adjust()` was called positionally** | The 5th parameter is `gamma`, so the caller's `sharpness`/`denoise` values landed in the wrong slots: Enhance would have produced visibly wrong images while reporting success. The parameter `denoise: Int` also shadowed the object's own `fun denoise(…)`. Now named arguments, an explicit `EnhanceOps.denoise(cur, threshold)`, the colour loop extracted verbatim into `private fun adjustColour(…)`, the order fixed to denoise → colour → sharpen, and intermediates recycled only when `!== src` |
+| 25 | **ML Kit's `Face.UNCOMPUTED_PROBABILITY` does not exist** | Three `.takeIf { it != Face.UNCOMPUTED_PROBABILITY }` guards in `FaceEngine.kt`. The getters already return a nullable `java.lang.Float` where `null` *means* not computed, so the guards were both unresolvable and redundant; nulls now pass straight to `FaceGeometry`. Note `com.google.mlkit:face-detection:16.1.7` is a stub — the classes ship in `play-services-mlkit-face-detection-17.1.0.aar` |
+| 26 | **No smart-cast across modules for `EntitlementInfo.expirationDate`** | It returns a nullable `java.util.Date` from another module, which Kotlin will not smart-cast, so the trial-window check did not compile. Bound to a local first: `val expiry = e?.expirationDate`. This is the code that decides whether a user is inside the 7-day trial — i.e. whether they pay |
+| 27 | **Suspend work inside AdMob's non-suspend callbacks, plus three RevenueCat shapes** | `onDismissed`/`onEarned` are plain `() -> Unit`, so the persisted counters had nowhere to be written; a dropped write means a daily cap or the 180 s gap silently not being enforced — the #1 revenue-killer class this architecture exists to prevent. Now a singleton `callbackScope` (`SupervisorJob() + Dispatchers.Main.immediate`, deliberately never cancelled) with `try { … } finally { callback() }`. Also `Package.getProduct()`, `StoreProduct.price.amountMicros`, and `PurchasesErrorCode.OperationAlreadyInProgressError` — there is no `PurchaseInProgressError` among the 27 codes |
+| 28 | **The 117 unit tests had never been through a real compile** | `AdPolicyTest.kt`'s fakes subclassed the `final` classes `EntitlementManager` / `RemoteFlags`, whose constructors need a `Context` / `FirebaseRemoteConfig`, and overrode `final` members → 11 errors on the first genuine `testDebugUnitTest`. The stub harness had hidden this for weeks, so "117/117 green" was over-claimed in every document. Fixed with narrow seam interfaces — `EntitlementSource { snapshot() }` and `FlagSource { … }` — beside the existing `UsageCounters`, implemented by the real classes; no `open`, no Mockito. **Rule: a stub harness proves logic, only Gradle proves compilation** |
+| 29 | **Coil 3.6.3 was declared and never used** | Every image in the app is painted from a locally-decoded bitmap (`Image(...)` / `BitmapPainter`); the only mention of Coil anywhere was its name in the open-source attribution string. `coil-core` + `coil-compose` + `okio` cost ~2 MB of a ~33 MB AAB budget for zero features, and the attribution claimed a licence for a library the app does not ship. Removed, and the string corrected. **Confirm a dependency is referenced before paying its size cost** |
+| 30 | **Batch counted exports but never checked the daily cap** | `noteExport()` ran on every batch; nothing ever read the count. `allowedCount` limits files **per run** (free = 1 + rewarded bonuses), not runs per day — so a free user could resize unlimited photos by running one-file batches, and the 3-exports/day cap (the whole free tier) did not exist for this tool. It looked correct because the counter *was* being incremented: same shape as #6, a state write with no matching gate. `ExportFlow.runBatch` now checks the cap before writing anything and returns `NeedsPro` |
+| 31 | **A failed batch file was recorded as a successful export** | `processOne` signals failure two ways — a negative sentinel and an exception — and only the exception was handled, so `-1L` became `done = true, outBytes = -1` and rendered `✔ -1 B`. Silent success, same family as #4: the user sees a tick next to a photo that was never written and the run total is wrong. Any negative return is now a failure |
+| 32 | **A trailing lambda binds to the LAST parameter** | `runBatch(…, write, afterSave = {})` called with a trailing lambda attached it to `afterSave`: *"No value passed for parameter 'write'"* plus three cascade errors. Reordered so the required lambda is last. The standing rule held — fix the first error, the rest were inference fallout |
 
 Bugs 6, 7, 9, 10 and 11 were all found by auditing, not by tests. Each compiled fine and
 every piece was individually correct — the *connection* was missing. That class of bug is

@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -137,7 +138,7 @@ fun SettingsScreen(onBack: () -> Unit, onGoPro: () -> Unit = {}) {
             Text("All image processing runs on this device using Google ML Kit and the " +
                  "Android graphics framework. No cloud AI, no third-party inference API.",
                  fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text("Open-source components: PdfBox-Android (Apache 2.0), Coil (Apache 2.0), " +
+            Text("Open-source components: PdfBox-Android (Apache 2.0), " +
                  "Jetpack Compose (Apache 2.0).",
                  fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }

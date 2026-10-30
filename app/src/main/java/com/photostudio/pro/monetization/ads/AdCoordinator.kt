@@ -4,6 +4,10 @@ import android.app.Activity
 import com.photostudio.pro.core.data.local.Prefs
 import com.photostudio.pro.core.data.repository.PrefsUsageCounters
 import com.photostudio.pro.monetization.billing.EntitlementManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 /**
  * The ONLY correct way to show an interstitial.
@@ -27,6 +31,17 @@ class AdCoordinator(
     private val manager: AdManager,
     private val entitlements: EntitlementManager,
 ) {
+
+    /**
+     * Ad callbacks are plain main-thread listeners (FullScreenContentCallback,
+     * onUserEarnedReward) — they are NOT suspend lambdas, so they cannot call the
+     * `suspend` Prefs / counter writes directly (bug #25). This scope owns those
+     * writes. It is deliberately uncancelled: AdCoordinator is built once in
+     * ServiceLocator.init and lives as long as the process, and the writes must
+     * survive the screen that triggered the ad being popped off the back stack —
+     * losing a `noteRewardGranted()` is how a user gets unlimited rewards.
+     */
+    private val callbackScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     /**
      * @param isOnboarding true while the first-run onboarding flow is active.
@@ -57,9 +72,16 @@ class AdCoordinator(
         manager.showInterstitial(activity, decision) {
             // Count it only after it actually showed, so a failed show does not
             // consume the user's daily allowance.
-            prefs.noteInterstitialShown()
-            usage.refresh()
-            onFinished()
+            callbackScope.launch {
+                // try/finally because this class promises onFinished() ALWAYS runs.
+                // A DataStore write that throws must not strand the user's export flow.
+                try {
+                    prefs.noteInterstitialShown()
+                    usage.refresh()
+                } finally {
+                    onFinished()
+                }
+            }
         }
     }
 
@@ -98,9 +120,14 @@ class AdCoordinator(
             activity = activity,
             decision = decision,
             onEarned = {
-                prefs.noteRewardGranted()
-                com.photostudio.pro.analytics.Events.logRewardGranted(kind.name)
-                onGranted(kind)
+                callbackScope.launch {
+                    try {
+                        prefs.noteRewardGranted()
+                    } finally {
+                        com.photostudio.pro.analytics.Events.logRewardGranted(kind.name)
+                        onGranted(kind)
+                    }
+                }
             },
             onCancelled = { onDenied("user_cancelled") },
             onError = { onError() },

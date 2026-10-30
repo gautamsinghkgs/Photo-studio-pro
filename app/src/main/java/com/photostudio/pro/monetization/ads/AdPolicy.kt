@@ -32,8 +32,12 @@ import com.photostudio.pro.monetization.config.RemoteFlags
  * if Firebase has not fetched yet. SPEC.md section 7.
  */
 class AdPolicy(
-    private val entitlements: EntitlementManager,
-    private val flags: RemoteFlags,
+    // Seams, not concrete classes (bug #28). AdPolicy is the most unit-tested file
+    // in the project and it must stay testable on a plain JVM with no Android
+    // runtime, no Firebase and no DataStore. `UsageCounters` already worked this
+    // way; entitlements and flags now do too.
+    private val entitlements: EntitlementSource,
+    private val flags: FlagSource,
     private val usage: UsageCounters,
 ) {
 
@@ -166,4 +170,31 @@ interface UsageCounters {
     val rewardedGrantsToday: Int
     val exportsToday: Int
     val ocrScansToday: Int
+}
+
+/**
+ * The ONLY slice of [EntitlementManager] that AdPolicy is allowed to see.
+ *
+ * A synchronous snapshot, because an ad decision cannot suspend: the ad SDK asks
+ * "may I show this now?" on the main thread and an answer that arrives later is
+ * an ad shown to a paying user.
+ */
+interface EntitlementSource {
+    fun snapshot(): EntitlementManager.State
+}
+
+/**
+ * The ONLY slice of [RemoteFlags] that AdPolicy is allowed to see.
+ *
+ * Deliberately narrow: if someone adds a flag here, they are declaring that ad
+ * policy depends on it, and AdPolicyTest will not compile until they cover it.
+ * That is the point — every one of these numbers can change the revenue curve.
+ */
+interface FlagSource {
+    val interstitialsEnabled: Boolean
+    val firstAdDelayMs: Long
+    val interstitialGapMs: Long
+    val interstitialDailyCap: Int
+    val rewardedEnabled: Boolean
+    val nativeEnabled: Boolean
 }

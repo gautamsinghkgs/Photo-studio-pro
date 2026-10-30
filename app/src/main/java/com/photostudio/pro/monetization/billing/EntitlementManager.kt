@@ -6,6 +6,7 @@ import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
 import com.revenuecat.purchases.PurchasesError
 import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
+import com.photostudio.pro.monetization.ads.EntitlementSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * That single-Source-of-truth discipline is what prevents the entitlement /
  * ad-SDK desync that causes payers to see ads and then refund.
  */
-class EntitlementManager(private val appContext: Context) {
+class EntitlementManager(private val appContext: Context) : EntitlementSource {
 
     /** Exactly one entitlement, named "pro". */
     companion object {
@@ -57,7 +58,7 @@ class EntitlementManager(private val appContext: Context) {
     val state: StateFlow<State> = _state.asStateFlow()
 
     /** Non-suspending read for AdPolicy, which must decide synchronously. */
-    fun snapshot(): State = _state.value
+    override fun snapshot(): State = _state.value
 
     fun configure(apiKey: String) {
         Purchases.logLevel = com.revenuecat.purchases.LogLevel.WARN
@@ -101,15 +102,18 @@ class EntitlementManager(private val appContext: Context) {
     private fun apply(info: CustomerInfo) {
         val e = info.entitlements.all[ENTITLEMENT_PRO]
         val isActive = e?.isActive == true
+        // Captured in a local on purpose: `expirationDate` is a nullable
+        // java.util.Date declared in ANOTHER module (purchases-core-public), so
+        // Kotlin refuses to smart-cast `e.expirationDate.time` (bug #26).
+        val expiry = e?.expirationDate
         val inTrial = isActive && info.activeSubscriptions.isEmpty() &&
-                e?.expirationDate == null           // non-expiring = lifetime
+                expiry == null                      // non-expiring = lifetime
         _state.value = State(
             isPro = isActive,
             // A real trial shows as an active subscription with a future expiry
             // and willPurchaseRenewal semantics handled by RevenueCat. We keep a
             // conservative approximation here; refine once you see live data.
-            isInTrial = isActive && e?.isActive == true && e.expirationDate != null &&
-                    isWithinTrialWindow(e.expirationDate.time),
+            isInTrial = isActive && expiry != null && isWithinTrialWindow(expiry.time),
             hasPurchaseIntent = _state.value.hasPurchaseIntent,
             activeProductId = info.activeSubscriptions.firstOrNull()
                 ?: info.nonSubscriptionTransactions.firstOrNull()?.productId,

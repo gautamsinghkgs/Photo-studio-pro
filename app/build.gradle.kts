@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // NO kotlin.android here — AGP 9 has built-in Kotlin (see the root build file).
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -14,7 +14,8 @@ plugins {
 
 // Kotlin 2.3 removed the old `kotlinOptions { jvmTarget = "17" }` DSL — it is now a
 // hard compile ERROR, not a warning (workflow run #2, app/build.gradle.kts:87).
-// The replacement is the compilerOptions DSL on the top-level kotlin extension.
+// The replacement is the compilerOptions DSL on the top-level kotlin extension,
+// which is also the AGP 9 form (built-in Kotlin registers that extension).
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
@@ -23,7 +24,11 @@ kotlin {
 
 android {
     namespace = "com.photostudio.pro"
-    compileSdk = 36                      // SPEC.md C3 — mandatory from 31 Aug 2026
+    // ⚠️ 37, not 36 — bug #16. Compose 1.12.1 / core 1.19.1 / navigation 2.10.2 /
+    // lifecycle 2.11.0 all declare minCompileSdk=37 in their AAR
+    // metadata. compileSdk only decides WHICH APIs you may call; targetSdk (below)
+    // is what Play enforces, and that stays 36 per SPEC.md C3.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.photostudio.pro"
@@ -151,7 +156,7 @@ dependencies {
     implementation(libs.ump)
 
     // ---- Billing ----
-    implementation(libs.revenuecat.store.google)
+    implementation(libs.revenuecat.purchases)   // umbrella artifact — see bug #17 in libs.versions.toml
 
     // ---- Firebase (SPARK PLAN ONLY — SPEC.md C2. Never enable Blaze.) ----
     implementation(platform(libs.firebase.bom))
@@ -161,7 +166,7 @@ dependencies {
     // implementation(libs.firebase.crashlytics)
 
     // ---- Third party ----
-    implementation(libs.coil.compose)
+    // Coil deliberately NOT here — see libs.versions.toml, bug #29 (unused dep).
     implementation(libs.pdfbox.android)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)

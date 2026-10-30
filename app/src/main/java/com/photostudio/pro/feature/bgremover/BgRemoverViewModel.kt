@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.photostudio.pro.core.image.BitmapOps
 import com.photostudio.pro.core.image.ExportOps
 import com.photostudio.pro.core.image.MaskOps
+import com.photostudio.pro.core.util.ExportFlow
 import com.photostudio.pro.core.util.ServiceLocator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -164,45 +165,46 @@ class BgRemoverViewModel : ViewModel() {
     }
 
     /**
-     * Export. This is a NATURAL BREAK POINT, so it is the only place an
-     * interstitial may be considered — and AdPolicy still decides.
+     * Export. This is a NATURAL BREAK POINT, so it is the only place an interstitial
+     * may be considered — and `AdPolicy` still decides, inside `ExportFlow`.
      *
-     * Free tier: SD + watermark + limited exports/day.
+     * Free tier: SD (1080 long edge) + watermark + limited exports/day.
      * Pro: original resolution, no watermark, unlimited.
+     *
+     * All five commercially sensitive steps live in [ExportFlow.run] and nowhere else.
+     * This function used to hand-roll them, which is why BG Remover could only export
+     * to the share sheet while four other tools could save to a folder (README §6 P1).
+     * Do NOT call `AdCoordinator.afterExportCompleted` from the Screen — `run` already
+     * does, and a second call means two ad decisions for one export.
      */
-    fun export(ctx: Context, format: ExportOps.Format, onNeedPro: () -> Unit, onDone: (Uri?) -> Unit) {
-        val fg = foregroundFull ?: return onDone(null)
+    fun export(
+        ctx: Context,
+        activity: android.app.Activity?,
+        treeUri: Uri?,
+        format: ExportOps.Format,
+        onDone: (ExportFlow.Outcome) -> Unit,
+    ) {
+        val fg = foregroundFull ?: return onDone(ExportFlow.Outcome.Failed("no_image"))
+        // The only thing left here is this tool's own quality preference: Pro 96,
+        // free 88. A preference, not a policy decision — the cap, the watermark and
+        // the counters stay in ExportFlow.
         val isPro = ServiceLocator.entitlements.snapshot().isPro
-        val counters = ServiceLocator.usage
-
-        if (!isPro && counters.exportsToday >= ServiceLocator.flags.freeExportsPerDay) return onNeedPro()
 
         _state.value = _state.value.copy(exporting = true)
         viewModelScope.launch {
-            val uri = withContext(Dispatchers.IO) {
-                runCatching {
-                    // Free tier is capped at 1080px on the longest edge.
-                    val quality = if (isPro) 96 else 88
-                    // Free tier: capped at 1080px on the longest edge + watermark.
-                    // Pro: original resolution, no watermark.
-                    val sized = if (isPro) fg else BitmapOps.scaleToLongestEdge(fg, 1080)
-                    val final = if (isPro) sized else ExportOps.watermark(sized, "Photo Studio Pro")
-                    val bytes = ExportOps.encode(final, format, quality)
-                    val uri = ExportOps.toShareUri(
-                        ctx, final, "cutout_${System.currentTimeMillis()}", format, quality)
-                    // Recycle the intermediates, never the source `fg`.
-                    if (final !== sized) final.recycle()
-                    if (sized !== fg) sized.recycle()
-                    uri?.also {
-                        ServiceLocator.prefs.noteExport()
-                        ServiceLocator.usage.refresh()
-                        com.photostudio.pro.analytics.Events.logExportCompleted(
-                            "bgremove", fg.width, fg.height, bytes.size, isPro)
-                    }
-                }.getOrNull()
-            }
-            _state.value = _state.value.copy(exporting = false, lastExportUri = uri)
-            onDone(uri)
+            val out = ExportFlow.run(
+                ctx = ctx, activity = activity, source = fg,
+                toolId = "bgremove",
+                fileName = "cutout_${System.currentTimeMillis()}",
+                format = format,
+                treeUri = treeUri,
+                plan = ExportFlow.Plan.Standard(quality = if (isPro) 96 else 88),
+            ) { _state.value = _state.value.copy(exporting = false) }
+            _state.value = _state.value.copy(
+                exporting = false,
+                lastExportUri = (out as? ExportFlow.Outcome.Saved)?.uri,
+            )
+            onDone(out)
         }
     }
 

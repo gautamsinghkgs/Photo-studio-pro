@@ -42,6 +42,7 @@ import com.photostudio.pro.core.ui.EmptyState
 import com.photostudio.pro.core.ui.NoticeCard
 import com.photostudio.pro.core.ui.PrimaryAction
 import com.photostudio.pro.core.ui.ToolScaffold
+import com.photostudio.pro.core.util.ExportFlow
 import com.photostudio.pro.core.util.ServiceLocator
 import com.photostudio.pro.monetization.ads.RewardGuard
 import kotlinx.coroutines.launch
@@ -177,11 +178,14 @@ fun BatchScreen(
                     PrimaryAction(if (state.finished) stringResource(R.string.done) else stringResource(R.string.export),
                                   enabled = state.treeUri != null) {
                         if (state.finished) onBack()
-                        else vm.run(ctx, treeUri = state.treeUri) {
-                            // ⭐ Export finished = natural break point.
-                            if (adsReady && activity != null) scope.launch {
-                                ServiceLocator.adCoordinator.afterExportCompleted(activity) { }
-                            }
+                        else vm.run(ctx, activity, treeUri = state.treeUri) { out ->
+                            // ⭐ Export finished = natural break point — but the ad
+                            // decision belongs to ExportFlow.runBatch now. Calling
+                            // afterExportCompleted here as well would fire TWO decisions
+                            // for one batch (README §6 P1, the double-ad trap).
+                            // The rewarded "+5 photos" button above still uses
+                            // `adsReady` and `scope`; that is a different placement.
+                            if (out is ExportFlow.BatchOutcome.NeedsPro) onGoPro()
                         }
                     }
                     TextButton(onClick = { picker.launch(

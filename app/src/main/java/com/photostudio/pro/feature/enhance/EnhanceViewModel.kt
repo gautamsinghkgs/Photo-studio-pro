@@ -125,7 +125,11 @@ class EnhanceViewModel : ViewModel() {
             val full = withContext(Dispatchers.Default) {
                 runCatching {
                     val base = if (_state.value.autoApplied) EnhanceOps.auto(src) else src
-                    EnhanceOps.adjust(base, a.brightness, a.contrast, a.saturation, a.sharpness, a.denoise)
+                    // NAMED arguments on purpose: positionally, the 5th parameter of
+                    // adjust() is gamma, so passing sharpness here would silently
+                    // apply a gamma curve instead of sharpening (bug #22).
+                    EnhanceOps.adjust(base, brightness = a.brightness, contrast = a.contrast,
+                        saturation = a.saturation, sharpness = a.sharpness, denoise = a.denoise)
                 }.getOrNull()
             }
             if (full == null) {

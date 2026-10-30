@@ -95,7 +95,10 @@ object PurchaseFlow {
     private fun mapOffering(offering: Offering?): List<Offer> {
         val pkgs = offering?.availablePackages ?: return emptyList()
         return pkgs.mapNotNull { p ->
-            val sp = p.storeProduct
+            // RevenueCat 6.5.2: `Package.product` (javap-verified). There is no
+            // `storeProduct` property on Package — that name exists on the older
+            // PurchasesError/store types and training data mixes them up (bug #27).
+            val sp = p.product
             val id = sp.id
             // Only surface the three products this app actually defines. An
             // unexpected id means someone edited the dashboard without editing the
@@ -113,7 +116,9 @@ object PurchaseFlow {
                 hasTrial = runCatching {
                     sp.subscriptionOptions?.defaultOffer?.freePhase != null
                 }.getOrDefault(false),
-                priceMicros = sp.priceAmountMicros,
+                // StoreProduct has no priceAmountMicros; the raw value lives on
+                // Price.amountMicros (javap-verified, bug #27).
+                priceMicros = sp.price.amountMicros,
             )
         }.sortedByDescending { it.priceMicros }   // anchor first: yearly/lifetime above weekly
     }
@@ -160,7 +165,9 @@ object PurchaseFlow {
 
     private fun mapError(e: PurchasesError): Result = when (e.code) {
         PurchasesErrorCode.PurchaseCancelledError        -> Result.UserCancelled
-        PurchasesErrorCode.PurchaseInProgressError       -> Result.AlreadyOwned
+        // The 6.5.2 enum member is OperationAlreadyInProgressError; there is no
+        // PurchaseInProgressError (javap-verified against the AAR, bug #27).
+        PurchasesErrorCode.OperationAlreadyInProgressError -> Result.AlreadyOwned
         PurchasesErrorCode.ProductAlreadyPurchasedError  -> Result.AlreadyOwned
         else -> Result.Error(e.message ?: e.code.name, e.code.name)
     }

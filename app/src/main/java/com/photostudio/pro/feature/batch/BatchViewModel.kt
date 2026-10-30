@@ -7,13 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.photostudio.pro.core.image.BitmapOps
 import com.photostudio.pro.core.image.ExportOps
+import com.photostudio.pro.core.util.ExportFlow
 import com.photostudio.pro.core.util.ServiceLocator
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * M3 — Batch Resize & Compress. THE SUBSCRIPTION DRIVER.
@@ -116,49 +115,78 @@ class BatchViewModel : ViewModel() {
         return doc?.name ?: tree.lastPathSegment ?: "Selected folder"
     }
 
-    fun run(ctx: Context, treeUri: Uri?, onFinished: () -> Unit) {
+    /**
+     * Run the batch. One run = ONE commercial event: a single daily-cap check, a
+     * single export counted, a single analytics event, a single ad decision at the
+     * end. All four live in [ExportFlow.runBatch].
+     *
+     * What stays here is the per-file work, which is this tool's actual product
+     * (four resize modes plus a KB target). What used to stay here and should not
+     * have: `noteExport()` was called on every run but the daily cap was NEVER
+     * checked, so a free user could resize unlimited photos all day by running
+     * one-file batches (bug #30).
+     *
+     * The Screen must not call `afterExportCompleted` — `runBatch` already does, and
+     * a second call would fire two ad decisions for one export (README §6 P1).
+     */
+    fun run(
+        ctx: Context,
+        activity: android.app.Activity?,
+        treeUri: Uri?,
+        onFinished: (ExportFlow.BatchOutcome) -> Unit,
+    ) {
         if (_state.value.running) return
         // Never fall back to cacheDir: Android wipes it under storage pressure
         // and the user cannot browse to it. Fail loudly instead.
-        if (treeUri == null) return onFinished()
+        if (treeUri == null) return onFinished(ExportFlow.BatchOutcome.Failed("no_folder"))
         _state.value = _state.value.copy(running = true, finished = false, totalOut = 0)
 
         viewModelScope.launch {
             val s = _state.value
-            val allowed = s.allowedCount
-            var outTotal = 0L
 
-            // Sequential on purpose. See the class doc.
-            s.items.forEachIndexed { index, item ->
-                if (index >= allowed) {
-                    _state.value = _state.value.copy(
-                        items = _state.value.items.toMutableList().also {
-                            it[index] = item.copy(error = false)   // left untouched, not marked failed
-                        })
-                    return@forEachIndexed
-                }
-                val bytes = withContext(Dispatchers.IO) {
-                    runCatching { processOne(ctx, item.uri, s, treeUri) }.getOrNull()
-                }
-                if (bytes == null) {
-                    _state.value = _state.value.copy(items = _state.value.items.toMutableList().also {
-                        it[index] = item.copy(error = true)
-                    })
-                } else {
-                    outTotal += bytes
-                    _state.value = _state.value.copy(items = _state.value.items.toMutableList().also {
-                        it[index] = item.copy(outBytes = bytes, done = true)
-                    }, totalOut = outTotal)
+            // Sequential on purpose — see the class doc. ExportFlow drives the loop so
+            // that the cap check and the ad decision cannot drift out of this file.
+            val out = ExportFlow.runBatch(
+                activity = activity,
+                toolId = "batch",
+                fileCount = s.items.size,
+            ) { index ->
+                val item = _state.value.items.getOrNull(index)
+                when {
+                    item == null -> -1L
+                    // Beyond the free/Pro batch size the file is left untouched, and
+                    // deliberately NOT marked failed: it was never attempted.
+                    index >= s.allowedCount -> {
+                        _state.value = _state.value.copy(
+                            items = _state.value.items.toMutableList().also {
+                                it[index] = item.copy(error = false)
+                            })
+                        -1L
+                    }
+                    else -> {
+                        // processOne signals failure with a negative sentinel, and
+                        // runCatching with null. Treat both as failure — recording -1
+                        // as a successful export showed "✔ -1 B" in the list (bug #31).
+                        val n = runCatching { processOne(ctx, item.uri, s, treeUri) }.getOrNull() ?: -1L
+                        val ok = n >= 0
+                        _state.value = _state.value.copy(
+                            items = _state.value.items.toMutableList().also {
+                                it[index] = if (ok) item.copy(outBytes = n, done = true)
+                                            else item.copy(error = true)
+                            },
+                            totalOut = _state.value.totalOut + if (ok) n else 0L)
+                        if (ok) n else -1L
+                    }
                 }
             }
 
-            val done = _state.value.items.count { it.done }
-            ServiceLocator.prefs.noteExport()
-            ServiceLocator.usage.refresh()
-            com.photostudio.pro.analytics.Events.logExportCompleted(
-                "batch", done, 0, outTotal.toInt(), _state.value.isPro)
-            _state.value = _state.value.copy(running = false, finished = true)
-            onFinished()
+            _state.value = _state.value.copy(
+                running = false,
+                // NeedsPro means nothing was written, so this is not a "finished" run:
+                // the Export button must stay live behind the paywall.
+                finished = out !is ExportFlow.BatchOutcome.NeedsPro,
+            )
+            onFinished(out)
         }
     }
 

@@ -395,14 +395,49 @@ for p, ln in occurrences(r"treeUri\s*=\s*null"):
 # =============================================== 8. versions outside the catalog
 CATALOG = os.path.join(ROOT, "gradle", "libs.versions.toml")
 COORD = re.compile(r'["\']([\w.\-]+:[\w.\-]+:\d[\w.\-]*)["\']')
+
+
+def buildscript_spans(text):
+    """Character spans of every `buildscript { ... }` block in a Gradle script.
+
+    Type-safe version-catalog accessors (libs.versions.kotlin) do NOT exist on the
+    build classpath — Gradle resolves buildscript {} before the catalog accessors
+    are generated — so a plugin coordinate written there has to be literal. That is
+    a documented exception to the "every version lives in the catalog" rule, not
+    drift, and it is reported as a note instead of a warning.
+    """
+    spans = []
+    for m in re.finditer(r"^\s*buildscript\s*\{", text, re.M):
+        depth, i = 0, m.end() - 1
+        while i < len(text):
+            if text[i] == "{":
+                depth += 1
+            elif text[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    spans.append((m.start(), i))
+                    break
+            i += 1
+    return spans
+
+
 for gf in ("build.gradle.kts", os.path.join("app", "build.gradle.kts"), "settings.gradle.kts"):
     p = os.path.join(ROOT, gf)
     if not os.path.exists(p):
         continue
     with open(p, encoding="utf-8") as fh:
         txt = masked(fh.read())
+    spans = buildscript_spans(txt)
     for m in COORD.finditer(txt):
         ln = txt.count("\n", 0, m.start()) + 1
+        if any(a <= m.start() <= b for a, b in spans):
+            notes.append(
+                "%s:%d spells out %s inside buildscript { } — correct and unavoidable. "
+                "Version-catalog accessors are unavailable on the build classpath, so the "
+                "AGP 9 KGP/KSP override cannot use libs.versions.*. If you bump kotlin/ksp "
+                "in the catalog, bump this line by hand." % (gf, ln, m.group(1))
+            )
+            continue
         warnings.append(
             "%s:%d hardcodes the coordinate %s. Every version belongs in "
             "gradle/libs.versions.toml so drift stays visible." % (gf, ln, m.group(1))

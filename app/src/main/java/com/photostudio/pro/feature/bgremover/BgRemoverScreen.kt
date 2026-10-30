@@ -47,11 +47,13 @@ import com.photostudio.pro.core.ui.EmptyState
 import com.photostudio.pro.core.ui.NoticeCard
 import com.photostudio.pro.core.ui.PrimaryAction
 import com.photostudio.pro.core.ui.ToolScaffold
+import com.photostudio.pro.core.util.ExportFlow
 import com.photostudio.pro.core.util.ServiceLocator
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.app.Activity
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 @Composable
 fun BgRemoverScreen(
@@ -69,6 +71,26 @@ fun BgRemoverScreen(
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri -> if (uri != null) vm.onPhotoPicked(ctx, uri) }
+
+    // Where the export lands. Null = share sheet; a tree Uri = a folder the user
+    // chose, which is usually what "save my cut-out" means. BG Remover used to be
+    // share-sheet only while four other tools could save to a folder (README §6 P1).
+    val picked = remember { mutableStateOf<android.net.Uri?>(null) }
+    val folder = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { tree ->
+        if (tree != null) {
+            // Take the persistable grant, otherwise the folder stops working after a
+            // restart and the next export silently falls back to the share sheet.
+            runCatching {
+                ctx.contentResolver.takePersistableUriPermission(
+                    tree,
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }
+            picked.value = tree
+        }
+    }
 
     ToolScaffold(
         title = stringResource(R.string.tool_bgremover),
@@ -133,20 +155,22 @@ fun BgRemoverScreen(
                              style = MaterialTheme.typography.bodySmall,
                              color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-                        val scope = rememberCoroutineScope()
                         val activity = ctx as? Activity
                         PrimaryAction(stringResource(R.string.export)) {
-                            // ⭐ NATURAL BREAK POINT. The export completes first,
-                            // then AdCoordinator builds a truthful AdContext from
-                            // persisted counters and asks AdPolicy. Never call
-                            // AdManager directly (SPEC.md architectural rule #1).
-                            vm.export(ctx, ExportOps.Format.PNG, onNeedPro = onGoPro) { uri ->
-                                if (uri != null && adsReady && activity != null) {
-                                    scope.launch {
-                                        ServiceLocator.adCoordinator.afterExportCompleted(activity) { }
-                                    }
-                                }
+                            // ⭐ NATURAL BREAK POINT — but the ad decision now lives in
+                            // ExportFlow.run, not here. Calling afterExportCompleted from
+                            // the Screen as well would fire TWO decisions for one export
+                            // (README §6 P1, "the double-ad trap"). `adsReady` is
+                            // deliberately not consulted any more either: whether an ad
+                            // may show is AdPolicy's answer, not the Screen's.
+                            vm.export(ctx, activity, picked.value, ExportOps.Format.PNG) { out ->
+                                if (out is ExportFlow.Outcome.NeedsPro) onGoPro()
                             }
+                        }
+                        TextButton(onClick = { folder.launch(null) },
+                                   modifier = Modifier.fillMaxWidth()) {
+                            Text(if (picked.value == null) stringResource(R.string.batch_choose_folder)
+                                 else stringResource(R.string.batch_save_to))
                         }
                     }
 

@@ -36,8 +36,13 @@ These are non-negotiable. If any requirement below conflicts with a HARD CONSTRA
   (Cloud Functions, Cloud Storage, Cloud Messaging with backend). Spark plan only.
 
 ### C3 — MODERN ANDROID COMPLIANCE
-- `compileSdk = 36`, `targetSdk = 36`, `minSdk = 24`
-- Latest stable AGP, Kotlin 2.x, Compose BOM.
+- `compileSdk = 37`, `targetSdk = 36`, `minSdk = 24`
+  *(compileSdk was specified as 36 and had to move to 37: the 2026 AndroidX generation
+  declares `minCompileSdk=37` **and** `minAndroidGradlePluginVersion=9.1.0` in its AAR
+  metadata. `targetSdk` — what Play actually enforces — stays 36. See README §8 bug #16.)*
+- Latest stable AGP (**9.1.1**), Kotlin 2.x (**2.3.21**), Compose BOM (**2026.09.00**),
+  Gradle **9.3.1**, JDK **17**, SDK Build-Tools **36.0.0**. AGP 9 has *built-in* Kotlin, so
+  `org.jetbrains.kotlin.android` must **not** be applied (bug #17).
 - **All native libraries must be 16 KB page-size aligned** (required from 31 Aug 2026).
   After any build that adds a native dependency, verify alignment.
 - Ship as **Android App Bundle (.aab)** only. Never a universal APK.
@@ -133,24 +138,24 @@ milestones into earlier ones.
 |---|---|---|
 | UI | Jetpack Compose + `androidx.activity:activity-compose` | Material 3 |
 | Navigation | `androidx.navigation:navigation-compose` | |
-| Images | `io.coil-kt:coil-compose` | Lighter than Glide |
+| Images | ~~`io.coil-kt.coil3:coil-compose`~~ **REMOVED** | Spec'd, then dropped — bug **#29**. Every image in the app is painted from a locally-decoded bitmap (`Image(...)` / `BitmapPainter`); nothing loads a URL, so Coil was ~2 MB of a ~33 MB AAB budget for zero features. Re-add only if URL-based image loading is ever introduced |
 | Async | `org.jetbrains.kotlinx:kotlinx-coroutines-android` | |
 | DI | `io.insert-koin:koin-android` **or** manual `ServiceLocator` | Hilt is fine too, but keep it simple |
 | Local DB | `androidx.room:room-runtime` + `room-ktx` + KSP compiler | |
 | Prefs | `androidx.datastore:datastore-preferences` | |
 | File access | `androidx.documentfile:documentfile` + Storage Access Framework | **No `READ_EXTERNAL_STORAGE`** on API 33+ |
 | ML: subject seg | `com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1` | ⚠️ **UNBUNDLED ONLY — no bundled artifact exists.** Verified 2026-10-29 against Maven Central + Google `com/google/mlkit/group-index.xml` + the official doc (updated 2026-10-28). `16.0.0-beta1` is the only version ever published. App-size impact **~200 KB**; the model is downloaded via Google Play services. **Selfie Segmentation IS bundled (`16.0.0-beta6`) but segments PEOPLE only — it cannot substitute for product photos.** |
-| ML: face | `com.google.mlkit:face-detection` | **Bundled**, `PERFORMANCE_MODE_FAST` |
+| ML: face | `com.google.mlkit:face-detection:16.1.7` **+** `com.google.android.gms:play-services-mlkit-face-detection:17.1.0` | The `com.google.mlkit` artifact is a **stub** — the `Face` class itself ships in the play-services AAR (confirmed by `javap`). `Face` has **no** `UNCOMPUTED_PROBABILITY` constant: the probability getters return a nullable `Float` where `null` already means "not computed" (bug **#25**). `PERFORMANCE_MODE_FAST` |
 | ML: OCR latin | `com.google.mlkit:text-recognition` | **Bundled** |
 | ML: OCR devanagari | `com.google.mlkit:text-recognition-devanagari` | **Bundled** |
 | PDF | `com.tom-roush:pdfbox-android` | Apache 2.0 |
 | Ads | `com.google.android.gms:play-services-ads` | + UMP SDK |
 | Consent | `com.google.android.ump:user-messaging-platform` | **Mandatory** for EEA/UK fill |
-| Billing | `com.revenuecat.purchases:purchases-store-google` | |
-| Billing UI | `com.revenuecat.purchases:purchases-ui-ktx` | Paywall composables |
-| Analytics | `com.google.firebase:firebase-analytics-ktx` | via Firebase BOM |
-| Crashes | `com.google.firebase:firebase-crashlytics-ktx` | via Firebase BOM |
-| Config | `com.google.firebase:firebase-config-ktx` | via Firebase BOM |
+| Billing | **`com.revenuecat.purchases:purchases:6.5.2`** — the *umbrella* artifact | Bug **#18**: `purchases-store-google` carries only 45 store classes — no `Purchases`, no `PurchasesConfiguration`, no `*With` extensions. The umbrella (142 classes) is the only artifact with the API this app calls |
+| Billing UI | ~~`com.revenuecat.purchases:purchases-ui-ktx`~~ **empty on Maven** | The paywall is hand-built in `feature/paywall/` — deliberately, so the copy and the pricing anchor stay under our control |
+| Analytics | `com.google.firebase:firebase-analytics` | via Firebase BOM 35.1.0. **No `-ktx`** — those coordinates are no longer managed by the BOM (`-ktx` metadata ends at 22.5.0), bug **#15** |
+| Crashes | `com.google.firebase:firebase-crashlytics` | via BOM, non-`-ktx`. **Declared but commented out** until the Crashlytics Gradle plugin is added (`YOUR-TURN.md` step 5) |
+| Config | `com.google.firebase:firebase-config` | via BOM, non-`-ktx` |
 
 ### Explicitly forbidden
 - Any HTTP client pointed at an AI service. (OkHttp/Retrofit is allowed **only** for
@@ -181,10 +186,11 @@ Play 16 KB page size        : https://developer.android.com/guide/practices/page
 ## 4. GRADLE BASELINE
 
 ```kotlin
-// app/build.gradle.kts  (AI: fill in confirmed latest versions, do not guess)
+// app/build.gradle.kts — versions are now CONFIRMED by six compile rounds, not guessed.
+// compileSdk had to move 36 → 37 (bug #16); targetSdk stays 36.
 android {
     namespace = "com.photostudio.pro"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.photostudio.pro"
@@ -232,11 +238,11 @@ Subject Segmentation (UNBUNDLED)   ~0.2 MB (Google doc, verified 2026-10-29)
 Face Detection (bundled)           ~6.9 MB
 Text Recognition Latin (bundled)   ~4 MB
 Text Recognition Devanagari        ~4 MB
-Compose + Coil + PdfBox + Room     ~8 MB
+Compose + PdfBox + Room            ~6 MB   (Coil REMOVED — bug #29: declared, never used)
 AdMob + UMP + RevenueCat + Firebase ~6 MB
 App code + resources                ~4 MB
 ─────────────────────────────────────────
-Expected AAB download size         ~33 MB   (Play limit 200 MB — plenty of headroom)
+Expected AAB download size         ~31 MB   (Play limit 200 MB — plenty of headroom)
 
 NOTE: this is an estimate, not a measurement. After M1, read the real number from
 Android Studio -> Build -> Analyze APK and update this block. Also verify 16 KB

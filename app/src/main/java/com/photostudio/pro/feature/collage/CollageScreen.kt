@@ -7,6 +7,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -166,16 +168,23 @@ fun CollageScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                         CollSlider(stringResource(R.string.collage_corners), st.corner.toFloat(), 0f, 120f,
                             { vm.update { copy(corner = it.toInt()) } }) { "${st.corner}px" }
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            listOf(Color.WHITE, Color.BLACK, Color(0xFFEFEFEF)).forEach { c ->
+                            // Compose Colour constants are White/Black (camelCase) and
+                            // Colour.value is a ULong, while CollageState.bgColor is an
+                            // android.graphics Int — so compare with toArgb() (bug #21).
+                            listOf(Color.White, Color.Black, Color(0xFFEFEFEF)).forEach { c ->
                                 Box(Modifier.padding(end = 8.dp).clip(RoundedCornerShape(8.dp))
                                     .background(c)
                                     .height(28.dp).fillMaxWidth(0.12f)
-                                    .then(if (st.bgColor == c.value)
+                                    // A colour swatch that cannot be tapped is an inert
+                                    // control — the same bug class as #10, and a Play
+                                    // "deceptive behaviour" risk. Make it select the colour.
+                                    .clickable { vm.update { copy(bgColor = c.toArgb()) } }
+                                    .then(if (st.bgColor == c.toArgb())
                                         Modifier.background(MaterialTheme.colorScheme.primary.copy(0.25f))
                                         else Modifier))
                             }
                             TextButton(onClick = { vm.update {
-                                copy(bgColor = if (bgColor == Color.WHITE.value) Color.BLACK.value else Color.WHITE.value) } }) {
+                                copy(bgColor = if (bgColor == Color.White.toArgb()) Color.Black.toArgb() else Color.White.toArgb()) } }) {
                                 Text("Toggle bg", fontSize = 12.sp)
                             }
                         }
