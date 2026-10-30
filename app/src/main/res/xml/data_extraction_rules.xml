@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ replacement for backup_rules.xml; identical policy and the same
+  include-only shape (bug #34): with <include> elements present, everything
+  not listed — user photos, the exports dir, every cache — is excluded by
+  definition, and lint's FullBackupContent check rejects <exclude> rules that
+  sit outside the includes as well as the non-existent "cache" domain.
+
+  What is included is the single DataStore file that holds Prefs and all daily
+  counters (files/datastore/photo_studio_prefs.preferences_pb) — restoring it
+  is what stops a reinstall from resetting the free-tier daily caps.
+-->
 <data-extraction-rules>
     <cloud-backup>
-        <include domain="sharedpref" path="." />
-        <exclude domain="file" path="exports/" />
-        <exclude domain="cache" path="." />
+        <include domain="file" path="datastore/" />
     </cloud-backup>
     <device-transfer>
-        <include domain="sharedpref" path="." />
-        <exclude domain="file" path="exports/" />
+        <include domain="file" path="datastore/" />
     </device-transfer>
 </data-extraction-rules>

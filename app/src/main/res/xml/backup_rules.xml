@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  We back up preferences and the local usage counters only.
+  Back up preferences and the daily usage counters only.
   NEVER back up image files — that would put user photos into Google's cloud,
   which would contradict the "your photos never leave your phone" claim and
   require a Data Safety declaration change. SPEC.md section 11.
+
+  Storage reality (verified 2026-10-31): Prefs and every daily counter live in
+  ONE DataStore file, files/datastore/photo_studio_prefs.preferences_pb. This
+  app has no SharedPreferences file and no database at all, so the old
+  "sharedpref" / "usage.db" includes matched storage that does not exist.
+
+  Schema rules (bug #34, caught by lintVitalRelease in CI run #8): once ANY
+  <include> is present, Auto Backup backs up ONLY the included paths, so an
+  <exclude> pointing anywhere else is a dead rule and fails lint ("not in an
+  included path"); and "cache" is not a domain at all (valid: root, file,
+  database, sharedpref, external). With include-only rules the exports dir
+  and every cache need no rule: they were never included, so they are never
+  backed up.
 -->
 <full-backup-content>
-    <include domain="sharedpref" path="." />
-    <include domain="database" path="usage.db" />
-    <exclude domain="file" path="exports/" />
-    <exclude domain="cache" path="." />
+    <include domain="file" path="datastore/" />
 </full-backup-content>
