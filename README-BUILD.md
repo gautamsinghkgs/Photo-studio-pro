@@ -3,12 +3,17 @@
 > **`README.md` is the master document** — project state, rules, architecture and next
 > steps. This file is only the build mechanics. Read `README.md` first.
 
-This project is **complete source code**, not a template and not a snippet — but it is
-**not "working" in any verified sense**, because it has never been compiled with the
-Android SDK. The environment it was written in has no Android SDK, no Gradle, no JDK 17
-and no emulator. **Expect 3–6 build
-iterations before your first successful AAB.** That is normal and it is not a sign that
-the code is broken.
+This project is **complete source code**, not a template and not a snippet — and as of
+**2026-10-30 it compiles**. `:app:compileDebugKotlin` and `:app:testDebugUnitTest`
+(**117 tests, 0 failures, 0 skipped**) are both green under AGP 9.1.1 / Gradle 9.3.1 /
+JDK 17 / compileSdk 37 — proven inside a sandbox with **2 GB of RAM** and no Android Studio,
+which is the strongest possible evidence that it is not environment-dependent.
+
+What has **never** run anywhere is dexing, R8 and packaging: the sandbox is OOM-killed at
+`dexBuilderDebug`, so those stages belong to your machine or to CI. Expect **1–3 iterations**
+to your first successful AAB rather than the 3–6 predicted before the compile went green —
+and the most likely first failure is R8's *"Missing class detected"* (fix: add that package
+as `-dontwarn` in `app/proguard-rules.pro`), followed by the AAB size measurement.
 
 ---
 
@@ -16,11 +21,13 @@ the code is broken.
 
 | Requirement | Minimum | Why |
 |---|---|---|
-| RAM | **8 GB** (16 GB comfortable) | Kotlin + AGP + Gradle OOM below this |
+| RAM | **8 GB** (16 GB comfortable) | Kotlin + AGP + Gradle OOM below this. 2 GB is enough to *compile and test* (proven) but **not** to dex or run R8 |
 | Disk | **15 GB free** | SDK + Gradle caches + first build |
-| JDK | **17** | AGP 8.x refuses to run on JDK 11 |
-| Android Studio | Latest stable | Brings the SDK and Gradle |
-| Android SDK Platform | **36** | `compileSdk = 36`, required by Play from 31 Aug 2026 |
+| JDK | **17** | AGP 9.x refuses to run on anything older |
+| Android Studio | Latest stable (AGP **9.1.1** support) | Brings the SDK and Gradle. An older Studio will offer to "downgrade AGP" — **refuse it**; see bug #16 |
+| Gradle | **9.3.1** | AGP 9.1.1's minimum is 9.1.0; 9.3.1 is its default and what CI installs |
+| Android SDK Platform | **37.0** (`platforms;android-37.0`) | `compileSdk = 37`, forced by the 2026 AndroidX AAR metadata (bug #16). **`targetSdk` stays 36** — that is what Play enforces from 31 Aug 2026 |
+| SDK Build-Tools | **36.0.0** | Required by AGP 9. Also what the 16 KB `zipalign` check runs from |
 
 ---
 
@@ -138,16 +145,18 @@ App Signing mitigates this, but keep your own backup regardless.
 ./gradlew test
 ```
 
-**117 unit tests already pass** — they were compiled and executed against the real
-production source files (not copies) using kotlinc 1.9.24 + JUnit 4 on 2026-10-29:
+**117 unit tests already pass** — and since 2026-10-30 they pass under **real Gradle**
+(`:app:testDebugUnitTest`: 0 failures, 0 skipped), which is strictly stronger than the
+earlier kotlinc-1.9.24 stub harness: that harness could not see bug **#28** at all. The
+counts below are parsed from `app/build/test-results/testDebugUnitTest/*.xml`, not copied:
 
 | Test class | Tests | What it protects |
 |---|---|---|
 | `AdPolicyTest` | 21 | The most important logic in the app: a paying user never sees a forced ad, banners stay permanently off, every threshold and every denial reason |
-| `RewardGuardTest` | 13 | The abuse defence: the daily cap fails closed, and no reward kind can ever grant Pro or lifetime |
-| `IdPhotoMathTest` | 30 | mm→pixel conversion, print-sheet tiling, and the compliance checks |
+| `RewardGuardTest` | 11 | The abuse defence: the daily cap fails closed, and no reward kind can ever grant Pro or lifetime |
+| `IdPhotoMathTest` | 31 | mm→pixel conversion, print-sheet tiling, and the compliance checks |
 | `QualitySearchTest` | 9 | Hitting a government portal's file-size ceiling at the highest possible quality |
-| `LayoutMathTest` | 41 | Collage tiling, centre-crop geometry, PDF page placement, and the white-background flood fill |
+| `LayoutMathTest` | 42 | Collage tiling, centre-crop geometry, PDF page placement, and the white-background flood fill |
 | `CollageTemplateContractTest` | 3 | The free/Pro template boundary must stay at exactly 10 free |
 
 The pure maths is deliberately split out of the Android-facing tools into two

@@ -68,11 +68,48 @@ kahin bhi card ki zaroorat nahi padegi — main har service check kar chuka hoon
 **Yeh sabse pehle karo.** Isse tumhe Android Studio install karne se pehle hi pata
 chal jaayega ki code mein kya errors hain.
 
-**Kyun:** jis environment mein maine yeh code likha, wahan Android SDK nahi tha, Gradle
-nahi tha, JDK 11 tha (AGP 8.13 ko 17 chahiye), 2 GB RAM thi aur emulator bhi nahi chal
-sakta tha. Matlab **55 Kotlin files mein se ek bhi line ab tak real Android compile se
-nahi guzri.** GitHub ke runners par JDK 17 + Android SDK + 7 GB RAM hota hai — wahan
-yeh compile ho sakta hai.
+> ### ✅ UPDATE 2026-10-30 — compile ka kaam ho chuka hai
+> Jis environment mein maine yeh code likha tha wahan Android SDK nahi tha, Gradle nahi tha,
+> JDK 11 tha aur 2 GB RAM thi. Maine **wahi cheezein usi sandbox mein khud install kar li
+> thin** (JDK 17 + Gradle 9.3.1 + Android SDK 37 + Build-Tools 36.0.0) aur ab:
+>
+> - `:app:compileDebugKotlin` → **BUILD SUCCESSFUL** (0 errors, sirf 6 deprecation warnings)
+> - `:app:testDebugUnitTest` → **117 tests, 0 failures, 0 skipped**
+>
+> Iske liye **29 bugs mile, 28 fix kiye gaye** — poora ledger `README.md` §8 mein hai.
+> Ek bhi bug design ka nahi tha; sab build-files ya "yaad se likhi gayi API" ke the.
+>
+> **Abhi bhi baaki:** APK/AAB banana (`assembleDebug` / `bundleRelease`). Sandbox ki 2 GB
+> RAM mein D8 dexing OOM ho jaati hai — yeh project ki galti nahi, RAM ki kami hai. Woh kaam
+> GitHub ka runner karega (7 GB RAM), isliye **STEP 1A abhi bhi zaroori hai** — bas ab uska
+> kaam "errors dhundhna" nahi, balki **dexing + R8 + 16 KB alignment + AAB size** verify
+> karna hai. `release` job duniya mein pehli baar chalegi.
+
+**⚠️ Sabse pehle yeh karo — patch upload.** GitHub par jo code abhi hai woh **purana** hai
+(AGP 8.13.2 / compileSdk 36 / Gradle 8.13). Saare fixes abhi sirf mere workspace mein hain.
+Maine ek zip bana di hai jismein **sirf 36 badli hui files** hain, sahi folder-structure ke saath:
+
+1. **`PSP-PATCH-FULL-2026-10-30.zip`** download karo (workspace mein hai) aur extract karo
+2. GitHub par repo kholo → **Add file → Upload files**
+3. Extract kiye hue **poore folder tree ko drag karke** wahan drop kar do (page repo ke **root**
+   par khula ho, tabhi paths sahi baithenge) — `.github/`, `app/`, `gradle/`, `tools/`, `docs/`
+   aur 6 markdown files sab chale jaayenge
+4. Neeche scroll karke commit message likho:
+   `Compile green (AGP 9.1.1 + Gradle 9.3.1 + SDK 37, bugs #15-#29) + P1 ExportFlow refactor (#30-#32)`
+   → **Commit changes**
+5. Upload ke baad mujhe batao — main har file `curl` karke `diff` se verify karunga ki paste
+   mein kuch bigda to nahi (yeh do baar ho chuka hai)
+
+File-by-file list aur har file ki sha256 **`PSP-PATCH-MANIFEST.txt`** mein hai.
+
+> ⚠️ **Do purane zip ab SUPERSEDED hain — unhe use mat karna:** `photo-studio-pro.zip`
+> (153 files, fixes se pehle ka) aur `PSP-PATCH-2026-10-30.zip` (29 files, P1 refactor se
+> pehle ka). Sirf **`PSP-PATCH-FULL-2026-10-30.zip`** upload karo.
+>
+> **Ek hi commit mein kyun?** CI mein concurrency group hai — do commit tezi se karte to
+> pehla run cancel ho jaata aur humein kabhi pata hi na chalta ki build-fix akela green hai
+> ya nahi. Dono changes locally verify ho chuke hain (compile + 117 tests + dono linters),
+> isliye ek commit safe hai.
 
 **Karna kya hai:**
 1. `github.com` par free account banao (card nahi maangta)
