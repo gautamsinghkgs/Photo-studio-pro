@@ -29,6 +29,19 @@
 -dontwarn org.apache.pdfbox.**
 -dontwarn java.awt.**
 
+# ---- pdfbox's OPTIONAL JPEG2000 codec (bug #33) ----
+# com.tom_roush.pdfbox.filter.JPXFilter references com.gemalto.jp2.JP2Decoder /
+# JP2Encoder. pdfbox-android treats JPX as an optional codec and does NOT bundle
+# the Gemalto library, so R8's missing-class check fails minifyReleaseWithR8
+# (CI run #7, the first release job ever to execute). Debug builds never run R8,
+# which is why this never appeared in 30 green local rounds.
+#
+# This -dontwarn is honest, not a mask: the classes are genuinely absent at
+# runtime too, and behaviour is unchanged — PdfViewModel wraps pdfToImages in
+# runCatching (which catches Throwable), so a PDF page containing JPX-encoded
+# images degrades to Ui.Failed("pdf_render_failed") instead of crashing.
+-dontwarn com.gemalto.jp2.**
+
 # ---- Kotlin serialization (countries.json) ----
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.**

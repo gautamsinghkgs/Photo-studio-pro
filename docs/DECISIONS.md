@@ -201,12 +201,12 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
 
 ---
 
-## 6. Bugs found — 32 total, 31 fixed, 1 parked
+## 6. Bugs found — 33 total, 32 fixed, 1 parked
 
 Do not "simplify" these back. Each was a real defect.
 
 **Found by:** 5 by unit tests · 3 by the resource linter or by reading · **4 by the wiring
-audit** · 2 by CI runs · **15 by pointing a real Android toolchain at the code** (six compile
+audit** · 3 by CI runs (the third by R8, on the first `release` job ever to execute) · **15 by pointing a real Android toolchain at the code** (six compile
 rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
 `ExportFlow` refactor**.
 
@@ -259,6 +259,7 @@ There are three complementary classes here, and each one demands a different def
 | 30 | **Batch counted exports but never checked the daily cap** | `noteExport()` ran on every batch; nothing ever read the count. `allowedCount` limits files **per run** (free = 1 + rewarded bonuses), not runs per day — so a free user could resize unlimited photos by running one-file batches, and the 3-exports/day cap (the whole free tier) did not exist for this tool. It looked correct because the counter *was* being incremented: same shape as #6, a state write with no matching gate. `ExportFlow.runBatch` now checks the cap before writing anything and returns `NeedsPro` |
 | 31 | **A failed batch file was recorded as a successful export** | `processOne` signals failure two ways — a negative sentinel and an exception — and only the exception was handled, so `-1L` became `done = true, outBytes = -1` and rendered `✔ -1 B`. Silent success, same family as #4: the user sees a tick next to a photo that was never written and the run total is wrong. Any negative return is now a failure |
 | 32 | **A trailing lambda binds to the LAST parameter** | `runBatch(…, write, afterSave = {})` called with a trailing lambda attached it to `afterSave`: *"No value passed for parameter 'write'"* plus three cascade errors. Reordered so the required lambda is last. The standing rule held — fix the first error, the rest were inference fallout |
+| 33 | **R8 blocked the first-ever release build on pdfbox's optional JPEG2000 codec** | `com.tom_roush.pdfbox.filter.JPXFilter` references `com.gemalto.jp2.JP2Decoder` / `JP2Encoder`, which pdfbox-android never bundles (JPX is an optional codec). R8's missing-class check therefore fails `minifyReleaseWithR8` — CI run #7. Debug builds never run R8, so no amount of local green could have surfaced it. Fixed with `-dontwarn com.gemalto.jp2.**`, which is honest rather than a mask: the classes are absent at runtime too, and `PdfViewModel` wraps `pdfToImages` in `runCatching` (catches `Throwable`), so a JPX-encoded page degrades to `Ui.Failed("pdf_render_failed")` instead of crashing. **An unexecuted build stage is an unmet bug category** |
 
 Bugs 6, 7, 9, 10 and 11 were all found by auditing, not by tests. Each compiled fine and
 every piece was individually correct — the *connection* was missing. That class of bug is
