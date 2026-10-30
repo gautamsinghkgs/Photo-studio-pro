@@ -98,8 +98,8 @@ object PurchaseFlow {
             val sp = p.storeProduct
             val id = sp.id
             // Only surface the three products this app actually defines. An
-            // unexpected id means someone edited the dashboard without editing
-            // the app — better to hide it than to sell something the app cannot
+            // unexpected id means someone edited the dashboard without editing the
+            // app — better to hide it than to sell something the app cannot
             // describe.
             if (id !in setOf(EntitlementManager.PRODUCT_WEEKLY,
                              EntitlementManager.PRODUCT_YEARLY,
@@ -135,8 +135,12 @@ object PurchaseFlow {
         runCatching {
             Purchases.sharedInstance.purchaseWith(
                 PurchaseParams.Builder(activity, offer.rcPackage).build(),
-                onError = { e -> onResult(mapError(e)) },
-                onSuccess = { (_, customerInfo) ->
+                // 6.5.2 signature: onError: (PurchasesError, userCancelled: Boolean) -> Unit.
+                // A one-parameter lambda here is a compile error; the second arg is
+                // real information (a cancel is not a failure) but PurchaseFlow maps
+                // both to Result.UserCancelled/Error via mapError, so ignore it.
+                onError = { e, _ -> onResult(mapError(e)) },
+                onSuccess = { _, customerInfo ->
                     val active = customerInfo.entitlements[EntitlementManager.ENTITLEMENT_PRO]?.isActive == true
                     ServiceLocator.entitlements.refresh()
                     if (active) {
