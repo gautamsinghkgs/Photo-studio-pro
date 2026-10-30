@@ -5,7 +5,7 @@ import com.revenuecat.purchases.CustomerInfo
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
 import com.revenuecat.purchases.PurchasesError
-import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoListener
+import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -70,7 +70,7 @@ class EntitlementManager(private val appContext: Context) {
     }
 
     fun refresh() {
-        Purchases.sharedInstance.getCustomerInfo(object : ReceiveCustomerInfoListener {
+        Purchases.sharedInstance.getCustomerInfo(object : ReceiveCustomerInfoCallback {
             override fun onReceived(customerInfo: CustomerInfo) = apply(customerInfo)
             override fun onError(error: PurchasesError) {
                 // Non-fatal. The cached value from the previous launch still
@@ -81,7 +81,7 @@ class EntitlementManager(private val appContext: Context) {
     }
 
     fun restorePurchases(onDone: (Boolean) -> Unit) {
-        Purchases.sharedInstance.restorePurchases(object : ReceiveCustomerInfoListener {
+        Purchases.sharedInstance.restorePurchases(object : ReceiveCustomerInfoCallback {
             override fun onReceived(customerInfo: CustomerInfo) {
                 apply(customerInfo)
                 onDone(customerInfo.entitlements.active.containsKey(ENTITLEMENT_PRO))
