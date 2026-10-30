@@ -84,7 +84,13 @@ class PdfViewModel : ViewModel() {
                         out.add(bmp)
                         _state.value = _state.value.copy(ui = Ui.Progress(i + 1, total))
                     }
-                }.getOrElse { -1 }
+                }.getOrElse {
+                    // Failure path (corrupt page, JPX image, OOM): the pages decoded
+                    // before the throw are ours to clean up, or they leak as bitmaps.
+                    out.forEach { runCatching { it.recycle() } }
+                    out.clear()
+                    -1
+                }
             }
             _state.value = _state.value.copy(
                 busy = false,

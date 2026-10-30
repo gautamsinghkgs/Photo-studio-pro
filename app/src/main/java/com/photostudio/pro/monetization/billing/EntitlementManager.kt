@@ -116,7 +116,7 @@ class EntitlementManager(private val appContext: Context) : EntitlementSource {
             isInTrial = isActive && expiry != null && isWithinTrialWindow(expiry.time),
             hasPurchaseIntent = _state.value.hasPurchaseIntent,
             activeProductId = info.activeSubscriptions.firstOrNull()
-                ?: info.nonSubscriptionTransactions.firstOrNull()?.productId,
+                ?: info.nonSubscriptionTransactions.firstOrNull()?.productIdentifier,
             expiresAtMillis = e?.expirationDate?.time,
             loaded = true,
         )

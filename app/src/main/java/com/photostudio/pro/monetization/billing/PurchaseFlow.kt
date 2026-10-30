@@ -169,7 +169,7 @@ object PurchaseFlow {
         // PurchaseInProgressError (javap-verified against the AAR, bug #27).
         PurchasesErrorCode.OperationAlreadyInProgressError -> Result.AlreadyOwned
         PurchasesErrorCode.ProductAlreadyPurchasedError  -> Result.AlreadyOwned
-        else -> Result.Error(e.message ?: e.code.name, e.code.name)
+        else -> Result.Error(e.message, e.code.name)   // PurchasesError.message is non-null; the elvis was dead
     }
 
     fun restore(onResult: (Boolean) -> Unit) {

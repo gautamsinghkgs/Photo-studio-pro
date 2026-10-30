@@ -173,8 +173,11 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
    killer and a direct cause of refunds.
 2. **Banners and app-open ads have no enable flag at all.** They are `false` unconditionally
    in code. A test asserts this, so adding a flag fails the build.
-3. **Interstitials ship disabled** (`ads_interstitial_enabled=false` in Remote Config
-   defaults) and only ever fire after a completed export/save.
+3. **Interstitials ship ENABLED from day 1** (`ads_interstitial_enabled=true` in Remote Config
+   defaults — owner decision 2026-10-31: ads are the early monetization, one interstitial per
+   export cycle) and only ever fire after a completed export/save. Rails unchanged: daily cap,
+   180 s gap, first-ad delay, banners off forever, pro = zero ads. The old D30–60 gate now
+   governs frequency ramp-up, not enablement.
 4. **`ExportFlow` is the only export path.** Free-tier cap, watermark, destination, counter
    persistence and the post-export ad decision all live there. Before it existed, eight
    tools each reimplemented that sequence — which is how one tool forgets a step and no test
@@ -201,11 +204,11 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
 
 ---
 
-## 6. Bugs found — 34 total, 33 fixed, 1 parked
+## 6. Bugs found — 35 total, 34 fixed, 1 parked
 
 Do not "simplify" these back. Each was a real defect.
 
-**Found by:** 5 by unit tests · 3 by the resource linter or by reading · **4 by the wiring
+**Found by:** 5 by unit tests · 4 by the resource linter or by reading · **4 by the wiring
 audit** · 4 by CI runs (the last two by the first `release` job ever to execute, one gate apart: R8 in run #7, `lintVital` in run #8) · **15 by pointing a real Android toolchain at the code** (six compile
 rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
 `ExportFlow` refactor**.
@@ -261,6 +264,16 @@ There are three complementary classes here, and each one demands a different def
 | 32 | **A trailing lambda binds to the LAST parameter** | `runBatch(…, write, afterSave = {})` called with a trailing lambda attached it to `afterSave`: *"No value passed for parameter 'write'"* plus three cascade errors. Reordered so the required lambda is last. The standing rule held — fix the first error, the rest were inference fallout |
 | 33 | **R8 blocked the first-ever release build on pdfbox's optional JPEG2000 codec** | `com.tom_roush.pdfbox.filter.JPXFilter` references `com.gemalto.jp2.JP2Decoder` / `JP2Encoder`, which pdfbox-android never bundles (JPX is an optional codec). R8's missing-class check therefore fails `minifyReleaseWithR8` — CI run #7. Debug builds never run R8, so no amount of local green could have surfaced it. Fixed with `-dontwarn com.gemalto.jp2.**`, which is honest rather than a mask: the classes are absent at runtime too, and `PdfViewModel` wraps `pdfToImages` in `runCatching` (catches `Throwable`), so a JPX-encoded page degrades to `Ui.Failed("pdf_render_failed")` instead of crashing. **An unexecuted build stage is an unmet bug category** |
 | 34 | **Backup-rule XMLs failed the `FullBackupContent` schema and described storage that does not exist** | `lintVitalRelease` (release-only, ran for the first time in run #8) rejected 7 things: `domain="cache"` is not a domain at all; every `<exclude>` sat outside the `<include>` set, i.e. a dead rule once includes exist; and the includes named `sharedpref` + `usage.db` while the app stores Prefs and all daily counters in one DataStore file (`files/datastore/…`) and ships no database. Net effect before the fix: nothing was backed up and nothing was excluded. Fixed include-only on `datastore/` in both XMLs — with includes present, Auto Backup takes exactly those paths, so photos/exports/caches stay out by definition (SPEC §11). Same family as #33: the checker had never run, so the file had never been read |
+| 35 | **Room 2.8.5 was a dependency nobody used** | No `@Database`/`@Dao`/`@Entity`/`databaseBuilder` in main or test sources, yet runtime+ktx+KSP-compiler were declared and proguard kept Room classes; the old backup rules even named a `usage.db` that never existed (#34). Removed with the post-green cleanup commit. Same tax-as-#29 class |
+
+**Owner decisions recorded 2026-10-31 (monetization policy):**
+1. Interstitials ON at launch — one per export cycle, shown after the save completes.
+2. Batch free output stays CLEAN (no watermark) until the 100k+ downloads phase; watermark is
+   the late-stage lever, ads are the early one. Written into the SPEC free-tier table.
+3. Subscribers see zero ads — confirmed already implemented, no change.
+4. Defaults with owner veto, taken when the owner skipped the decision UI: watermark scope =
+   the five image tools keep their shipped free-tier watermark (only Batch is clean); ad
+   placement = post-export (pre-export would show an ad for an export that can still fail).
 
 Bugs 6, 7, 9, 10 and 11 were all found by auditing, not by tests. Each compiled fine and
 every piece was individually correct — the *connection* was missing. That class of bug is
@@ -290,9 +303,10 @@ hold all the connections in their head either.
 - **Geography is a 9× lever.** 3,000 DAU at 45% Tier-1 ≈ ₹2.28 lakh/mo; 3,000 DAU at 0%
   Tier-1 ≈ ₹24,900. So launch on r/EtsySellers, r/eBay, r/reselling, r/Flipping,
   r/smallbusiness — **never** r/AndroidDev or r/india.
-- **Ad schedule:** Day 0–30 rewarded only. Day 30–60 interstitials 1/day *only if* D7 > 15%
-  and crash-free > 99.5%. Every frequency change needs a minimum 7-day test. Ad overload is
-  the #1 killer in this category: one disruptive interstitial costs +6–7% churn.
+- **Ad schedule:** interstitials ON from day 1, one per export cycle, post-export (owner
+  decision 2026-10-31). Day 30–60: ramp frequency to 1/day *only if* D7 > 15% and crash-free
+  > 99.5%. Every frequency change needs a minimum 7-day test. Ad overload is the #1 killer in
+  this category: one disruptive interstitial costs +6–7% churn.
 - **North Star = blended ARPDAU.** Raise ad frequency only if ARPDAU rises AND D7 retention
   drops by at most 1 point.
 - **Owner runs it solo.** Median app in this category makes $72/mo at year one; 2-year odds

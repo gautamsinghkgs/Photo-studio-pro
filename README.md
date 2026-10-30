@@ -566,11 +566,12 @@ app that cannot ship.
 | Item | Size | Why it waits |
 |---|---|---|
 | **29 hardcoded English `Text("…")` literals** across 10 screens (`BatchScreen` 88/114/189/194, `WhiteBgScreen` 110/124/136, `CollageScreen` 107/143/145/179, `PdfScreen` 116/119, `IdPhotoScreen` 96/137, `SettingsScreen` 137/140, `OcrScreen` 66, `BgRemoverScreen` 132, `EnhanceScreen` 122) | 29 strings × 2 locales | A Hindi user currently sees a mixed-language screen. This is one dedicated EN↔HI pass, not 29 opportunistic edits: doing it piecemeal multiplies the hand-off file list for zero build benefit. `check_resources.py` reports 140/140 parity and **cannot see literals** — that is exactly why the count is written down here |
-| **6 compiler warnings** | 6 one-liners | `CountrySpec.kt:91` redundant `Json {}` · `OcrScreen.kt:52` `LocalClipboardManager` → `LocalClipboard` · `OcrScreen.kt:88,93` `Icons.Filled.TextSnippet` → AutoMirrored · `EntitlementManager.kt:119` `productId` → `productIdentifier` · `PurchaseFlow.kt:172` a useless elvis. None is a bug; all six are deprecations with a named replacement. Fix them in one commit *after* the release build is green, so a warning-driven edit can never be blamed for a packaging failure |
-| **Partial bitmaps leak on the PDF render failure path** | ~3 lines | `PdfViewModel.onPdfPicked` collects rendered pages into `out`; if `pdfToImages` throws mid-document (corrupt page, JPX image, OOM), `runCatching` yields `-1` and the already-decoded bitmaps in `out` are never recycled. Behaviour is correct — the user sees `pdf_render_failed` — only memory hygiene on the failure path is wrong. Found while fixing #33; folded into the same post-release-green commit as the six warnings |
-| **Room 2.8.5 is a dependency nobody uses** | 3 dependency lines + 2 proguard lines | No `@Database`, `@Dao`, `@Entity` or `databaseBuilder` exists anywhere in `app/src` (main or test), yet `room-runtime`, `room-ktx` and `ksp(room-compiler)` are declared and `proguard-rules.pro` keeps `* extends androidx.room.RoomDatabase`. Same silent-cost class as #29 (Coil): roughly a megabyte of AAB and KSP seconds on every build for zero features. Found while fixing #34 — the old backup rules named a `usage.db` that never existed. Deliberately NOT removed in the #34 patch so that run #9's first-ever AAB size maps to exactly one change; removed in the post-release-green commit with the six warnings |
-| **Should Batch watermark free-tier output?** | 1 decision | Batch is now the only image tool that does not watermark on the free tier (bug #30 closed the *count* leak; the watermark was never there). Its free limit is "batch of 1" and the daily cap now applies, so the exposure is 3 clean exports/day. Watermarking a resize tool is user-hostile; leaving it clean is defensible. **Owner's call** — then write it into the SPEC free-tier table so the next agent does not "fix" it |
 | **22 unreferenced strings** | 0 work | Deliberate. They are the vocabulary for the P2 localisation pass and for screens still in `feature/later/`. Do not delete them |
+
+**Closed by the post-green cleanup commit (2026-10-31):** the six compiler warnings · the PDF
+failure-path bitmap leak · unused Room (#35) · and the owner decisions — interstitials **ON at
+launch** (one per export cycle, post-export; the D30–60 gate now governs frequency ramp-up only)
+and **Batch free output stays clean until 100k+ downloads**, watermark being the late-stage lever.
 
 **Owner-only placeholders (an agent cannot fill any of these):**
 
@@ -595,8 +596,9 @@ The 14-day tester requirement is the **schedule risk**, not the code. Start recr
 
 ### 🔵 P4 — Post-launch, deliberately deferred
 
-Day 0–30 rewarded + subscriptions only → Day 30–60 interstitials at 1/day **only if**
-D7 retention >15% **and** crash-free >99.5% → Day 60–90 lifetime IAP + 2–3/day →
+Interstitials **ON from day 1** — one per export cycle, post-export (owner decision 2026-10-31;
+rails: daily cap, 180 s gap, first-ad delay, pro = zero ads) → Day 30–60 frequency ramps to
+1/day **only if** D7 retention >15% **and** crash-free >99.5% → Day 60–90 lifetime IAP + 2–3/day →
 Day 90+ mediation, win-back campaigns, `es` / `pt-BR` localisation.
 
 Also deferred: **AdMob SSV** (Phase 2 — only build it if weekly rewarded impressions ÷
@@ -639,7 +641,8 @@ everything after it on the same command line (bug #13). A placeholder
 | #6 | `41109024673` | 🔴 | Ran against the **broken flattened upload** (`3fad0b5`): `resources` ✅ but `compile` / `test` / `release` all died — the root `build.gradle.kts` *was* the app module's script. Proof the git cleanup was mandatory, not cosmetic |
 | #7 | `41111250516` | 🔴 | **First run on the clean 100-file tree.** `resources` ✅ · `compile` ✅ (**first D8 dexing + packaging ever**) · `test` ✅ (117/117 on a real runner) · `release` 🔴 step 7 → **#33**: R8 missing classes `com.gemalto.jp2.*` (pdfbox's optional JPX codec) |
 | #8 | `41115825371` | 🔴 | **R8 passed** — the #33 fix worked. Then the next first-run gate spoke: `lintVitalRelease` (release-only lint) failed with 7 `[FullBackupContent]` errors across the two backup XMLs → **#34** |
-| **#9** | *(the next one)* | ❓ | **First run in which `bundleRelease` can complete.** If lint is clean, the 16 KB zipalign gate, the 64-bit gate, the size report and the AAB artifact finally execute — none of them ever has |
+| #9 | `41119231916` | 🟢 | **First fully green run — all four jobs.** `bundleRelease` completed end-to-end for the first time ever: R8 ✅ · resource shrinking ✅ · lintVital ✅ · 16 KB zipalign ✅ · 64-bit ✅ · AAB artifact uploaded (54,280,259 B wrapped). **The app is release-proven** |
+| **#10** | *(the next one)* | ❓ | Carries the post-green cleanup: six warnings, PDF failure-path recycle, Room removal (#35), interstitials ON at launch (owner decision). Must stay green |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced
@@ -801,7 +804,7 @@ different artifact and are still unverified.
 `purchases-<version>-sources.jar` from Maven Central and read the signature. Training
 data mixes three API generations; the jar does not.
 
-## 8. Bug ledger — 34 found, 33 fixed, 1 parked
+## 8. Bug ledger — 35 found, 34 fixed, 1 parked
 
 Full write-ups with root cause and the locking test are in `docs/DECISIONS.md` §6.
 Read them: **each one is a class of mistake that will recur.**
@@ -853,6 +856,7 @@ called. And **#30–#31** were invisible to both — they surfaced only when som
 | 32 | **A trailing lambda binds to the LAST parameter, not the most important one.** `runBatch(…, write: suspend (Int) -> Long, afterSave: () -> Unit = {})` called with a trailing lambda attached that lambda to `afterSave` → *"No value passed for parameter 'write'"* plus three cascade errors (unknown `index` type, then a bogus *"'operator' modifier is required on compareTo"*) | **Compiler, P1 round 1** | Put the required lambda last even if that means a defaulted parameter comes before it — legal in Kotlin, and it keeps the call site readable. And the standing rule held: fix the FIRST error, the other three were inference fallout |
 | 33 | **R8 refused to build the release: pdfbox references an optional JPEG2000 codec it does not ship.** `com.tom_roush.pdfbox.filter.JPXFilter` references `com.gemalto.jp2.JP2Decoder` / `JP2Encoder`; pdfbox-android treats JPX as optional and never bundles the Gemalto codec, so R8's missing-class check failed `minifyReleaseWithR8` — CI run #7, the **first release job ever to execute**. Thirty green local rounds could not see it because debug builds never run R8 | **The CI `release` job, on its first execution** | Fixed with `-dontwarn com.gemalto.jp2.**` in `app/proguard-rules.pro` — honest, not a mask: the classes are absent at runtime too, and `PdfViewModel` already wraps `pdfToImages` in `runCatching` (which catches `Throwable`), so a JPX-encoded page degrades to `Ui.Failed("pdf_render_failed")` instead of crashing. **Every build stage you have never run is a bug category you have never met** — R8 was the last unexecuted stage |
 | 34 | **The backup-rule XMLs were invalid against the `FullBackupContent` schema, and their includes pointed at storage that does not exist.** `<exclude domain="cache">` names a domain that is not in the vocabulary (valid: root, file, database, sharedpref, external); every `<exclude>` sat outside the `<include>` set, which is a dead rule the moment any include exists; and the includes named `sharedpref` + `usage.db` while the app actually keeps Prefs *and* every daily counter in one DataStore file (`files/datastore/…`) and ships no database at all. So the old rules backed up nothing and excluded nothing | **The CI `release` job, second consecutive first-run gate** (`lintVitalRelease`, run #8 — release-only lint; debug builds and both project linters cannot see it) | Include-only rules pointing at `datastore/` in both XMLs: with includes present, Auto Backup backs up exactly that and nothing else, so photos / exports / caches stay out *by definition* — SPEC §11's promise holds with fewer rules than before. Same lesson as #33 one gate later: **an unexecuted checker is an unread file** |
+| 35 | **Room 2.8.5 was a dependency nobody used.** No `@Database`, `@Dao`, `@Entity` or `databaseBuilder` anywhere in main or test sources, yet `room-runtime`, `room-ktx` and `ksp(room-compiler)` were declared and proguard kept `* extends androidx.room.RoomDatabase` — about a megabyte of AAB and KSP seconds on every build for zero features. The old backup rules even named a `usage.db` that never existed (#34) | **Reading while fixing #34** — a grep for Room annotations returned nothing | Removed the three dependency lines, the KSP line and the dead keep rules. Same class as #29 (Coil): **a dependency you never reference is a tax on every build and every download** |
 
 **Four meta-lessons:**
 - **A parameter that is accepted and ignored is a bug, not a style issue.** Bugs #5 and #12

@@ -14,7 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.TextSnippet
+import androidx.compose.material.icons.automirrored.filled.TextSnippet
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -49,7 +49,7 @@ fun OcrScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
     val ctx = LocalContext.current
     val st by vm.state.collectAsState()
     val ent by ServiceLocator.entitlements.state.collectAsState()
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
         if (it != null) vm.onPhotoPicked(ctx, it)
@@ -85,12 +85,12 @@ fun OcrScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
 
                 when (st.ui) {
                     is OcrViewModel.Ui.Idle -> EmptyState(
-                        Icons.Filled.TextSnippet, stringResource(R.string.tool_ocr),
+                        Icons.AutoMirrored.Filled.TextSnippet, stringResource(R.string.tool_ocr),
                         stringResource(R.string.tool_ocr_desc), stringResource(R.string.ocr_scan),
                         { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) })
 
                     is OcrViewModel.Ui.Nothing -> EmptyState(
-                        Icons.Filled.TextSnippet, stringResource(R.string.ocr_nothing),
+                        Icons.AutoMirrored.Filled.TextSnippet, stringResource(R.string.ocr_nothing),
                         stringResource(R.string.ocr_nothing_body), stringResource(R.string.retry),
                         { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) })
 

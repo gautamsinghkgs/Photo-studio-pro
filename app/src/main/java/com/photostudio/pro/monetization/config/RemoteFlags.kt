@@ -47,7 +47,11 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
         // behaves correctly — it just cannot be tuned live.
         config.setDefaultsAsync(
             mapOf(
-                RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED   to false,   // ⭐ OFF at launch
+                // OWNER DECISION 2026-10-31: ads earn from day 1 — one interstitial per
+                // export cycle, shown AFTER the save completes. The rails stay: daily
+                // cap, 180 s gap, first-ad delay, banners off forever, pro = zero ads.
+                // The old D30–60 enablement ramp now governs frequency ramp-up only.
+                RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED   to true,    // ⭐ ON at launch
                 RemoteFlagKeys.ADS_INTERSTITIAL_DELAY_MS  to AdPolicy.DEFAULT_FIRST_AD_DELAY_MS,
                 RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS    to AdPolicy.DEFAULT_INTERSTITIAL_GAP_MS,
                 RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP to AdPolicy.DEFAULT_INTERSTITIAL_DAILY_CAP.toLong(),

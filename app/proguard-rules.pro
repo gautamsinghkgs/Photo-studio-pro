@@ -53,9 +53,8 @@
 }
 -keep,includedescriptorclasses class com.photostudio.pro.**$$serializer { *; }
 
-# ---- Room ----
--keep class * extends androidx.room.RoomDatabase
--dontwarn androidx.room.paging.**
+# ---- Room ----  (removed 2026-10-31: the dependency was never used — bug #35.
+# If Room is ever genuinely added back, re-add its keep rules with it.)
 
 # ---- Keep line numbers for Crashlytics stack traces ----
 -keepattributes SourceFile,LineNumberTable

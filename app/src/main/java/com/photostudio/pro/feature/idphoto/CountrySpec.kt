@@ -86,9 +86,12 @@ class CountryRepository(private val context: Context) {
     fun freeSubset(limit: Int): List<CountrySpec> =
         all().sortedWith(compareBy({ it.priority }, { it.name })).take(limit.coerceAtLeast(1))
 
+    /** One shared format: building a Json instance per call is wasteful (compiler warning). */
+    private val JSON_FORMAT = Json { ignoreUnknownKeys = true; isLenient = true }
+
     private fun load(): List<CountrySpec> = runCatching {
         val text = context.assets.open("countries.json").bufferedReader().use { it.readText() }
-        Json { ignoreUnknownKeys = true; isLenient = true }
+        JSON_FORMAT
             .decodeFromString<CountriesFile>(text)
             .countries
     }.getOrElse {

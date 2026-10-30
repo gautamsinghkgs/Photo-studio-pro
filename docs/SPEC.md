@@ -220,7 +220,8 @@ android {
     bundle {
         language  { enableSplit = true }
         density   { enableSplit = true }
-        abi       { enableSplit = true }   // CRITICAL: keeps per-device download ~33 MB
+        abi       { enableSplit = true }   // CRITICAL: the all-ABI AAB is ~52 MiB (run #9);
+                                           // splits keep each device's download a fraction of that
     }
 
     compileOptions {
@@ -238,15 +239,18 @@ Subject Segmentation (UNBUNDLED)   ~0.2 MB (Google doc, verified 2026-10-29)
 Face Detection (bundled)           ~6.9 MB
 Text Recognition Latin (bundled)   ~4 MB
 Text Recognition Devanagari        ~4 MB
-Compose + PdfBox + Room            ~6 MB   (Coil REMOVED — bug #29: declared, never used)
+Compose + PdfBox                   ~5 MB   (Coil REMOVED #29, Room REMOVED #35: both declared, never used)
 AdMob + UMP + RevenueCat + Firebase ~6 MB
 App code + resources                ~4 MB
 ─────────────────────────────────────────
-Expected AAB download size         ~31 MB   (Play limit 200 MB — plenty of headroom)
+MEASURED AAB, all ABIs (CI run #9)  54,280,259 B (~52 MiB) — this is the UPLOAD size.
+Per-device download is far smaller: abi/density/language splits are ON.
+Per-device number pending a bundletool measurement step (P3).
 
-NOTE: this is an estimate, not a measurement. After M1, read the real number from
-Android Studio -> Build -> Analyze APK and update this block. Also verify 16 KB
-page alignment there: `zipalign -c -P 16 -v 4 app-release.aab`.
+NOTE: the block above is now partly MEASURED — CI run #9 (2026-10-31) produced the
+first real AAB: 54,280,259 B across all ABIs, and `zipalign -c -P 16 -v 4` passed in
+the same job. What remains unmeasured is the per-device download size; add a
+bundletool `build-apks --device-spec` step in P3 to get it.
 ```
 If the measured total exceeds **70 MB**, stop and report before adding more models.
 
@@ -668,7 +672,7 @@ and never gate the UI behind a network round-trip.
 | Background removal | **Unlimited** (deliberate generous hook) | Unlimited |
 | Exports per day | 3 | Unlimited |
 | Export resolution | SD (up to 1080 px) | HD / 4K / original |
-| Watermark | Yes | **None** |
+| Watermark | Yes on the five image tools; **Batch free exports stay CLEAN until the 100k+ downloads phase** (owner decision 2026-10-31 — ads are the early monetization lever, watermark is the late one) | **None** |
 | Batch size | **1 photo** | **100 photos** |
 | Collage templates | 10 | 200+ |
 | ID photo countries | 10 | 30+ |
