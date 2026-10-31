@@ -161,4 +161,44 @@
     <string name="settings_delete_data_summary">Is app ne device par jo bhi save kiya hai, sab saaf ho jaayega</string>
     <string name="settings_delete_data_warn">Isse tumhare daily usage counters, saved preferences aur is device par offline Pro status saaf ho jaayenge. Tumhari photos hum kabhi store nahi karte, isliye server se kuch mitane ko hai hi nahi — hamara koi server nahi hai. Agar tum Pro subscriber ho toh purchase tumhare Google account par rehti hai aur Restore purchases se kabhi bhi wapas la sakte ho. Yeh wapas nahi hoga.</string>
     <string name="settings_delete_confirm">Sab mita do</string>
+
+    <!-- ============ P2 LOCALISATION PASS (2026-10-31) ============
+         EN keys ke exactly samaan set — check_resources.py parity gate. -->
+    <string name="batch_selected_count">%1$d फ़ोटो चुनी गईं</string>
+    <string name="batch_mode">मोड</string>
+    <string name="batch_add_more">और फ़ोटो जोड़ें</string>
+    <string name="bg_coverage">विषय कवरेज: %1$d%%</string>
+    <string name="id_output_summary">%1$d × %2$d पिक्सल  ·  ~%3$d KB  ·  प्रति शीट %4$d</string>
+    <string name="settings_about_processing">सारी इमेज प्रोसेसिंग इसी डिवाइस पर Google ML Kit और Android ग्राफ़िक्स फ्रेमवर्क से होती है। कोई क्लाउड AI नहीं, कोई थर्ड-पार्टी inference API नहीं।</string>
+    <string name="settings_about_oss">ओपन-सोर्स घटक: PdfBox-Android (Apache 2.0), Jetpack Compose (Apache 2.0)।</string>
+    <string name="ocr_auto_detect">स्क्रिप्ट अपने-आप पहचानें (लैटिन + देवनागरी दोनों चलती हैं, बेहतर परिणाम रखा जाता है)</string>
+    <string name="collage_status_count">%1$d फ़ोटो · इस लेआउट के लिए %2$d चाहिए</string>
+    <string name="collage_toggle_bg">बैकग्राउंड बदलें</string>
+    <string name="enh_original">मूल</string>
+    <string name="wb_coverage">बैकग्राउँड सफ़ेद हुआ: फ़्रेम का %1$d%%</string>
+    <string name="wb_soften_edge">किनारा नरम करें (सफ़ेद घेरा हटाता है)</string>
+    <string name="pdf_status_count">%1$d फ़ोटो — हर फ़ोटो का एक पृष्ठ</string>
+    <string name="pdf_render_dpi">रेंडर DPI</string>
+    <string name="pdf_dpi_note">150 DPI पढ़ने लायक है और लंबे डॉक्यूमेंट पर मेमोरी सुरक्षित रखता है। 300 DPI प्रिंट के लिए है।</string>
+    <string name="pdf_rendering_progress">पृष्ठ %1$d / %2$d रेंडर हो रहा है…</string>
+    <string name="home_building">· बन रहा है ·</string>
+    <string name="paywall_loading_prices">Google Play से क़ीमें लोड हो रही हैं…</string>
+    <string name="paywall_opening_play">Google Play खुल रहा है…</string>
+    <string name="paywall_loading">लोड हो रहा है…</string>
+    <string name="paywall_start_trial">%1$d-दिन का मुफ़्ट ट्रायल शुरू करें</string>
+    <string name="paywall_buy_lifetime">लाइफ़टाइम खरीदें · %1$s</string>
+    <string name="paywall_subscribe">सब्स्क्राइब करें · %1$s</string>
+    <string name="paywall_prices_note">चेकआउट पर Google Play क़ीमें आपकी स्थानीय मुद्रा में दिखाता है।</string>
+    <string name="paywall_weekly">साप्ताहिक</string>
+    <string name="paywall_yearly">वार्षिक</string>
+    <string name="paywall_lifetime">लाइफ़टाइम</string>
+    <string name="paywall_offer_best">सबसे बढ़िया · %1$d-दिन का मुफ़्ट ट्रायल</string>
+    <string name="paywall_offer_once">एक बार भुगतान, हमेशा के लिए आपका</string>
+    <string name="paywall_offer_trial">%1$d-दिन का मुफ़्ट ट्रायल</string>
+    <string name="paywall_benefit_1">असीमित एक्सपोर्ट — कोई दैनिक सीमा नहीं</string>
+    <string name="paywall_benefit_2">एक साथ 100 फ़ोटो तक बैच रिसाइज़</string>
+    <string name="paywall_benefit_3">HD और 4K आउटपुट, कोई वॉटरमार्क नहीं</string>
+    <string name="paywall_benefit_4">सभी 30+ ID फ़ोटो देश</string>
+    <string name="paywall_benefit_5">सभी कॉलाज टेम्पलेट</string>
+    <string name="paywall_benefit_6">कोई विज्ञापन नहीं, कभी नहीं</string>
 </resources>

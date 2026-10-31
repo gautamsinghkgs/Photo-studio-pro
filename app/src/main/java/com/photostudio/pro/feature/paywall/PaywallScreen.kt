@@ -100,12 +100,12 @@ fun PaywallScreen(trigger: String, onDismiss: () -> Unit) {
 
             Spacer(Modifier.height(4.dp))
             listOf(
-                "Unlimited exports — no daily limit",
-                "Batch resize up to 100 photos at once",
-                "HD and 4K output, no watermark",
-                "All 30+ ID photo countries",
-                "All collage templates",
-                "No ads, ever",
+                stringResource(R.string.paywall_benefit_1),
+                stringResource(R.string.paywall_benefit_2),
+                stringResource(R.string.paywall_benefit_3),
+                stringResource(R.string.paywall_benefit_4),
+                stringResource(R.string.paywall_benefit_5),
+                stringResource(R.string.paywall_benefit_6),
             ).forEach { Benefit(it) }
 
             Spacer(Modifier.height(6.dp))
@@ -115,7 +115,7 @@ fun PaywallScreen(trigger: String, onDismiss: () -> Unit) {
                 // Buttons stay DISABLED. Showing a placeholder price like
                 // "$34.99" would be a wrong price, which is a policy violation.
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Text("Loading prices from Google Play…", fontSize = 12.sp,
+                Text(stringResource(R.string.paywall_loading_prices), fontSize = 12.sp,
                      color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             offers.forEach { o ->
@@ -172,12 +172,12 @@ fun PaywallScreen(trigger: String, onDismiss: () -> Unit) {
             ) {
                 Text(
                     when {
-                        busy -> "Opening Google Play…"
-                        chosen == null -> "Loading…"
+                        busy -> stringResource(R.string.paywall_opening_play)
+                        chosen == null -> stringResource(R.string.paywall_loading)
                         chosen.hasTrial && !chosen.isOneTime ->
-                            "Start ${EntitlementManager.TRIAL_DAYS}-day free trial"
-                        chosen.isOneTime -> "Buy lifetime · ${chosen.priceFormatted}"
-                        else -> "Subscribe · ${chosen.priceFormatted}"
+                            stringResource(R.string.paywall_start_trial, EntitlementManager.TRIAL_DAYS)
+                        chosen.isOneTime -> stringResource(R.string.paywall_buy_lifetime, chosen.priceFormatted)
+                        else -> stringResource(R.string.paywall_subscribe, chosen.priceFormatted)
                     },
                     fontWeight = FontWeight.SemiBold, fontSize = 16.sp,
                 )
@@ -202,7 +202,7 @@ fun PaywallScreen(trigger: String, onDismiss: () -> Unit) {
 
             NoticeCard(stringResource(R.string.paywall_terms))
             Text(
-                "Prices are shown by Google Play in your local currency at checkout.",
+                stringResource(R.string.paywall_prices_note),
                 fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(),
             )
@@ -210,17 +210,19 @@ fun PaywallScreen(trigger: String, onDismiss: () -> Unit) {
     }
 }
 
+@Composable
 private fun titleFor(productId: String) = when (productId) {
-    EntitlementManager.PRODUCT_WEEKLY   -> "Weekly"
-    EntitlementManager.PRODUCT_YEARLY   -> "Yearly"
-    EntitlementManager.PRODUCT_LIFETIME -> "Lifetime"
+    EntitlementManager.PRODUCT_WEEKLY   -> stringResource(R.string.paywall_weekly)
+    EntitlementManager.PRODUCT_YEARLY   -> stringResource(R.string.paywall_yearly)
+    EntitlementManager.PRODUCT_LIFETIME -> stringResource(R.string.paywall_lifetime)
     else -> productId
 }
 
+@Composable
 private fun subtitleFor(o: PurchaseFlow.Offer) = when {
-    o.hasTrial && !o.isOneTime -> "Best value · ${EntitlementManager.TRIAL_DAYS}-day free trial"
-    o.isOneTime                -> "Pay once, yours forever"
-    else                       -> "${EntitlementManager.TRIAL_DAYS}-day free trial"
+    o.hasTrial && !o.isOneTime -> stringResource(R.string.paywall_offer_best, EntitlementManager.TRIAL_DAYS)
+    o.isOneTime                -> stringResource(R.string.paywall_offer_once)
+    else                       -> stringResource(R.string.paywall_offer_trial, EntitlementManager.TRIAL_DAYS)
 }
 
 /*

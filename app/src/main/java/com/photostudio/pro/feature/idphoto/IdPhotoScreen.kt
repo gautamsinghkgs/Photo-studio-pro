@@ -155,7 +155,7 @@ fun IdPhotoScreen(
 
                     is IdPhotoViewModel.Ui.Ready -> {
                         BmpCard(ui.cropPreview, stringResource(R.string.after), 240)
-                        Text("${ui.outW} × ${ui.outH} px  ·  ~${ui.estKb} KB  ·  ${ui.copies} per sheet",
+                        Text(stringResource(R.string.id_output_summary, ui.outW, ui.outH, ui.estKb, ui.copies),
                              style = MaterialTheme.typography.bodySmall,
                              color = MaterialTheme.colorScheme.onSurfaceVariant)
 

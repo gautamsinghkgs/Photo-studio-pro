@@ -78,7 +78,7 @@ fun HomeScreen(adsReady: Boolean, onNavigate: (String) -> Unit) {
                     if (entitlements.isPro) {
                         Surface(Modifier.padding(end = 4.dp), shape = RoundedCornerShape(6.dp),
                                 color = MaterialTheme.colorScheme.secondary) {
-                            Text(" PRO ", color = MaterialTheme.colorScheme.onSecondary,
+                            Text(" ${stringResource(R.string.pro_badge)} ", color = MaterialTheme.colorScheme.onSecondary,
                                  fontSize = 10.sp, fontWeight = FontWeight.Bold,
                                  modifier = Modifier.padding(vertical = 2.dp))
                         }
@@ -147,7 +147,7 @@ private fun ToolCard(tool: Tool, onClick: () -> Unit) {
                  color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, fontSize = 11.5.sp)
             if (!tool.built) {
                 Spacer(Modifier.height(6.dp))
-                Text("· building ·", fontSize = 10.sp,
+                Text(stringResource(R.string.home_building), fontSize = 10.sp,
                      color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f))
             }
         }

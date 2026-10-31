@@ -113,7 +113,7 @@ fun PdfScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                             { imgPicker.launch(PickVisualMediaRequest(
                                 ActivityResultContracts.PickVisualMedia.ImageOnly)) })
                     } else {
-                        Text("${st.photos.size} photo(s) — one page each",
+                        Text(stringResource(R.string.pdf_status_count, st.photos.size),
                              fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         st.photoNames.take(8).forEachIndexed { i, n ->
                             Text("${i + 1}. $n", fontSize = 11.sp, maxLines = 1,
@@ -155,7 +155,7 @@ fun PdfScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                     // PDF -> images
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text("Render DPI", fontSize = 12.sp)
+                        Text(stringResource(R.string.pdf_render_dpi), fontSize = 12.sp)
                         Text("${st.dpi}", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                     }
                     Slider(value = st.dpi.toFloat(),
@@ -165,14 +165,13 @@ fun PdfScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                         saved.value = false
                         pdfPicker.launch(arrayOf("application/pdf"))
                     }
-                    Text("150 DPI is legible and keeps memory safe on a long document. " +
-                         "300 DPI is for print.", fontSize = 11.sp,
+                    Text(stringResource(R.string.pdf_dpi_note), fontSize = 11.sp,
                          color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
                 when (val ui = st.ui) {
                     is PdfViewModel.Ui.Progress -> Column {
-                        Text("Rendering page ${ui.done} of ${ui.total}…", fontSize = 12.sp)
+                        Text(stringResource(R.string.pdf_rendering_progress, ui.done, ui.total), fontSize = 12.sp)
                         LinearProgressIndicator(progress = { ui.done.toFloat() / ui.total.coerceAtLeast(1) },
                                                 modifier = Modifier.fillMaxWidth())
                     }

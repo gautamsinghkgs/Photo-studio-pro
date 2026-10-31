@@ -151,7 +151,7 @@ fun BgRemoverScreen(
                             selected = state.bg,
                             onSelect = { vm.setBackground(it) },
                         )
-                        Text("Subject coverage: ${(ui.coverage * 100).toInt()}%",
+                        Text(stringResource(R.string.bg_coverage, (ui.coverage * 100).toInt()),
                              style = MaterialTheme.typography.bodySmall,
                              color = MaterialTheme.colorScheme.onSurfaceVariant)
 

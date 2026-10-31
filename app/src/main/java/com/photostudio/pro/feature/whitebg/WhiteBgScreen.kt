@@ -107,7 +107,7 @@ fun WhiteBgScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                         Image(ui.result.asImageBitmap(), null, Modifier.fillMaxSize(),
                               contentScale = ContentScale.Fit)
                     }
-                    Text("Background whitened: ${(ui.coverage * 100).toInt()}% of the frame",
+                    Text(stringResource(R.string.wb_coverage, (ui.coverage * 100).toInt()),
                          fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                     // Honest failure mode: tell them to use the right tool
@@ -133,7 +133,7 @@ fun WhiteBgScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = st.soften, onCheckedChange = { vm.update { copy(soften = it) } })
-                        Text("Soften edge (removes the white halo)", Modifier.padding(start = 10.dp), fontSize = 13.sp)
+                        Text(stringResource(R.string.wb_soften_edge), Modifier.padding(start = 10.dp), fontSize = 13.sp)
                     }
                 }
 

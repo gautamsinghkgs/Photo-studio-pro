@@ -197,4 +197,48 @@
     <string name="settings_delete_data_summary">Clears everything this app stores on your device</string>
     <string name="settings_delete_data_warn">This clears your daily usage counters, your saved preferences and your offline Pro status on this device. Your photos are never stored by us, so there is nothing of yours to delete from a server — we have no server. If you are a Pro subscriber, your purchase stays on your Google account and you can restore it any time with Restore purchases. This cannot be undone.</string>
     <string name="settings_delete_confirm">Delete everything</string>
+
+    <!-- ============ P2 LOCALISATION PASS (2026-10-31) ============
+         UI literals moved out of Compose code so a Hindi user never sees a
+         mixed-language screen. Deliberate literals remain in code: numbers
+         and units ("1. name", "pt", "%", dpi), symbols (lock, check), the
+         app name as a clipboard label, and CountrySpec.name (a 30-row
+         country-name data table — its own future pass). -->
+    <string name="batch_selected_count">%1$d photos selected</string>
+    <string name="batch_mode">Mode</string>
+    <string name="batch_add_more">Add more photos</string>
+    <string name="bg_coverage">Subject coverage: %1$d%%</string>
+    <string name="id_output_summary">%1$d × %2$d px  ·  ~%3$d KB  ·  %4$d per sheet</string>
+    <string name="settings_about_processing">All image processing runs on this device using Google ML Kit and the Android graphics framework. No cloud AI, no third-party inference API.</string>
+    <string name="settings_about_oss">Open-source components: PdfBox-Android (Apache 2.0), Jetpack Compose (Apache 2.0).</string>
+    <string name="ocr_auto_detect">Auto-detect script (runs Latin + Devanagari, keeps the better result)</string>
+    <string name="collage_status_count">%1$d photo(s) · layout needs %2$d</string>
+    <string name="collage_toggle_bg">Toggle bg</string>
+    <string name="enh_original">ORIGINAL</string>
+    <string name="wb_coverage">Background whitened: %1$d%% of the frame</string>
+    <string name="wb_soften_edge">Soften edge (removes the white halo)</string>
+    <string name="pdf_status_count">%1$d photo(s) — one page each</string>
+    <string name="pdf_render_dpi">Render DPI</string>
+    <string name="pdf_dpi_note">150 DPI is legible and keeps memory safe on a long document. 300 DPI is for print.</string>
+    <string name="pdf_rendering_progress">Rendering page %1$d of %2$d…</string>
+    <string name="home_building">· building ·</string>
+    <string name="paywall_loading_prices">Loading prices from Google Play…</string>
+    <string name="paywall_opening_play">Opening Google Play…</string>
+    <string name="paywall_loading">Loading…</string>
+    <string name="paywall_start_trial">Start %1$d-day free trial</string>
+    <string name="paywall_buy_lifetime">Buy lifetime · %1$s</string>
+    <string name="paywall_subscribe">Subscribe · %1$s</string>
+    <string name="paywall_prices_note">Prices are shown by Google Play in your local currency at checkout.</string>
+    <string name="paywall_weekly">Weekly</string>
+    <string name="paywall_yearly">Yearly</string>
+    <string name="paywall_lifetime">Lifetime</string>
+    <string name="paywall_offer_best">Best value · %1$d-day free trial</string>
+    <string name="paywall_offer_once">Pay once, yours forever</string>
+    <string name="paywall_offer_trial">%1$d-day free trial</string>
+    <string name="paywall_benefit_1">Unlimited exports — no daily limit</string>
+    <string name="paywall_benefit_2">Batch resize up to 100 photos at once</string>
+    <string name="paywall_benefit_3">HD and 4K output, no watermark</string>
+    <string name="paywall_benefit_4">All 30+ ID photo countries</string>
+    <string name="paywall_benefit_5">All collage templates</string>
+    <string name="paywall_benefit_6">No ads, ever</string>
 </resources>

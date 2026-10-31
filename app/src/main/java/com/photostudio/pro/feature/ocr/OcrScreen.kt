@@ -67,7 +67,7 @@ fun OcrScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                 Card { Column(Modifier.padding(14.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = st.autoScript, onCheckedChange = vm::setAuto)
-                        Text("Auto-detect script (runs Latin + Devanagari, keeps the better result)",
+                        Text(stringResource(R.string.ocr_auto_detect),
                              Modifier.padding(start = 10.dp), fontSize = 12.sp)
                     }
                     if (!st.autoScript) {

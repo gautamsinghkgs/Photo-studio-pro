@@ -135,11 +135,9 @@ fun SettingsScreen(onBack: () -> Unit, onGoPro: () -> Unit = {}) {
             Text(stringResource(R.string.settings_about), fontWeight = FontWeight.SemiBold)
             Text(stringResource(R.string.settings_version, BuildConfig.VERSION_NAME), fontSize = 12.sp,
                  color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text("All image processing runs on this device using Google ML Kit and the " +
-                 "Android graphics framework. No cloud AI, no third-party inference API.",
+            Text(stringResource(R.string.settings_about_processing),
                  fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text("Open-source components: PdfBox-Android (Apache 2.0), " +
-                 "Jetpack Compose (Apache 2.0).",
+            Text(stringResource(R.string.settings_about_oss),
                  fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }

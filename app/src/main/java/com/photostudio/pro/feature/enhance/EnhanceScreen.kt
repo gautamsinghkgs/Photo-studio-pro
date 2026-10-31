@@ -119,7 +119,7 @@ fun EnhanceScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                                   contentScale = ContentScale.Fit)
                         }
                         if (st.showOriginal) {
-                            Text("ORIGINAL", Modifier.align(Alignment.TopStart).padding(10.dp)
+                            Text(stringResource(R.string.enh_original), Modifier.align(Alignment.TopStart).padding(10.dp)
                                 .clip(RoundedCornerShape(6.dp)).background(androidx.compose.ui.graphics.Color.Black.copy(0.55f))
                                 .padding(horizontal = 8.dp, vertical = 2.dp),
                                 color = androidx.compose.ui.graphics.Color.White, fontSize = 10.sp)

@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.photostudio.pro.R
 
 /** Standard screen scaffold with a back button and an optional PRO badge. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +88,7 @@ fun ProBadge() {
         shape = RoundedCornerShape(6.dp),
     ) {
         Text(
-            " PRO ", color = MaterialTheme.colorScheme.onSecondary,
+            " ${stringResource(R.string.pro_badge)} ", color = MaterialTheme.colorScheme.onSecondary,
             fontSize = 10.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 1.dp),
         )

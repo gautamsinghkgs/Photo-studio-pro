@@ -86,7 +86,7 @@ fun BatchScreen(
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
-                    Text("${state.items.size} photos selected", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.batch_selected_count, state.items.size), fontWeight = FontWeight.SemiBold)
 
                     // ---- The free/Pro boundary, stated plainly ----
                     if (state.blockedCount > 0) {
@@ -112,7 +112,7 @@ fun BatchScreen(
                     }
 
                     Card { Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text("Mode", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        Text(stringResource(R.string.batch_mode), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         BatchViewModel.Mode.entries.forEach { m ->
                             Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                                 androidx.compose.material3.RadioButton(
@@ -190,7 +190,7 @@ fun BatchScreen(
                     }
                     TextButton(onClick = { picker.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
-                        Text("Add more photos", fontSize = 13.sp)
+                        Text(stringResource(R.string.batch_add_more), fontSize = 13.sp)
                     }
 
                     state.items.take(60).forEachIndexed { i, it ->

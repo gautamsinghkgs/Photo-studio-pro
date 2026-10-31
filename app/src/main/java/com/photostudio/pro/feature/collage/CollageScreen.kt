@@ -106,7 +106,7 @@ fun CollageScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                         }
                     }
 
-                    Text("${st.photos.size} photo(s) · layout needs ${st.template.count}",
+                    Text(stringResource(R.string.collage_status_count, st.photos.size, st.template.count),
                          fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (!st.hasEnough) NoticeCard(stringResource(R.string.collage_need_more, st.template.count))
 
@@ -185,7 +185,7 @@ fun CollageScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                             }
                             TextButton(onClick = { vm.update {
                                 copy(bgColor = if (bgColor == Color.White.toArgb()) Color.Black.toArgb() else Color.White.toArgb()) } }) {
-                                Text("Toggle bg", fontSize = 12.sp)
+                                Text(stringResource(R.string.collage_toggle_bg), fontSize = 12.sp)
                             }
                         }
                     } }

@@ -565,8 +565,8 @@ app that cannot ship.
 
 | Item | Size | Why it waits |
 |---|---|---|
-| **29 hardcoded English `Text("…")` literals** across 10 screens (`BatchScreen` 88/114/189/194, `WhiteBgScreen` 110/124/136, `CollageScreen` 107/143/145/179, `PdfScreen` 116/119, `IdPhotoScreen` 96/137, `SettingsScreen` 137/140, `OcrScreen` 66, `BgRemoverScreen` 132, `EnhanceScreen` 122) | 29 strings × 2 locales | A Hindi user currently sees a mixed-language screen. This is one dedicated EN↔HI pass, not 29 opportunistic edits: doing it piecemeal multiplies the hand-off file list for zero build benefit. `check_resources.py` reports 140/140 parity and **cannot see literals** — that is exactly why the count is written down here |
-| **22 unreferenced strings** | 0 work | Deliberate. They are the vocabulary for the P2 localisation pass and for screens still in `feature/later/`. Do not delete them |
+| ~~29 hardcoded English literals~~ → **DONE 2026-10-31 — the P2 localisation pass landed.** A fresh scan found **37** live literals across 12 files (the old count predated the P1 refactor and missed PaywallScreen's benefit/offer blocks entirely). All moved to `strings.xml` EN+HI — parity is now **177/177**. `titleFor`/`subtitleFor` became `@Composable` to reach `stringResource`; `pro_badge` got wired (unreferenced 22 → 21). The 10 literals that remain in code are deliberate: numbers/units (`1. name`, `pt`, `%`, dpi), symbols (lock, check), the app name as a clipboard label, and `CountrySpec.name` (a 30-row proper-noun country table — its own future pass if ever needed) | 0 | Re-verify any time: `grep -rnE '(Text\|label\|title)\s*[=(]\s*"' app/src/main/java --include="*.kt" \| grep -v stringResource` → only the 10 deliberate sites |
+| **21 unreferenced strings** | 0 work | Deliberate. Vocabulary for screens still in `feature/later/` — the localisation pass wired one of the old 22 (`pro_badge`). Do not delete them |
 
 **Closed by the post-green cleanup commit (2026-10-31)** — OcrScreen's warning one commit later via #36 —:** the six compiler warnings · the PDF
 failure-path bitmap leak · unused Room (#35) · and the owner decisions — interstitials **ON at
@@ -645,7 +645,9 @@ everything after it on the same command line (bug #13). A placeholder
 | #10 | `41124485332` | 🔴 | The cleanup commit's own regression: `resources` ✅ but all three build jobs died on the OcrScreen "warning fix" — `LocalClipboard` is an API migration, not a rename → **#36** |
 | #11 | `41184706523` | 🟢 | **Second fully green run.** The #36 hotfix verified end-to-end; the release gates re-proven after the Room removal. Two consecutive full-green runs (#9, #11) — the code side is stable |
 | #12 | `41185899132` | 🔴 | Every real gate passed again (16 KB ✅ 64-bit ✅ AAB 53M built + uploaded) but the new bundletool step died in one second — its flags were written from memory → **#37** |
-| **#13** | `41187145733` | 🟢 | **4/4 jobs, 12/12 release steps.** The bundletool step ran clean and published its number as a `::notice::` — **per-device download = 24,227,813 B ≈ 23.1 MB** (arm64-v8a/en-IN/420dpi; AAB upload 54,145,529 B). Recorded in SPEC §size-budget |
+| #13 | `41187145733` | 🟢 | **4/4 jobs, 12/12 release steps.** The bundletool step ran clean and published its number as a `::notice::` — **per-device download = 24,227,813 B ≈ 23.1 MB** (arm64-v8a/en-IN/420dpi; AAB upload 54,145,529 B). Recorded in SPEC §size-budget |
+| #14 | `41188332485` | 🟢 | Docs-only push (the run-#13 numbers recorded in SPEC/README) — routine 4/4 green |
+| **#15** | *(the next one)* | ❓ | **P2 localisation pass**: 37 UI literals → `strings.xml` EN+HI (177/177 parity), 12 Kotlin files touched. Locally verified before shipping: `compileDebugKotlin` ✅ 2m57s, `testDebugUnitTest` ✅, both linters clean |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced
@@ -1010,7 +1012,7 @@ These facts were confirmed by six compile rounds, not only by reading.
 | `tools/check_resources.py` | **exit 0** — 55 Kotlin files, 10 resource XMLs scanned |
 | `tools/check_wiring.py` | **exit 0** — 0 errors, 0 warnings, 12 notes (3 of them deliberate `PARKED` entries). Previously verified with 7 injected violations, all caught, then reverted |
 | Kotlin files in `app/src/main` | 55 files |
-| Strings EN ↔ HI | **140 / 140**, unique, identical name sets — plus 22 unreferenced entries (§6 P2) and 29 hardcoded literals the linter cannot see (§6 P2) |
+| Strings EN ↔ HI | **177 / 177**, unique, identical name sets — plus 21 unreferenced entries (§6 P2) and **0** hardcoded UI literals: the P2 localisation pass landed 2026-10-31 (37 moved; the 10 remaining code literals are deliberate numbers/symbols/proper nouns, listed in §6) |
 | CI | 4 jobs, YAML-valid via `yaml.safe_load`, `run:` blocks verified as genuinely multi-line |
 | Secrets | **none** — no keystore, no `google-services.json`, no `local.properties`, no `.env` |
 | Rendered on a real device | **never** — no emulator has ever run anywhere (§4.3) |
