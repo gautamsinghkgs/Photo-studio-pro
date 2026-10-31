@@ -32,6 +32,8 @@ class PhotoStudioApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Returns NULL (not an exception) when no Firebase config exists in
+        // the build — safe. ServiceLocator then falls back to LocalFlags (#38).
         FirebaseApp.initializeApp(this)
         ServiceLocator.init(this)
 

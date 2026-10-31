@@ -9,6 +9,8 @@ import com.photostudio.pro.monetization.ads.AdCoordinator
 import com.photostudio.pro.monetization.ads.AdManager
 import com.photostudio.pro.monetization.ads.AdPolicy
 import com.photostudio.pro.monetization.billing.EntitlementManager
+import com.photostudio.pro.monetization.config.AppFlags
+import com.photostudio.pro.monetization.config.LocalFlags
 import com.photostudio.pro.monetization.config.RemoteFlags
 
 /**
@@ -24,7 +26,7 @@ object ServiceLocator {
     lateinit var appContext: Context; private set
     lateinit var prefs: Prefs; private set
     lateinit var usage: PrefsUsageCounters; private set
-    lateinit var flags: RemoteFlags; private set
+    lateinit var flags: AppFlags; private set
     lateinit var entitlements: EntitlementManager; private set
     lateinit var adPolicy: AdPolicy; private set
     lateinit var adManager: AdManager; private set
@@ -39,7 +41,11 @@ object ServiceLocator {
         appContext = context.applicationContext
         prefs = Prefs(appContext)
         usage = PrefsUsageCounters(prefs)
-        flags = RemoteFlags(FirebaseRemoteConfig.getInstance())
+        // Bug #38: Firebase is OPTIONAL. Without a google-services.json the
+        // plugin generates no resources, initializeApp() returns null and
+        // getInstance() throws — which used to kill the app at startup.
+        flags = runCatching { RemoteFlags(FirebaseRemoteConfig.getInstance()) }
+            .getOrElse { LocalFlags() }
         entitlements = EntitlementManager(appContext)
         adPolicy = AdPolicy(entitlements, flags, usage)
         adManager = AdManager(appContext)

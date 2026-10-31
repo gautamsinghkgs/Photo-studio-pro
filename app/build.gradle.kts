@@ -7,7 +7,14 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    // Uncomment AFTER adding app/google-services.json (YOUR-TURN.md step 5)
+    // Uncomment AFTER adding app/google-services.json (YOUR-TURN.md step 5).
+    // Until then Firebase is entirely absent from the build and the app runs
+    // on LocalFlags (in-memory safe defaults) with a no-op analytics sink —
+    // that is the bug #38 contract: Firebase optional at build time AND at
+    // runtime. ⚠️ When enabling: the json MUST contain a client for EVERY
+    // applicationId INCLUDING the debug suffix com.photostudio.pro.debug
+    // (see debug { applicationIdSuffix }), or processDebugGoogleServices
+    // fails the build.
     // alias(libs.plugins.google.services)
     // alias(libs.plugins.firebase.crashlytics)
 }

@@ -13,14 +13,18 @@ import com.photostudio.pro.monetization.ads.FlagSource
  * and feature availability WITHOUT waiting for a 1-7 day Play review.
  * master-plan section 12.1.
  *
- * ⚠️ LAUNCH DEFAULT: interstitials are OFF. They are switched on remotely
- * around Day 30, only if D7 retention is holding above 15% and crash-free
- * sessions above 99.5%. This is a business decision, not a code decision —
- * but the code must make it a one-line remote change.
+ * OWNER DECISION 2026-10-31: interstitials are ON at launch — one per export
+ * cycle, shown AFTER the save completes, with the rails intact (daily cap,
+ * 180 s gap, first-ad delay, banners off forever, pro = zero ads).
  *
  * ⚠️ NEVER enable Firebase Blaze. Cloud Functions and Cloud Storage are
  * Blaze-only and Firebase has no hard spending cap. Spark gives us
  * Analytics, Crashlytics and Remote Config, which is all we need.
+ *
+ * ⚠️ FIREBASE IS OPTIONAL (bug #38). Until the owner adds a real
+ * google-services.json and un-comments the plugin in app/build.gradle.kts,
+ * no Firebase resources exist in the build and [LocalFlags] serves these same
+ * defaults from memory. The app must boot with or without Firebase.
  */
 object RemoteFlagKeys {
     const val ADS_INTERSTITIAL_ENABLED    = "ads_interstitial_enabled"
@@ -39,42 +43,84 @@ object RemoteFlagKeys {
     const val TOOL_ENABLED_PREFIX         = "tool_enabled_"
 }
 
-class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
+/**
+ * SINGLE SOURCE OF TRUTH for the safe values. Both the Firebase Remote Config
+ * defaults map ([RemoteFlags]) and the in-memory fallback ([LocalFlags]) read
+ * from here, so the two can never drift apart. Bug #38.
+ */
+object FlagDefaults {
+    const val INTERSTITIAL_ENABLED   = true     // ⭐ OWNER DECISION 2026-10-31: ON at launch
+    const val FIRST_AD_DELAY_MS      = AdPolicy.DEFAULT_FIRST_AD_DELAY_MS
+    const val INTERSTITIAL_GAP_MS    = AdPolicy.DEFAULT_INTERSTITIAL_GAP_MS
+    const val INTERSTITIAL_DAILY_CAP = AdPolicy.DEFAULT_INTERSTITIAL_DAILY_CAP
+    const val REWARDED_ENABLED       = true
+    const val REWARDED_DAILY_CAP     = 8
+    const val NATIVE_ENABLED         = false
+    const val PAYWALL_VARIANT        = "soft_hard"
+    const val FREE_EXPORTS_PER_DAY   = 3
+    const val FREE_BATCH_SIZE        = 1
+    const val FREE_OCR_SCANS_PER_DAY = 5
+    const val FREE_ID_PHOTO_COUNTRIES = 10
+    const val SSV_STRICT_MODE        = false
+
+    /** Per-tool kill switches. A broken tool can be hidden instantly, no update.
+     *  They MUST all be present: a missing key reads as false, which would hide
+     *  the tool on a fresh install before the first fetch. */
+    val TOOL_ENABLED = mapOf(
+        "bgremove" to true,
+        "idphoto"  to true,
+        "batch"    to true,
+        "whitebg"  to false,
+        "collage"  to false,
+        "pdf"      to false,
+        "ocr"      to false,
+        "enhance"  to false,
+    )
+}
+
+/**
+ * The full flag surface the app reads. [RemoteFlags] (Firebase) and
+ * [LocalFlags] (in-memory) both implement it; ServiceLocator chooses at
+ * startup. Extends [FlagSource] so AdPolicy keeps seeing only its narrow slice.
+ */
+interface AppFlags : FlagSource {
+    /** Call once from PhotoStudioApp.onCreate. Failures are non-fatal. */
+    fun fetchAsync()
+    val rewardedDailyCap: Int
+    val paywallVariant: String
+    val freeExportsPerDay: Int
+    val freeBatchSize: Int
+    val freeOcrScansPerDay: Int
+    val freeIdPhotoCountries: Int
+    /** Phase 2 only. Always false until an SSV endpoint exists. */
+    val ssvStrictMode: Boolean
+    fun isToolEnabled(toolId: String): Boolean
+}
+
+class RemoteFlags(private val config: FirebaseRemoteConfig) : AppFlags {
 
     init {
         // In-app defaults are the SAFE values. If fetch fails, the app still
         // behaves correctly — it just cannot be tuned live.
         config.setDefaultsAsync(
-            mapOf(
-                // OWNER DECISION 2026-10-31: ads earn from day 1 — one interstitial per
-                // export cycle, shown AFTER the save completes. The rails stay: daily
-                // cap, 180 s gap, first-ad delay, banners off forever, pro = zero ads.
-                // The old D30–60 enablement ramp now governs frequency ramp-up only.
-                RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED   to true,    // ⭐ ON at launch
-                RemoteFlagKeys.ADS_INTERSTITIAL_DELAY_MS  to AdPolicy.DEFAULT_FIRST_AD_DELAY_MS,
-                RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS    to AdPolicy.DEFAULT_INTERSTITIAL_GAP_MS,
-                RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP to AdPolicy.DEFAULT_INTERSTITIAL_DAILY_CAP.toLong(),
-                RemoteFlagKeys.ADS_REWARDED_ENABLED       to true,
-                RemoteFlagKeys.ADS_REWARDED_DAILY_CAP     to 8L,
-                RemoteFlagKeys.ADS_NATIVE_ENABLED         to false,
-                RemoteFlagKeys.PAYWALL_VARIANT            to "soft_hard",
-                RemoteFlagKeys.FREE_EXPORTS_PER_DAY       to 3L,
-                RemoteFlagKeys.FREE_BATCH_SIZE            to 1L,
-                RemoteFlagKeys.FREE_OCR_SCANS_PER_DAY     to 5L,
-                RemoteFlagKeys.FREE_ID_PHOTO_COUNTRIES    to 10L,
-                RemoteFlagKeys.SSV_STRICT_MODE            to false,
-                // Per-tool kill switches. They MUST be in the defaults map:
-                // getBoolean() returns false for a key that was never set, which
-                // would hide every tool on a fresh install before the first fetch.
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "bgremove") to true,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "idphoto")  to true,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "batch")    to true,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "whitebg")  to false,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "collage")  to false,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "pdf")      to false,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "ocr")      to false,
-                (RemoteFlagKeys.TOOL_ENABLED_PREFIX + "enhance")  to false,
-            )
+            buildMap<String, Any> {
+                put(RemoteFlagKeys.ADS_INTERSTITIAL_ENABLED,   FlagDefaults.INTERSTITIAL_ENABLED)
+                put(RemoteFlagKeys.ADS_INTERSTITIAL_DELAY_MS,  FlagDefaults.FIRST_AD_DELAY_MS)
+                put(RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS,    FlagDefaults.INTERSTITIAL_GAP_MS)
+                put(RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP, FlagDefaults.INTERSTITIAL_DAILY_CAP.toLong())
+                put(RemoteFlagKeys.ADS_REWARDED_ENABLED,       FlagDefaults.REWARDED_ENABLED)
+                put(RemoteFlagKeys.ADS_REWARDED_DAILY_CAP,     FlagDefaults.REWARDED_DAILY_CAP.toLong())
+                put(RemoteFlagKeys.ADS_NATIVE_ENABLED,         FlagDefaults.NATIVE_ENABLED)
+                put(RemoteFlagKeys.PAYWALL_VARIANT,            FlagDefaults.PAYWALL_VARIANT)
+                put(RemoteFlagKeys.FREE_EXPORTS_PER_DAY,       FlagDefaults.FREE_EXPORTS_PER_DAY.toLong())
+                put(RemoteFlagKeys.FREE_BATCH_SIZE,            FlagDefaults.FREE_BATCH_SIZE.toLong())
+                put(RemoteFlagKeys.FREE_OCR_SCANS_PER_DAY,     FlagDefaults.FREE_OCR_SCANS_PER_DAY.toLong())
+                put(RemoteFlagKeys.FREE_ID_PHOTO_COUNTRIES,    FlagDefaults.FREE_ID_PHOTO_COUNTRIES.toLong())
+                put(RemoteFlagKeys.SSV_STRICT_MODE,            FlagDefaults.SSV_STRICT_MODE)
+                FlagDefaults.TOOL_ENABLED.forEach { (tool, on) ->
+                    put(RemoteFlagKeys.TOOL_ENABLED_PREFIX + tool, on)
+                }
+            }
         )
         config.setConfigSettingsAsync(
             FirebaseRemoteConfigSettings.Builder()
@@ -85,8 +131,7 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
         )
     }
 
-    /** Call once from PhotoStudioApp.onCreate. Failures are non-fatal. */
-    fun fetchAsync() {
+    override fun fetchAsync() {
         config.fetchAndActivate()
             .addOnCompleteListener { /* ignored — defaults are already safe */ }
     }
@@ -96,18 +141,42 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
     override val interstitialGapMs: Long       get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_GAP_MS)
     override val interstitialDailyCap: Int     get() = config.getLong(RemoteFlagKeys.ADS_INTERSTITIAL_DAILY_CAP).toInt()
     override val rewardedEnabled: Boolean      get() = config.getBoolean(RemoteFlagKeys.ADS_REWARDED_ENABLED)
-    val rewardedDailyCap: Int         get() = config.getLong(RemoteFlagKeys.ADS_REWARDED_DAILY_CAP).toInt()
+    override val rewardedDailyCap: Int         get() = config.getLong(RemoteFlagKeys.ADS_REWARDED_DAILY_CAP).toInt()
     override val nativeEnabled: Boolean        get() = config.getBoolean(RemoteFlagKeys.ADS_NATIVE_ENABLED)
-    val paywallVariant: String        get() = config.getString(RemoteFlagKeys.PAYWALL_VARIANT)
-    val freeExportsPerDay: Int        get() = config.getLong(RemoteFlagKeys.FREE_EXPORTS_PER_DAY).toInt()
-    val freeBatchSize: Int            get() = config.getLong(RemoteFlagKeys.FREE_BATCH_SIZE).toInt()
-    val freeOcrScansPerDay: Int       get() = config.getLong(RemoteFlagKeys.FREE_OCR_SCANS_PER_DAY).toInt()
-    val freeIdPhotoCountries: Int     get() = config.getLong(RemoteFlagKeys.FREE_ID_PHOTO_COUNTRIES).toInt()
-
-    /** Phase 2 only. Always false until an SSV endpoint exists. */
-    val ssvStrictMode: Boolean        get() = config.getBoolean(RemoteFlagKeys.SSV_STRICT_MODE)
-
-    /** Per-tool kill switch. A broken tool can be hidden instantly, no update. */
-    fun isToolEnabled(toolId: String): Boolean =
+    override val paywallVariant: String        get() = config.getString(RemoteFlagKeys.PAYWALL_VARIANT)
+    override val freeExportsPerDay: Int        get() = config.getLong(RemoteFlagKeys.FREE_EXPORTS_PER_DAY).toInt()
+    override val freeBatchSize: Int            get() = config.getLong(RemoteFlagKeys.FREE_BATCH_SIZE).toInt()
+    override val freeOcrScansPerDay: Int       get() = config.getLong(RemoteFlagKeys.FREE_OCR_SCANS_PER_DAY).toInt()
+    override val freeIdPhotoCountries: Int     get() = config.getLong(RemoteFlagKeys.FREE_ID_PHOTO_COUNTRIES).toInt()
+    override val ssvStrictMode: Boolean        get() = config.getBoolean(RemoteFlagKeys.SSV_STRICT_MODE)
+    override fun isToolEnabled(toolId: String): Boolean =
         config.getBoolean(RemoteFlagKeys.TOOL_ENABLED_PREFIX + toolId)
+}
+
+/**
+ * In-memory flags for builds with NO Firebase config — which is every build
+ * today, because the google-services plugin is commented out in
+ * app/build.gradle.kts until the owner adds a real google-services.json
+ * (bug #38: the app used to die at startup when Firebase resources were
+ * absent). Values are identical to the Remote Config defaults map because
+ * both read [FlagDefaults]. When the owner enables Firebase, [RemoteFlags]
+ * takes over with zero call-site changes.
+ */
+class LocalFlags : AppFlags {
+    override fun fetchAsync() { /* nothing to fetch — memory is the source */ }
+    override val interstitialsEnabled: Boolean  = FlagDefaults.INTERSTITIAL_ENABLED
+    override val firstAdDelayMs: Long           = FlagDefaults.FIRST_AD_DELAY_MS
+    override val interstitialGapMs: Long        = FlagDefaults.INTERSTITIAL_GAP_MS
+    override val interstitialDailyCap: Int      = FlagDefaults.INTERSTITIAL_DAILY_CAP
+    override val rewardedEnabled: Boolean       = FlagDefaults.REWARDED_ENABLED
+    override val rewardedDailyCap: Int          = FlagDefaults.REWARDED_DAILY_CAP
+    override val nativeEnabled: Boolean         = FlagDefaults.NATIVE_ENABLED
+    override val paywallVariant: String         = FlagDefaults.PAYWALL_VARIANT
+    override val freeExportsPerDay: Int         = FlagDefaults.FREE_EXPORTS_PER_DAY
+    override val freeBatchSize: Int             = FlagDefaults.FREE_BATCH_SIZE
+    override val freeOcrScansPerDay: Int        = FlagDefaults.FREE_OCR_SCANS_PER_DAY
+    override val freeIdPhotoCountries: Int      = FlagDefaults.FREE_ID_PHOTO_COUNTRIES
+    override val ssvStrictMode: Boolean         = FlagDefaults.SSV_STRICT_MODE
+    override fun isToolEnabled(toolId: String): Boolean =
+        FlagDefaults.TOOL_ENABLED[toolId] ?: false
 }

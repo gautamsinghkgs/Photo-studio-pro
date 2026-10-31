@@ -183,6 +183,12 @@ flags = os.path.join(MAIN, "monetization", "config", "RemoteFlags.kt")
 if home in SRC and flags in SRC:
     listed = re.findall(r'Tool\(\s*"([a-z0-9_]+)"', SRC[home])
     prefixed = set(re.findall(r'TOOL_ENABLED_PREFIX\s*\+\s*"([a-z0-9_]+)"', SRC[flags]))
+    # bug #38 refactor: the kill switches now live in FlagDefaults.TOOL_ENABLED,
+    # the single source of truth shared by RemoteFlags AND LocalFlags. Accept
+    # either the old literal-prefix shape or the new mapOf("id" to bool) shape.
+    _toolmap = re.search(r'val TOOL_ENABLED\s*=\s*mapOf\((.*?)\n\s*\)', SRC[flags], re.S)
+    if _toolmap:
+        prefixed |= set(re.findall(r'"([a-z0-9_]+)"\s*to\s*(?:true|false)', _toolmap.group(1)))
     for t in listed:
         if t not in prefixed:
             errors.append(
