@@ -243,14 +243,19 @@ Compose + PdfBox                   ~5 MB   (Coil REMOVED #29, Room REMOVED #35: 
 AdMob + UMP + RevenueCat + Firebase ~6 MB
 App code + resources                ~4 MB
 ─────────────────────────────────────────
-MEASURED AAB, all ABIs (CI run #9)  54,280,259 B (~52 MiB) — this is the UPLOAD size.
-Per-device download is far smaller: abi/density/language splits are ON.
-Per-device number pending a bundletool measurement step (P3).
+MEASURED AAB, all ABIs (CI run #13) 54,145,529 B (~52 MiB) — this is the UPLOAD size.
+MEASURED PER-DEVICE DOWNLOAD (CI run #13, bundletool 1.18.3; device spec
+arm64-v8a / en-IN / 420 dpi / SDK 36):  24,227,813 B ≈ 23.1 MiB  ✅
+  — under the 70 MB stop-line below, far under Play's 150 MB cap, and far
+  under the 200 MB over-cellular warning threshold. Mobile-data friendly.
 
-NOTE: the block above is now partly MEASURED — CI run #9 (2026-10-31) produced the
-first real AAB: 54,280,259 B across all ABIs, and `zipalign -c -P 16 -v 4` passed in
-the same job. What remains unmeasured is the per-device download size; add a
-bundletool `build-apks --device-spec` step in P3 to get it.
+NOTE: both numbers are now MEASURED BY CI ON EVERY PUSH TO main: step 10
+reports the AAB upload size; step 11 runs `bundletool build-apks
+--device-spec` and emits the per-device size as a public `::notice::`
+annotation (the step is `continue-on-error` — reporting, not a gate; bug
+#37). The old 35–40 MB estimate was high: device splits drop 3 of the 4
+ABIs and every non-English locale; the single biggest item per device is
+`libmlkit_google_ocr_pipeline.so` (arm64 slice) + the bundled OCR models.
 ```
 If the measured total exceeds **70 MB**, stop and report before adding more models.
 

@@ -622,7 +622,7 @@ everything after it on the same command line (bug #13). A placeholder
 | **`resources`** | `tools/check_resources.py` **and** `tools/check_wiring.py` | Resource integrity *and* cross-file wiring. **~10 s, no Android SDK. Gates the other three** |
 | **`compile`** | `assembleDebug` | Kotlin compilation is already green locally; this job adds the stage the sandbox **cannot** run — D8 dexing + packaging. ⭐ **Start here** |
 | **`test`** | `testDebugUnitTest` + HTML artifact | **117 tests, 0 failures** — green locally on 2026-10-30; CI re-proves it on a real runner |
-| **`release`** | `bundleRelease` (unsigned) + `zipalign -c -P 16 -v 4` + arm64-v8a check + size report + AAB artifact | R8 + resource shrinking + the release-only `lintVital` — the three stages that first executed in runs #7–#8 and produced **#33** and **#34** — plus the two Play gates that **cannot be fixed after a rejection** (16 KB page size, 64-bit) which passed in run #9 together with the first real download-size measurement (AAB, all ABIs: 54,280,259 B). From run #12 the job also runs **bundletool** to measure the per-device slice (arm64-v8a / en-IN / 420 dpi) and emits it as a public `::notice::` annotation |
+| **`release`** | `bundleRelease` (unsigned) + `zipalign -c -P 16 -v 4` + arm64-v8a check + size report + AAB artifact | R8 + resource shrinking + the release-only `lintVital` — the three stages that first executed in runs #7–#8 and produced **#33** and **#34** — plus the two Play gates that **cannot be fixed after a rejection** (16 KB page size, 64-bit) which passed in run #9 together with the first real download-size measurement (AAB, all ABIs: 54,280,259 B). Since run #13 (fixed #37: flags verified against `bundletool help` + `sdkVersion` added to the device spec) the job also measures the **per-device slice** (arm64-v8a / en-IN / 420 dpi) with bundletool and publishes it as a `::notice::` annotation — first measured: **24,227,813 B ≈ 23.1 MB**. The step is `continue-on-error`: reporting, never a gate |
 
 `compile` / `test` / `release` run in parallel, each with `needs: resources`.
 
@@ -645,7 +645,7 @@ everything after it on the same command line (bug #13). A placeholder
 | #10 | `41124485332` | 🔴 | The cleanup commit's own regression: `resources` ✅ but all three build jobs died on the OcrScreen "warning fix" — `LocalClipboard` is an API migration, not a rename → **#36** |
 | #11 | `41184706523` | 🟢 | **Second fully green run.** The #36 hotfix verified end-to-end; the release gates re-proven after the Room removal. Two consecutive full-green runs (#9, #11) — the code side is stable |
 | #12 | `41185899132` | 🔴 | Every real gate passed again (16 KB ✅ 64-bit ✅ AAB 53M built + uploaded) but the new bundletool step died in one second — its flags were written from memory → **#37** |
-| **#13** | *(the next one)* | ❓ | The bundletool step re-shipped with locally-verified flags + `sdkVersion` in the device spec, and marked `continue-on-error` so reporting can never red the pipeline. Expect the per-device number as a `::notice::` annotation |
+| **#13** | `41187145733` | 🟢 | **4/4 jobs, 12/12 release steps.** The bundletool step ran clean and published its number as a `::notice::` — **per-device download = 24,227,813 B ≈ 23.1 MB** (arm64-v8a/en-IN/420dpi; AAB upload 54,145,529 B). Recorded in SPEC §size-budget |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced
