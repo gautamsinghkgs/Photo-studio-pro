@@ -187,8 +187,20 @@ if home in SRC and flags in SRC:
     # the single source of truth shared by RemoteFlags AND LocalFlags. Accept
     # either the old literal-prefix shape or the new mapOf("id" to bool) shape.
     _toolmap = re.search(r'val TOOL_ENABLED\s*=\s*mapOf\((.*?)\n\s*\)', SRC[flags], re.S)
+    _toolvals = {}
     if _toolmap:
-        prefixed |= set(re.findall(r'"([a-z0-9_]+)"\s*to\s*(?:true|false)', _toolmap.group(1)))
+        _toolvals = dict(re.findall(r'"([a-z0-9_]+)"\s*to\s*(true|false)', _toolmap.group(1)))
+        prefixed |= set(_toolvals)
+    # bug #39: presence is not enough — a built, listed tool whose LAUNCH
+    # default is false is invisible on every fresh install.
+    for t in listed:
+        if _toolvals.get(t) == "false":
+            errors.append(
+                "tool id '%s' is built and listed in HomeScreen but its launch "
+                "default in FlagDefaults.TOOL_ENABLED is false -> invisible on "
+                "every fresh install (bug #39). Kill switches are for remote "
+                "incidents, never for launch defaults" % t
+            )
     for t in listed:
         if t not in prefixed:
             errors.append(

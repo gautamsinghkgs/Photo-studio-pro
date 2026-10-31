@@ -204,12 +204,12 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
 
 ---
 
-## 6. Bugs found — 38 total, 38 fixed, 0 parked
+## 6. Bugs found — 39 total, 39 fixed, 0 parked
 
 Do not "simplify" these back. Each was a real defect.
 
 **Found by:** 5 by unit tests · 4 by the resource linter or by reading · **4 by the wiring
-audit** · 6 by CI runs (first-ever `release`-job executions: R8 #7, `lintVital` #8, compile #10, bundletool flags #12) · **1 by the first-ever emulator boot** (#38 — a whole class of bugs CI cannot see, because CI builds and never runs) · **15 by pointing a real Android toolchain at the code** (six compile
+audit** · 6 by CI runs (first-ever `release`-job executions: R8 #7, `lintVital` #8, compile #10, bundletool flags #12) · **1 by the first-ever emulator boot** (#38 — a whole class of bugs CI cannot see, because CI builds and never runs) · **1 by the first living render** (#39 — a screenshot caught what no checker can: a broken product promise on screen) · **15 by pointing a real Android toolchain at the code** (six compile
 rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
 `ExportFlow` refactor**.
 
@@ -268,6 +268,7 @@ There are three complementary classes here, and each one demands a different def
 | 36 | **`LocalClipboard` is an API migration, not a rename** | compose-ui 1.12 `Clipboard` has only suspend `get/setClipEntry(ClipEntry)`; `ClipEntry` wraps `android.content.ClipData`; the old non-suspend `setText(AnnotatedString)` is gone. The cleanup batch applied the deprecation's named replacement blind (no local toolchain) and run #10's compile died in all three build jobs. Fixed with `rememberCoroutineScope` + `scope.launch { setClipEntry(ClipEntry(ClipData.newPlainText(...))) }`, javap-verified against `ui-android-1.12.1.aar`, then compile + 117 tests proven locally before shipping. Rule added: **never ship a deprecation replacement without either a compile or a javap of the artifact** |
 | 37 | **bundletool flags written from memory** | `--alias` is not a bundletool flag (it wants `--ks-key-alias`); the device spec also missed the required `sdkVersion` — a second failure hiding behind the first. The size step died in 1 s on run #12 while all real gates had passed (16 KB ✅ 64-bit ✅ AAB 53M). Fixed by running the identical 1.18.3 jar locally against a dummy bundle: the old flags reproduced CI's error verbatim (control), the corrected flags + `sdkVersion` pass validation; the step is now `continue-on-error` — reporting can never red the pipeline. Rule from #36 extended: **new CI tooling gets exercised locally before it ships** |
 | 38 | **Firebase optional at build time, mandatory at runtime — the app died at first launch on every device** | The `google-services` plugin is commented out until a real `google-services.json` exists, so no Firebase resources are generated; `FirebaseApp.initializeApp()` returns null (does not throw) and `FirebaseRemoteConfig.getInstance()` in `ServiceLocator.init` then throws `IllegalStateException`. Sixteen green CI runs were blind to it — CI builds, it never runs. Caught in minutes by the first emulator boot via `adb logcat -b crash`. Fixed by making Firebase truly optional per SPEC C2: `AppFlags` interface + `LocalFlags` in-memory fallback, both reading one `FlagDefaults` object (no drift possible), with `runCatching { RemoteFlags(...) }.getOrElse { LocalFlags() }` in ServiceLocator. Rule: startup-path changes get an emulator boot before shipping |
+| 39 | **Home hid 5 of 8 built tools: milestone-era `false` kill-switch defaults** | `FlagDefaults.TOOL_ENABLED` kept `false` for whitebg/collage/pdf/ocr/enhance from when those tools did not exist; HomeScreen filters on `isToolEnabled`, so fresh installs showed 3 tools against the "eight tools" promise in onboarding and the store listing. Caught by the first living render (emulator screenshot) — no crash, no lint, just a broken promise on screen. Fixed: all defaults `true` (the switches exist for remote incidents), and `check_wiring.py` now errors on any `false` launch default for a built+listed tool |
 
 **Owner decisions recorded 2026-10-31 (monetization policy):**
 1. Interstitials ON at launch — one per export cycle, shown after the save completes.

@@ -63,18 +63,23 @@ object FlagDefaults {
     const val FREE_ID_PHOTO_COUNTRIES = 10
     const val SSV_STRICT_MODE        = false
 
-    /** Per-tool kill switches. A broken tool can be hidden instantly, no update.
-     *  They MUST all be present: a missing key reads as false, which would hide
-     *  the tool on a fresh install before the first fetch. */
+    /** Per-tool kill switches: a broken tool can be hidden REMOTELY in an
+     *  incident, instantly, no Play review. They MUST all be present (a missing
+     *  key reads as false and would hide the tool), and — bug #39 — they MUST
+     *  all default to TRUE at launch. The old milestone-era `false` values (from
+     *  when these tools did not exist yet) silently hid 5 of the 8 built tools
+     *  on every fresh install, against onboarding's and the store listing's
+     *  "eight tools" promise. `check_wiring.py` now errors on any false default
+     *  for a built+listed tool, so the VALUE is guarded, not just the key. */
     val TOOL_ENABLED = mapOf(
         "bgremove" to true,
         "idphoto"  to true,
         "batch"    to true,
-        "whitebg"  to false,
-        "collage"  to false,
-        "pdf"      to false,
-        "ocr"      to false,
-        "enhance"  to false,
+        "whitebg"  to true,
+        "collage"  to true,
+        "pdf"      to true,
+        "ocr"      to true,
+        "enhance"  to true,
     )
 }
 
