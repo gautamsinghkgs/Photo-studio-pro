@@ -209,7 +209,7 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
 Do not "simplify" these back. Each was a real defect.
 
 **Found by:** 5 by unit tests · 4 by the resource linter or by reading · **4 by the wiring
-audit** · 5 by CI runs (three of them by first-ever `release`-job executions: R8 in run #7, `lintVital` in run #8, compile in run #10) · **15 by pointing a real Android toolchain at the code** (six compile
+audit** · 6 by CI runs (first-ever `release`-job executions: R8 #7, `lintVital` #8, compile #10, bundletool flags #12) · **15 by pointing a real Android toolchain at the code** (six compile
 rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
 `ExportFlow` refactor**.
 

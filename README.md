@@ -644,7 +644,8 @@ everything after it on the same command line (bug #13). A placeholder
 | #9 | `41119231916` | 🟢 | **First fully green run — all four jobs.** `bundleRelease` completed end-to-end for the first time ever: R8 ✅ · resource shrinking ✅ · lintVital ✅ · 16 KB zipalign ✅ · 64-bit ✅ · AAB artifact uploaded (54,280,259 B wrapped). **The app is release-proven** |
 | #10 | `41124485332` | 🔴 | The cleanup commit's own regression: `resources` ✅ but all three build jobs died on the OcrScreen "warning fix" — `LocalClipboard` is an API migration, not a rename → **#36** |
 | #11 | `41184706523` | 🟢 | **Second fully green run.** The #36 hotfix verified end-to-end; the release gates re-proven after the Room removal. Two consecutive full-green runs (#9, #11) — the code side is stable |
-| **#12** | *(the next one)* | ❓ | Adds the bundletool per-device download-size measurement (the slice a real phone gets). Its number arrives as a public `::notice::` annotation |
+| #12 | `41185899132` | 🔴 | Every real gate passed again (16 KB ✅ 64-bit ✅ AAB 53M built + uploaded) but the new bundletool step died in one second — its flags were written from memory → **#37** |
+| **#13** | *(the next one)* | ❓ | The bundletool step re-shipped with locally-verified flags + `sdkVersion` in the device spec, and marked `continue-on-error` so reporting can never red the pipeline. Expect the per-device number as a `::notice::` annotation |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced
