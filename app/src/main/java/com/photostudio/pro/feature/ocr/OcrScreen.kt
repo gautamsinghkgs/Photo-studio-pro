@@ -1,5 +1,6 @@
 package com.photostudio.pro.feature.ocr
 
+import android.content.ClipData
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,13 +24,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import kotlinx.coroutines.launch
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +53,7 @@ fun OcrScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
     val st by vm.state.collectAsState()
     val ent by ServiceLocator.entitlements.state.collectAsState()
     val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
         if (it != null) vm.onPhotoPicked(ctx, it)
@@ -112,7 +116,11 @@ fun OcrScreen(adsReady: Boolean, onBack: () -> Unit, onGoPro: () -> Unit,
                             Text(f.text, fontFamily = FontFamily.Monospace, fontSize = 14.sp, lineHeight = 22.sp)
                         } }
                         SecondaryAction(stringResource(R.string.ocr_copy)) {
-                            clipboard.setText(AnnotatedString(f.text))
+                            // Clipboard.setClipEntry is suspend (compose-ui 1.12): hop into a
+                            // coroutine scope instead of calling setText from the click lambda.
+                            scope.launch {
+                                clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("Photo Studio Pro", f.text)))
+                            }
                         }
                         Text(f.script.name, fontSize = 11.sp,
                              color = MaterialTheme.colorScheme.onSurfaceVariant)

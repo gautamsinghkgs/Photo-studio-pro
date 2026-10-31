@@ -204,12 +204,12 @@ the CI runner (7 GB) is the first place they can. No emulator has ever run eithe
 
 ---
 
-## 6. Bugs found — 35 total, 34 fixed, 1 parked
+## 6. Bugs found — 36 total, 35 fixed, 1 parked
 
 Do not "simplify" these back. Each was a real defect.
 
 **Found by:** 5 by unit tests · 4 by the resource linter or by reading · **4 by the wiring
-audit** · 4 by CI runs (the last two by the first `release` job ever to execute, one gate apart: R8 in run #7, `lintVital` in run #8) · **15 by pointing a real Android toolchain at the code** (six compile
+audit** · 5 by CI runs (three of them by first-ever `release`-job executions: R8 in run #7, `lintVital` in run #8, compile in run #10) · **15 by pointing a real Android toolchain at the code** (six compile
 rounds, `javap` on the downloaded AARs, and one real `testDebugUnitTest`) · **3 during the P1
 `ExportFlow` refactor**.
 
@@ -265,6 +265,7 @@ There are three complementary classes here, and each one demands a different def
 | 33 | **R8 blocked the first-ever release build on pdfbox's optional JPEG2000 codec** | `com.tom_roush.pdfbox.filter.JPXFilter` references `com.gemalto.jp2.JP2Decoder` / `JP2Encoder`, which pdfbox-android never bundles (JPX is an optional codec). R8's missing-class check therefore fails `minifyReleaseWithR8` — CI run #7. Debug builds never run R8, so no amount of local green could have surfaced it. Fixed with `-dontwarn com.gemalto.jp2.**`, which is honest rather than a mask: the classes are absent at runtime too, and `PdfViewModel` wraps `pdfToImages` in `runCatching` (catches `Throwable`), so a JPX-encoded page degrades to `Ui.Failed("pdf_render_failed")` instead of crashing. **An unexecuted build stage is an unmet bug category** |
 | 34 | **Backup-rule XMLs failed the `FullBackupContent` schema and described storage that does not exist** | `lintVitalRelease` (release-only, ran for the first time in run #8) rejected 7 things: `domain="cache"` is not a domain at all; every `<exclude>` sat outside the `<include>` set, i.e. a dead rule once includes exist; and the includes named `sharedpref` + `usage.db` while the app stores Prefs and all daily counters in one DataStore file (`files/datastore/…`) and ships no database. Net effect before the fix: nothing was backed up and nothing was excluded. Fixed include-only on `datastore/` in both XMLs — with includes present, Auto Backup takes exactly those paths, so photos/exports/caches stay out by definition (SPEC §11). Same family as #33: the checker had never run, so the file had never been read |
 | 35 | **Room 2.8.5 was a dependency nobody used** | No `@Database`/`@Dao`/`@Entity`/`databaseBuilder` in main or test sources, yet runtime+ktx+KSP-compiler were declared and proguard kept Room classes; the old backup rules even named a `usage.db` that never existed (#34). Removed with the post-green cleanup commit. Same tax-as-#29 class |
+| 36 | **`LocalClipboard` is an API migration, not a rename** | compose-ui 1.12 `Clipboard` has only suspend `get/setClipEntry(ClipEntry)`; `ClipEntry` wraps `android.content.ClipData`; the old non-suspend `setText(AnnotatedString)` is gone. The cleanup batch applied the deprecation's named replacement blind (no local toolchain) and run #10's compile died in all three build jobs. Fixed with `rememberCoroutineScope` + `scope.launch { setClipEntry(ClipEntry(ClipData.newPlainText(...))) }`, javap-verified against `ui-android-1.12.1.aar`, then compile + 117 tests proven locally before shipping. Rule added: **never ship a deprecation replacement without either a compile or a javap of the artifact** |
 
 **Owner decisions recorded 2026-10-31 (monetization policy):**
 1. Interstitials ON at launch — one per export cycle, shown after the save completes.
