@@ -622,7 +622,7 @@ everything after it on the same command line (bug #13). A placeholder
 | **`resources`** | `tools/check_resources.py` **and** `tools/check_wiring.py` | Resource integrity *and* cross-file wiring. **~10 s, no Android SDK. Gates the other three** |
 | **`compile`** | `assembleDebug` | Kotlin compilation is already green locally; this job adds the stage the sandbox **cannot** run — D8 dexing + packaging. ⭐ **Start here** |
 | **`test`** | `testDebugUnitTest` + HTML artifact | **117 tests, 0 failures** — green locally on 2026-10-30; CI re-proves it on a real runner |
-| **`release`** | `bundleRelease` (unsigned) + `zipalign -c -P 16 -v 4` + arm64-v8a check + size report + AAB artifact | R8 + resource shrinking + the release-only `lintVital` — the three stages that first executed in runs #7–#8 and produced **#33** and **#34** — plus the two Play gates that **cannot be fixed after a rejection** (16 KB page size, 64-bit) and the first real download-size measurement. The gates downstream of `bundleRelease` have still never executed |
+| **`release`** | `bundleRelease` (unsigned) + `zipalign -c -P 16 -v 4` + arm64-v8a check + size report + AAB artifact | R8 + resource shrinking + the release-only `lintVital` — the three stages that first executed in runs #7–#8 and produced **#33** and **#34** — plus the two Play gates that **cannot be fixed after a rejection** (16 KB page size, 64-bit) which passed in run #9 together with the first real download-size measurement (AAB, all ABIs: 54,280,259 B). From run #12 the job also runs **bundletool** to measure the per-device slice (arm64-v8a / en-IN / 420 dpi) and emits it as a public `::notice::` annotation |
 
 `compile` / `test` / `release` run in parallel, each with `needs: resources`.
 
@@ -643,7 +643,8 @@ everything after it on the same command line (bug #13). A placeholder
 | #8 | `41115825371` | 🔴 | **R8 passed** — the #33 fix worked. Then the next first-run gate spoke: `lintVitalRelease` (release-only lint) failed with 7 `[FullBackupContent]` errors across the two backup XMLs → **#34** |
 | #9 | `41119231916` | 🟢 | **First fully green run — all four jobs.** `bundleRelease` completed end-to-end for the first time ever: R8 ✅ · resource shrinking ✅ · lintVital ✅ · 16 KB zipalign ✅ · 64-bit ✅ · AAB artifact uploaded (54,280,259 B wrapped). **The app is release-proven** |
 | #10 | `41124485332` | 🔴 | The cleanup commit's own regression: `resources` ✅ but all three build jobs died on the OcrScreen "warning fix" — `LocalClipboard` is an API migration, not a rename → **#36** |
-| **#11** | *(the next one)* | ❓ | Carries the #36 hotfix — javap-verified and, for the first time since the toolchain vanished, compile + 117 tests re-proven **locally** before shipping. Must stay green |
+| #11 | `41184706523` | 🟢 | **Second fully green run.** The #36 hotfix verified end-to-end; the release gates re-proven after the Room removal. Two consecutive full-green runs (#9, #11) — the code side is stable |
+| **#12** | *(the next one)* | ❓ | Adds the bundletool per-device download-size measurement (the slice a real phone gets). Its number arrives as a public `::notice::` annotation |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced

@@ -321,6 +321,34 @@ jobs:
           echo "AAB size: $(du -h "$AAB" | cut -f1)"
           echo "SPEC.md 7.4 estimated ~33 MB. Update that file with this real number."
 
+      # ⚠️ PLAY GATE 3 — the number a user actually pays for in data: the
+      # PER-DEVICE download. The AAB carries every ABI; Play delivers one
+      # device's slice. bundletool builds exactly that slice and measures it.
+      # The result is echoed as a ::notice:: annotation because Actions log
+      # text needs sign-in while annotations are public via the REST API.
+      - name: Measure per-device download size (bundletool)
+        run: |
+          AAB=$(ls app/build/outputs/bundle/release/*.aab | head -1)
+          curl -fsSL -o /tmp/bundletool.jar \
+            "https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar"
+          # Throwaway key: bundletool refuses to build .apks from an unsigned
+          # bundle, and this keystore signs nothing that ever ships.
+          keytool -genkeypair -keystore /tmp/ci.jks -storepass android \
+            -keypass android -alias ci -dname "CN=CI" -keyalg RSA -keysize 2048 \
+            -validity 1 2>/dev/null
+          printf '{ "supportedAbis": ["arm64-v8a"], "supportedLocales": ["en-IN"], "screenDensity": 420 }' \
+            > /tmp/device.json
+          java -jar /tmp/bundletool.jar build-apks --bundle="$AAB" \
+            --output=/tmp/device.apks --device-spec=/tmp/device.json \
+            --ks=/tmp/ci.jks --ks-pass=pass:android --key-pass=pass:android --alias=ci
+          SIZE=$(java -jar /tmp/bundletool.jar get-size total --apks=/tmp/device.apks \
+            | grep -oE '[0-9]{6,}' | tail -1)
+          if [ -z "$SIZE" ]; then
+            SIZE=$(python3 -c "import zipfile;print(sum(i.compress_size for i in zipfile.ZipFile('/tmp/device.apks').infolist() if i.filename.endswith('.apk')))")
+          fi
+          echo "Per-device download size (arm64-v8a / en-IN / 420dpi): $SIZE bytes"
+          echo "::notice::PSP per-device download size (arm64-v8a/en-IN/420dpi) = $SIZE bytes"
+
       - name: Upload the AAB
         if: always()
         uses: actions/upload-artifact@v4
