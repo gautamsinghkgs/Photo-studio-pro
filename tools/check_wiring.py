@@ -47,17 +47,6 @@ notes = []
 # silent mechanism that looks alive.
 # ---------------------------------------------------------------------------
 PARKED = {
-    "Prefs.incrementPaywallScreens": (
-        "The whole `paywall_after_screens` lever is unwired at BOTH ends: no caller "
-        "increments the counter, nothing reads RemoteFlags.paywallAfterScreens, and "
-        "the key is absent from the defaults map (so getLong returns 0). It is "
-        "harmless today but the owner will see the knob in Firebase and expect it "
-        "to work. RESOLVE BEFORE LAUNCH: wire it or delete it. README section 6 P2."
-    ),
-    "RemoteFlags.paywallAfterScreens": (
-        "Reader half of the same dead lever as Prefs.incrementPaywallScreens above. "
-        "Parked together; resolve together."
-    ),
     "RemoteFlags.ssvStrictMode": (
         "AdMob Server-Side Verification is deliberately deferred to Phase 2 "
         "(docs/DECISIONS.md section 2.3): it is optional, the SDK has no retry "

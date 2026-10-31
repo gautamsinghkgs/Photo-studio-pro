@@ -27,7 +27,6 @@ class Prefs(private val context: Context) {
         val SESSION_TS          = longPreferencesKey("session_ts")
         val LAST_INTERSTITIAL   = longPreferencesKey("last_interstitial_ts")
         val ONBOARDING_DONE     = booleanPreferencesKey("onboarding_done")
-        val PAYWALL_SCREEN_COUNT= intPreferencesKey("paywall_screen_count")
         val EXPORT_FORMAT       = stringPreferencesKey("export_format")
         val RATE_PROMPTS        = intPreferencesKey("rate_prompts")
         // Daily counters, keyed together with the day they belong to.
@@ -130,12 +129,6 @@ class Prefs(private val context: Context) {
         context.dataStore.data.map { it[K.ONBOARDING_DONE] ?: false }.first()
 
     suspend fun setOnboardingDone() = context.dataStore.edit { it[K.ONBOARDING_DONE] = true }
-
-    suspend fun incrementPaywallScreens(): Int {
-        var v = 0
-        context.dataStore.edit { v = (it[K.PAYWALL_SCREEN_COUNT] ?: 0) + 1; it[K.PAYWALL_SCREEN_COUNT] = v }
-        return v
-    }
 
 
     data class Counters(

@@ -216,16 +216,16 @@ Strings **140/140** EN↔HI in sync.
   only support the share sheet, **not** a user-chosen SAF folder, unlike the other 5. See §6 P1.
 - ❌ **RevenueCat API styles are inconsistent** across 3 files — see §7.4. This will
   produce compile errors and both files must converge on one style.
-- ⚠️ **One dead Remote Config lever.** `paywall_after_screens` is unwired at *both* ends:
-  nothing calls `Prefs.incrementPaywallScreens()`, nothing reads `RemoteFlags.paywallAfterScreens`,
-  and the key is absent from the defaults map. **Harmless in code, but the owner will see the
-  knob in the Firebase console and expect it to work.** Decision required before launch:
-  wire it or delete it. Parked explicitly in `tools/check_wiring.py` → `PARKED`. See §6 P2.
+- ✅ **The dead Remote Config lever is GONE (2026-10-31).** `paywall_after_screens` (bug #9,
+  parked since the wiring audit) was **deleted, not wired**: a Firebase knob that does nothing
+  confuses the owner more than it helps. Removed: the key constant, its defaults-map entry,
+  `RemoteFlags.paywallAfterScreens`, `Prefs.incrementPaywallScreens()`, and both `PARKED`
+  entries in `tools/check_wiring.py`. Ledger: **37 found, 37 fixed, 0 parked**. See §6 P2.
 - ✅ `ssvStrictMode` is also never read, but that one is **deliberate** — SSV is deferred to
   Phase 2 (§6 P4). Also parked in `PARKED`, with the reason.
 - ❌ `feature/later/` (`LaterMilestoneScreen`) is **unrouted** — deliberately parked for M13+.
-- ❌ 22 strings are defined but unreferenced (`home_title`, `save`, `share`, `reward_*`).
-  Harmless UI-polish spares. **Do not delete** without checking the Hindi file.
+- ❌ 21 strings are defined but unreferenced (the localisation pass wired `pro_badge`).
+  Harmless UI-polish spares for `feature/later/`. **Do not delete** without checking the Hindi file.
 
 **Owner-only work (an agent cannot do any of this):**
 - ❌ Play Console account + **identity verification** (started, not finished)
@@ -550,16 +550,15 @@ Pick one and write it into the SPEC's free-tier table.
 
 ### 🟡 P2 — Decisions and placeholders
 
-**One decision an agent CAN make (or must escalate):**
+**The one agent-decidable item — RESOLVED 2026-10-31: DELETED, not wired.**
 
-`paywall_after_screens` — wire it or delete it. Wiring it means choosing what counts as a
-"screen" (probably each tool opened), where to count it (`Nav.kt`), and a guard so the
-paywall does not re-fire on every subsequent screen. It is a real growth lever — the research
-in `docs/DECISIONS.md` §7 shows hard paywalls earning **$2.32 D14 RPI vs $0.27** for
-freemium, so paywall aggression matters — but it is also a retention risk, and it must stay
-remotely controllable and default to "never". `compile` is green now, so this is unblocked;
-it is still parked until the `release` job passes, because a growth lever is worthless in an
-app that cannot ship.
+`paywall_after_screens` is gone (ledger row #9 → fixed; key, defaults entry, RemoteFlags
+property, Prefs mutator and both `PARKED` linter entries removed). Rationale: paywall
+aggression IS a real growth lever (`docs/DECISIONS.md` §7: hard paywall **$2.32 D14 RPI vs
+$0.27** freemium), but a half-built lever is worse than none — a knob the owner can set in
+Firebase with zero effect is a trap. If screen-count-triggered paywalls are ever wanted,
+design them deliberately: what counts as a "screen", where the counter lives, re-fire
+guards, and a default of "never".
 
 **Tracked and deliberately NOT fixed yet — do not fold these into an unrelated commit:**
 
@@ -647,7 +646,8 @@ everything after it on the same command line (bug #13). A placeholder
 | #12 | `41185899132` | 🔴 | Every real gate passed again (16 KB ✅ 64-bit ✅ AAB 53M built + uploaded) but the new bundletool step died in one second — its flags were written from memory → **#37** |
 | #13 | `41187145733` | 🟢 | **4/4 jobs, 12/12 release steps.** The bundletool step ran clean and published its number as a `::notice::` — **per-device download = 24,227,813 B ≈ 23.1 MB** (arm64-v8a/en-IN/420dpi; AAB upload 54,145,529 B). Recorded in SPEC §size-budget |
 | #14 | `41188332485` | 🟢 | Docs-only push (the run-#13 numbers recorded in SPEC/README) — routine 4/4 green |
-| **#15** | *(the next one)* | ❓ | **P2 localisation pass**: 37 UI literals → `strings.xml` EN+HI (177/177 parity), 12 Kotlin files touched. Locally verified before shipping: `compileDebugKotlin` ✅ 2m57s, `testDebugUnitTest` ✅, both linters clean |
+| #15 | `41189838347` | 🟢 | **P2 localisation pass proven in CI**: 4/4 jobs, 12/12 release steps; per-device size 24,228,822 B (+1 KB for the 74 new string entries — negligible). Hindi parity 177/177 shipped |
+| **#16** | *(the next one)* | ❓ | Housekeeping: dead `paywall_after_screens` lever **deleted** (bug #9 → fixed; ledger now 37/37/0) + all four GitHub Actions bumped to their verified Node-24 majors (checkout **v7**, setup-java **v6**, setup-python **v7**, upload-artifact **v7** — each tag's `action.yml` fetched and its inputs checked before shipping, per the #37 rule). Also repairs two **silent no-ops** from the BTFLAG doc patch (its ledger-header and row-#37 replacements missed on wording drift and were masked by a whole-file assert): headers now read 37/37/0 and row #37 exists in both ledgers. Every doc replacement now asserts its own match count. Locally verified: compile ✅ tests ✅ linters ✅ |
 
 GitHub's REST API exposes run / job / step *conclusions* publicly, but **log text needs a
 signed-in session** (401 otherwise). That is why every fix since run #3 was reproduced
@@ -809,7 +809,7 @@ different artifact and are still unverified.
 `purchases-<version>-sources.jar` from Maven Central and read the signature. Training
 data mixes three API generations; the jar does not.
 
-## 8. Bug ledger — 36 found, 35 fixed, 1 parked
+## 8. Bug ledger — 37 found, 37 fixed, 0 parked
 
 Full write-ups with root cause and the locking test are in `docs/DECISIONS.md` §6.
 Read them: **each one is a class of mistake that will recur.**
@@ -835,7 +835,7 @@ called. And **#30–#31** were invisible to both — they surfaced only when som
 | 6 | `Prefs.setOnboardingDone()` had **ZERO callers** → `AdPolicy` always returned `never_during_onboarding` → **no ad could ever show on any device** | **Wiring grep** | Would have masqueraded as "AdMob isn't filling". Grep for callers of every state-mutating setter |
 | 7 | `BatchScreen` passed `treeUri = null` → exports went to `cacheDir`, wiped under storage pressure and un-browsable | **Wiring grep** | Grep every null-defaulted parameter at its call sites |
 | 8 | `<string name="cancel">` declared **twice** in BOTH `strings.xml` files (EN L54+L199, HI L40+L163), with **two different Hindi translations** | **Resource linter** | `aapt2` fails deep inside a ~10-min Gradle run without naming the line. Count `grep -c` lines **AND** unique names — 140 lines / 139 unique was the tell |
-| 9 | **`paywall_after_screens` is dead at both ends** — nothing calls `Prefs.incrementPaywallScreens()`, nothing reads the flag, and the key is missing from the defaults map | **Wiring audit** | **PARKED, not fixed.** Harmless in code, but the owner would configure the Firebase knob for no effect. Wire it or delete it before launch (§6 P2) |
+| 9 | **`paywall_after_screens` was dead at both ends** — nothing called `Prefs.incrementPaywallScreens()`, nothing read the flag | **Wiring audit** | **FIXED 2026-10-31 — DELETED, not wired** (conservative default, veto window passed): key constant, defaults-map entry, RemoteFlags property, Prefs mutator and both `PARKED` linter entries removed. A real paywall-timing lever, if ever wanted, gets designed deliberately (§6 P2) |
 | 10 | The Batch **"Remove location and camera data" switch was inert.** `Bitmap.compress()` cannot carry EXIF, so exports were *always* stripped — the OFF position promised to keep data the app never keeps | **Wiring audit** | A UI control that cannot do what its label says is a Play Deceptive-Behaviour exposure even when it fails in the safe direction. Replaced with honest static text; deleted the dead `STRIP_EXIF` pref |
 | 11 | **M8 PDF produced no ad decision at all.** `PdfScreen` received `adsReady` from `Nav.kt` and never read it — the only one of the eight tools with no post-save ad hook | **Wiring audit** | An unused parameter *that is already plumbed in* is the same tell as an unused variable. Now wired, and the linter asserts every exporting tool has an ad decision |
 | 12 | `AdPolicy.canShowInterstitialPure()` accepted `dailyCap` and **ignored it** — a caller passing `dailyCap = 0` expected ads off and silently got ads | **Compiler warning** | Behaviour was correct (the cap is enforced in the impure wrapper) but the signature lied. Parameter removed, verified by re-running all 117 tests. Same shape as bug #5 |
@@ -863,6 +863,7 @@ called. And **#30–#31** were invisible to both — they surfaced only when som
 | 34 | **The backup-rule XMLs were invalid against the `FullBackupContent` schema, and their includes pointed at storage that does not exist.** `<exclude domain="cache">` names a domain that is not in the vocabulary (valid: root, file, database, sharedpref, external); every `<exclude>` sat outside the `<include>` set, which is a dead rule the moment any include exists; and the includes named `sharedpref` + `usage.db` while the app actually keeps Prefs *and* every daily counter in one DataStore file (`files/datastore/…`) and ships no database at all. So the old rules backed up nothing and excluded nothing | **The CI `release` job, second consecutive first-run gate** (`lintVitalRelease`, run #8 — release-only lint; debug builds and both project linters cannot see it) | Include-only rules pointing at `datastore/` in both XMLs: with includes present, Auto Backup backs up exactly that and nothing else, so photos / exports / caches stay out *by definition* — SPEC §11's promise holds with fewer rules than before. Same lesson as #33 one gate later: **an unexecuted checker is an unread file** |
 | 35 | **Room 2.8.5 was a dependency nobody used.** No `@Database`, `@Dao`, `@Entity` or `databaseBuilder` anywhere in main or test sources, yet `room-runtime`, `room-ktx` and `ksp(room-compiler)` were declared and proguard kept `* extends androidx.room.RoomDatabase` — about a megabyte of AAB and KSP seconds on every build for zero features. The old backup rules even named a `usage.db` that never existed (#34) | **Reading while fixing #34** — a grep for Room annotations returned nothing | Removed the three dependency lines, the KSP line and the dead keep rules. Same class as #29 (Coil): **a dependency you never reference is a tax on every build and every download** |
 | 36 | **The deprecation-replacement batch shipped without a compile: `LocalClipboard` is not a drop-in for `LocalClipboardManager`.** compose-ui 1.12's `Clipboard` interface exposes only `suspend getClipEntry()` / `suspend setClipEntry(ClipEntry)`, and `ClipEntry` is constructed from an `android.content.ClipData` — the old one-line `setText(AnnotatedString)` has no non-suspend equivalent, so run #10's compile died in all three build jobs. The deprecation message names the replacement but not the shape change | **CI compile, run #10** — the first red run ever caused by one of my own patches | `rememberCoroutineScope()` + `scope.launch { clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(...))) }`, javap-verified against `ui-android-1.12.1.aar` before shipping, then compile + 117 tests re-proven **locally**. **A deprecation replacement is an API migration, not a rename — without a local compile, javap the AAR first** |
+| 37 | **The bundletool step shipped with flags written from memory.** Run #12's new download-size step died in one second: `--alias` is not a bundletool flag (it wants `--ks-key-alias`), and the device spec was missing the required `sdkVersion` — a second failure hiding behind the first | **CI run #12** | Ran the identical 1.18.3 jar locally against a dummy bundle: the old flags reproduced CI's error **verbatim** (control test), the corrected flags + `sdkVersion` pass all validation. The step also got `continue-on-error: true` — a reporting step can never red the pipeline again. Rule extended from #36: **new CI tooling gets exercised locally before it ships** |
 
 **Four meta-lessons:**
 - **A parameter that is accepted and ignored is a bug, not a style issue.** Bugs #5 and #12
@@ -1010,7 +1011,7 @@ These facts were confirmed by six compile rounds, not only by reading.
 | `:app:assembleDebug` | 🔴 **cannot run in the sandbox** — D8 is OOM-killed at `dexBuilderDebug` (2 GB RAM). Everything before dexing passed. This is the CI runner's job |
 | Resources · manifests · aapt2 | 🟢 `mergeDebugResources`, all 3 manifest tasks, `processDebugResources`, `checkDebugAarMetadata`, `compileDebugJavaWithJavac`, `desugarDebugFileDependencies` |
 | `tools/check_resources.py` | **exit 0** — 55 Kotlin files, 10 resource XMLs scanned |
-| `tools/check_wiring.py` | **exit 0** — 0 errors, 0 warnings, 12 notes (3 of them deliberate `PARKED` entries). Previously verified with 7 injected violations, all caught, then reverted |
+| `tools/check_wiring.py` | **exit 0** — 0 errors, 0 warnings, **7 notes** (1 deliberate `PARKED` entry left: `ssvStrictMode`, Phase 2; the two paywall-lever entries were deleted along with the lever). Previously verified with 7 injected violations, all caught, then reverted |
 | Kotlin files in `app/src/main` | 55 files |
 | Strings EN ↔ HI | **177 / 177**, unique, identical name sets — plus 21 unreferenced entries (§6 P2) and **0** hardcoded UI literals: the P2 localisation pass landed 2026-10-31 (37 moved; the 10 remaining code literals are deliberate numbers/symbols/proper nouns, listed in §6) |
 | CI | 4 jobs, YAML-valid via `yaml.safe_load`, `run:` blocks verified as genuinely multi-line |

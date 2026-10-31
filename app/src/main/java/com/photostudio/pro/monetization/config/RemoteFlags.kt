@@ -30,7 +30,6 @@ object RemoteFlagKeys {
     const val ADS_REWARDED_ENABLED        = "ads_rewarded_enabled"
     const val ADS_REWARDED_DAILY_CAP      = "ads_rewarded_daily_cap"
     const val ADS_NATIVE_ENABLED          = "ads_native_enabled"
-    const val PAYWALL_AFTER_SCREENS       = "paywall_after_screens"
     const val PAYWALL_VARIANT             = "paywall_variant"
     const val FREE_EXPORTS_PER_DAY        = "free_exports_per_day"
     const val FREE_BATCH_SIZE             = "free_batch_size"
@@ -58,7 +57,6 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
                 RemoteFlagKeys.ADS_REWARDED_ENABLED       to true,
                 RemoteFlagKeys.ADS_REWARDED_DAILY_CAP     to 8L,
                 RemoteFlagKeys.ADS_NATIVE_ENABLED         to false,
-                RemoteFlagKeys.PAYWALL_AFTER_SCREENS      to 3L,
                 RemoteFlagKeys.PAYWALL_VARIANT            to "soft_hard",
                 RemoteFlagKeys.FREE_EXPORTS_PER_DAY       to 3L,
                 RemoteFlagKeys.FREE_BATCH_SIZE            to 1L,
@@ -100,7 +98,6 @@ class RemoteFlags(private val config: FirebaseRemoteConfig) : FlagSource {
     override val rewardedEnabled: Boolean      get() = config.getBoolean(RemoteFlagKeys.ADS_REWARDED_ENABLED)
     val rewardedDailyCap: Int         get() = config.getLong(RemoteFlagKeys.ADS_REWARDED_DAILY_CAP).toInt()
     override val nativeEnabled: Boolean        get() = config.getBoolean(RemoteFlagKeys.ADS_NATIVE_ENABLED)
-    val paywallAfterScreens: Int      get() = config.getLong(RemoteFlagKeys.PAYWALL_AFTER_SCREENS).toInt()
     val paywallVariant: String        get() = config.getString(RemoteFlagKeys.PAYWALL_VARIANT)
     val freeExportsPerDay: Int        get() = config.getLong(RemoteFlagKeys.FREE_EXPORTS_PER_DAY).toInt()
     val freeBatchSize: Int            get() = config.getLong(RemoteFlagKeys.FREE_BATCH_SIZE).toInt()
